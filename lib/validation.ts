@@ -49,7 +49,9 @@ export const ParsedTimeSchema = z.object({
 });
 
 export function parseTimeString(timeStr: string): z.infer<typeof ParsedTimeSchema> {
-  const [hours, minutes] = timeStr.split(':').map(Number);
+  const parts = timeStr.split(':');
+  const hours = Number(parts[0]) ?? 0;
+  const minutes = Number(parts[1]) ?? 0;
   return { hours, minutes, formatted: timeStr };
 }
 
@@ -64,7 +66,10 @@ export const ParsedDateSchema = z.object({
 });
 
 export function parseDateString(dateStr: string): z.infer<typeof ParsedDateSchema> {
-  const [year, month, day] = dateStr.split('-').map(Number);
+  const parts = dateStr.split('-');
+  const year = Number(parts[0]) ?? 0;
+  const month = Number(parts[1]) ?? 1;
+  const day = Number(parts[2]) ?? 1;
   const date = new Date(Date.UTC(year, month - 1, day));
   return { year, month, day, date, formatted: dateStr };
 }

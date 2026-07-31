@@ -204,7 +204,11 @@ export class ApiClient {
 
 export function createApiClient(config?: Partial<ApiClientConfig>): ApiClient {
   const baseURL = config?.baseURL ?? process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:8000';
-  return new ApiClient({ baseURL, timeoutMs: config?.timeoutMs, retryOptions: config?.retryOptions });
+  return new ApiClient({
+    baseURL,
+    timeoutMs: config?.timeoutMs ?? DEFAULT_TIMEOUT,
+    retryOptions: config?.retryOptions ?? {},
+  });
 }
 
 export const apiClient = createApiClient();

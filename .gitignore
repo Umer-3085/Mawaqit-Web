@@ -42,3 +42,12 @@ next-env.d.ts
 
 # agents
 AGENTS.md
+
+# turbo
+.turbo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

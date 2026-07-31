@@ -19,12 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*", "./types/*", "./lib/*", "./hooks/*"]
     },
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true
+    "noPropertyAccessFromIndexSignature": true
   },
   "include": [
     "next-env.d.ts",

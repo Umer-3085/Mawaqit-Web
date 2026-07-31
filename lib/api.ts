@@ -4,6 +4,8 @@ import {
   PrayerTimesRangeResponse,
   SingleDayParams,
   DateRangeParams,
+} from '../types/prayer-times';
+import {
   PrayerTimesResponseSchema,
   PrayerTimesRangeResponseSchema,
   SingleDayParamsSchema,

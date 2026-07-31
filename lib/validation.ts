@@ -1,4 +1,15 @@
 import { z } from 'zod';
+import type {
+  CalculationMethod,
+  Madhab,
+  HighLatitudeRule,
+  NaflMethod,
+  ParsedTime,
+  ParsedDate,
+  PrayerTimesResponse,
+  PrayerTimesRangeResponse,
+  ParsedPrayerTimesResponse,
+} from '../types/prayer-times';
 
 export const CalculationMethodEnum = z.enum([
   'MUSLIM_WORLD_LEAGUE',
@@ -30,16 +41,6 @@ export const NaflMethodEnum = z.enum([
   'MALIKI_DELAYED',
 ]);
 
-export type CalculationMethod = z.infer<typeof CalculationMethodEnum>;
-export type Madhab = z.infer<typeof MadhabEnum>;
-export type HighLatitudeRule = z.infer<typeof HighLatitudeRuleEnum>;
-export type NaflMethod = z.infer<typeof NaflMethodEnum>;
-
-export const CALCULATION_METHODS = CalculationMethodEnum.options;
-export const MADHABS = MadhabEnum.options;
-export const HIGH_LATITUDE_RULES = HighLatitudeRuleEnum.options;
-export const NAFL_METHODS = NaflMethodEnum.options;
-
 const TimeStringSchema = z.string().regex(/^\d{2}:\d{2}$/);
 
 export const ParsedTimeSchema = z.object({
@@ -48,7 +49,7 @@ export const ParsedTimeSchema = z.object({
   formatted: TimeStringSchema,
 });
 
-export function parseTimeString(timeStr: string): z.infer<typeof ParsedTimeSchema> {
+export function parseTimeString(timeStr: string): ParsedTime {
   const parts = timeStr.split(':');
   const hours = Number(parts[0]) ?? 0;
   const minutes = Number(parts[1]) ?? 0;
@@ -65,7 +66,7 @@ export const ParsedDateSchema = z.object({
   formatted: DateStringSchema,
 });
 
-export function parseDateString(dateStr: string): z.infer<typeof ParsedDateSchema> {
+export function parseDateString(dateStr: string): ParsedDate {
   const parts = dateStr.split('-');
   const year = Number(parts[0]) ?? 0;
   const month = Number(parts[1]) ?? 1;
@@ -74,7 +75,7 @@ export function parseDateString(dateStr: string): z.infer<typeof ParsedDateSchem
   return { year, month, day, date, formatted: dateStr };
 }
 
-export const PrayerTimesResponseSchema = z.object({
+export const PrayerTimesResponseSchema: z.ZodType<PrayerTimesResponse> = z.object({
   date: DateStringSchema,
   fajr: TimeStringSchema,
   sunrise: TimeStringSchema,
@@ -85,17 +86,17 @@ export const PrayerTimesResponseSchema = z.object({
   timezone: z.string().min(1),
   calculation_method: CalculationMethodEnum,
   madhab: MadhabEnum,
-  ishraq: TimeStringSchema.nullish(),
+  ishraq: TimeStringSchema.nullable().optional(),
   ishraq_elevation: z.number().nullable().optional(),
-  duha_start: TimeStringSchema.nullish(),
+  duha_start: TimeStringSchema.nullable().optional(),
   duha_start_elevation: z.number().nullable().optional(),
-  duha_end: TimeStringSchema.nullish(),
-  awwabin_start: TimeStringSchema.nullish(),
-  awwabin_end: TimeStringSchema.nullish(),
-  nafl_method: NaflMethodEnum.nullish(),
+  duha_end: TimeStringSchema.nullable().optional(),
+  awwabin_start: TimeStringSchema.nullable().optional(),
+  awwabin_end: TimeStringSchema.nullable().optional(),
+  nafl_method: NaflMethodEnum.nullable().optional(),
 });
 
-export const PrayerTimesRangeResponseSchema = z.object({
+export const PrayerTimesRangeResponseSchema: z.ZodType<PrayerTimesRangeResponse> = z.object({
   items: z.array(PrayerTimesResponseSchema),
   start_date: DateStringSchema,
   end_date: DateStringSchema,
@@ -118,25 +119,7 @@ export const DateRangeParamsSchema = SingleDayParamsSchema.extend({
   end_date: DateStringSchema,
 });
 
-export type PrayerTimesResponse = z.infer<typeof PrayerTimesResponseSchema>;
-export type PrayerTimesRangeResponse = z.infer<typeof PrayerTimesRangeResponseSchema>;
-export type SingleDayParams = z.infer<typeof SingleDayParamsSchema>;
-export type DateRangeParams = z.infer<typeof DateRangeParamsSchema>;
-
-export function parsePrayerTimesResponse(data: PrayerTimesResponse): PrayerTimesResponse & {
-  parsedDate: z.infer<typeof ParsedDateSchema>;
-  parsedFajr: z.infer<typeof ParsedTimeSchema>;
-  parsedSunrise: z.infer<typeof ParsedTimeSchema>;
-  parsedDhuhr: z.infer<typeof ParsedTimeSchema>;
-  parsedAsr: z.infer<typeof ParsedTimeSchema>;
-  parsedMaghrib: z.infer<typeof ParsedTimeSchema>;
-  parsedIsha: z.infer<typeof ParsedTimeSchema>;
-  parsedIshraq: z.infer<typeof ParsedTimeSchema> | null;
-  parsedDuhaStart: z.infer<typeof ParsedTimeSchema> | null;
-  parsedDuhaEnd: z.infer<typeof ParsedTimeSchema> | null;
-  parsedAwwabinStart: z.infer<typeof ParsedTimeSchema> | null;
-  parsedAwwabinEnd: z.infer<typeof ParsedTimeSchema> | null;
-} {
+export function parsePrayerTimesResponse(data: PrayerTimesResponse): ParsedPrayerTimesResponse {
   return {
     ...data,
     parsedDate: parseDateString(data.date),

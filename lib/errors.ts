@@ -1,7 +1,9 @@
+import { overwrite } from "zod";
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
-    public readonly message: string,
+    public override readonly message: string,
     public readonly details?: unknown
   ) {
     super(message);
@@ -10,14 +12,14 @@ export class ApiError extends Error {
 
   static fromResponse(status: number, data: unknown): ApiError {
     const message = typeof data === 'object' && data !== null && 'detail' in data
-      ? String((data as Record<string, unknown>).detail)
+      ? String((data as Record<string, unknown>)["detail"])
       : `Request failed with status ${status}`;
     return new ApiError(status, message, data);
   }
 }
 
 export class NetworkError extends Error {
-  constructor(public readonly cause?: Error) {
+  constructor(public override readonly cause?: Error) {
     super(cause?.message ?? 'Network request failed');
     this.name = 'NetworkError';
   }

@@ -53,28 +53,6 @@
   --font-arabic: var(--font-noto-sans-arabic);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    /* Dark mode - Islamic theme variant */
-    --color-primary: #2ecc71;      /* Brighter green for dark bg */
-    --color-primary-hover: #27ae60;
-    --color-primary-light: #58d68d;
-    --color-secondary: #f39c12;    /* Brighter gold */
-    --color-secondary-hover: #f1c40f;
-    --color-background: #1a1a1a;   /* Near black */
-    --color-surface: #242424;
-    --color-surface-elevated: #2d2d2d;
-    --color-text: #f5f5f5;
-    --color-text-muted: #a0a0a0;
-    --color-border: #333333;
-    --color-border-focus: #2ecc71;
-    --color-error: #e74c3c;
-    --color-success: #2ecc71;
-  }
-}
-
 body {
   background: var(--color-background);
   color: var(--color-text);

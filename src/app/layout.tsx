@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { ThemeProvider } from '../../components/ui/theme-provider';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${notoSansArabic.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><ThemeProvider attribute="class" defaultTheme="system" enableSystem><Providers>{children}</Providers></ThemeProvider></body>
+      <body className="min-h-full flex flex-col"><ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme={false}><Providers>{children}</Providers></ThemeProvider></body>
     </html>
   );
 }

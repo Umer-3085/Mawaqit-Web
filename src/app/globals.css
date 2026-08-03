@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   --color-primary: #0d4d3f;        /* Deep Islamic green */
   --color-primary-hover: #0f5d4a;
   --color-primary-light: #1a6b52;
@@ -35,6 +33,7 @@
   --color-error: var(--color-error);
   --color-success: var(--color-success);
   --font-sans: var(--font-inter);
+  --font-arabic: var(--font-noto-sans-arabic);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,11 +53,12 @@
     --color-text-muted: #a0a0a0;
     --color-border: #333333;
     --color-border-focus: #2ecc71;
+    --color-error: #e74c3c;
+    --color-success: #2ecc71;
   }
 }
 
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-family: Arial, Helvetica, sans-serif;
 }

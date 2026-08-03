@@ -8,7 +8,7 @@ const swrConfig: SWRConfiguration = {
     dedupingInterval: 60000,
 };
 
-export function Provider({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <SWRConfig value={swrConfig}>
             {children}

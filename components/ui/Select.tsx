@@ -3,23 +3,23 @@
 import { forwardRef, type SelectHTMLAttributes, useId } from 'react';
 import { cn } from './utils';
 
-export interface SelectOption {
-  value: string;
+export interface SelectOption<T = string> {
+  value: T;
   label: string;
   disabled?: boolean;
 }
 
-export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+export interface SelectProps<T = string> extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
   label: string;
-  options: SelectOption[];
+  options: SelectOption<T>[];
   placeholder?: string;
   error?: string;
   helperText?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: T) => void;
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  (
+  function Select<T = string>(
     {
       label,
       options,
@@ -33,9 +33,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       onChange,
       'aria-describedby': ariaDescribedBy,
       ...props
-    },
-    ref
-  ) => {
+    }: SelectProps<T>,
+    ref: React.Ref<HTMLSelectElement>
+  ) {
     const generatedId = useId();
     const id = providedId || generatedId;
     const errorId = `${id}-error`;
@@ -45,7 +45,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       .join(' ') || undefined;
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange?.(e.target.value);
+      onChange?.(e.target.value as T);
     };
 
     return (
@@ -89,7 +89,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {options.map((option) => (
-            <option key={option.value} value={option.value} disabled={option.disabled}>
+            <option key={String(option.value)} value={String(option.value)} disabled={option.disabled}>
               {option.label}
             </option>
           ))}

@@ -2,7 +2,7 @@
 
 import { cn } from './utils';
 
-interface LoadingSpinnerProps {
+export interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   color?: 'primary' | 'white' | 'current';

@@ -3,7 +3,7 @@
 import { forwardRef, type InputHTMLAttributes, useId } from 'react';
 import { cn } from './utils';
 
-export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
   label: string;
   value?: string;
   onChange: (value: string) => void;

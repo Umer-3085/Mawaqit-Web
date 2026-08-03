@@ -1,7 +1,9 @@
 'use client';
 
 import { Select, type SelectOption } from './Select';
-import type { CalculationMethod, CALCULATION_METHODS } from '../../types/prayer-times';
+import type { CalculationMethod } from '../../types/prayer-times';
+
+const TypedSelect = Select as <T = string>(props: import('./Select').SelectProps<T>) => React.ReactElement | null;
 
 const methodLabels: Record<CalculationMethod, string> = {
   MUSLIM_WORLD_LEAGUE: 'Muslim World League',
@@ -17,7 +19,7 @@ const methodLabels: Record<CalculationMethod, string> = {
   UOIF: 'Union des Organisations Islamiques de France',
 };
 
-interface MethodSelectProps {
+export interface MethodSelectProps {
   value: CalculationMethod;
   onChange: (value: CalculationMethod) => void;
   label?: string;
@@ -49,13 +51,13 @@ export function MethodSelect({
     'UOIF',
   ];
 
-  const options: SelectOption[] = methods.map((method) => ({
+  const options: SelectOption<CalculationMethod>[] = methods.map((method) => ({
     value: method,
     label: methodLabels[method] || method,
   }));
 
   return (
-    <Select
+    <TypedSelect<CalculationMethod>
       label={label}
       options={options}
       value={value}

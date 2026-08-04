@@ -11,6 +11,7 @@ import { PrayerTimeCard } from './PrayerTimeCard';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorAlert } from '../../components/ui/ErrorAlert';
 import { cn } from '../../components/ui/utils';
+import { Button } from '@/ui';
 
 interface TodayPrayerTimesClientProps {
   initialData: PrayerTimesResponse | null;

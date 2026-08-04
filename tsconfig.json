@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*", "./types/*", "./lib/*", "./hooks/*", "./components/*"]
+      "@/*": ["./src/*", "./types/*", "./lib/*", "./hooks/*"],
+      "@/components/*": ["./components/*"]
     },
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,

@@ -9,3 +9,4 @@ export { MethodSelect, type MethodSelectProps } from './MethodSelect';
 export { cn } from './utils';
 export { ThemeProvider } from './theme-provider';
 export { ThemeToggle } from './ThemeToggle';
+export * from '../prayer-times';

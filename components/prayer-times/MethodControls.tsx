@@ -10,10 +10,10 @@ interface MethodControlsProps {
   highLatitudeRule: HighLatitudeRule;
   naflMethod: NaflMethod;
   onChange: (updates: {
-    calculationMethod?: CalculationMethod;
+    calculation_method?: CalculationMethod;
     madhab?: Madhab;
-    highLatitudeRule?: HighLatitudeRule;
-    naflMethod?: NaflMethod;
+    high_latitude_rule?: HighLatitudeRule;
+    nafl_method?: NaflMethod;
   }) => void;
   disabled?: boolean;
 }
@@ -49,7 +49,7 @@ export function MethodControls({
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <MethodSelect
         value={calculationMethod}
-        onChange={(v) => onChange({ calculationMethod: v })}
+        onChange={(v) => onChange({ calculation_method: v })}
         disabled={disabled}
         label="Calculation Method"
       />
@@ -65,7 +65,7 @@ export function MethodControls({
         label="High Latitude Rule"
         options={HIGH_LATITUDE_OPTIONS}
         value={highLatitudeRule}
-        onChange={(v: HighLatitudeRule) => onChange({ highLatitudeRule: v })}
+        onChange={(v: HighLatitudeRule) => onChange({ high_latitude_rule: v })}
         disabled={disabled}
         placeholder="Select rule"
       />
@@ -73,7 +73,7 @@ export function MethodControls({
         label="Nafl Method"
         options={NAFL_METHOD_OPTIONS}
         value={naflMethod}
-        onChange={(v: NaflMethod) => onChange({ naflMethod: v })}
+        onChange={(v: NaflMethod) => onChange({ nafl_method: v })}
         disabled={disabled}
         placeholder="Select method"
       />

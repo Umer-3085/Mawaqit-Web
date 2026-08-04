@@ -19,11 +19,11 @@ export function useUpdateLocation() {
       const newLocation = { ...location, ...updates };
 
       await Promise.all([
-mutate(
-        (key): boolean => Array.isArray(key) && PRAYER_TIMES_KEYS.includes(key[0] as typeof PRAYER_TIMES_KEYS[number]),
-        undefined,
-        { revalidate: true }
-      ),
+        mutate(
+          (key): boolean => Array.isArray(key) && PRAYER_TIMES_KEYS.includes(key[0] as typeof PRAYER_TIMES_KEYS[number]),
+          undefined,
+          { revalidate: true }
+        ),
         baseUpdateLocation(updates),
       ]);
 

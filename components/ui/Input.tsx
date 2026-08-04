@@ -6,7 +6,7 @@ import { cn } from './utils';
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label: string;
   type?: 'text' | 'email' | 'number' | 'password' | 'tel' | 'url';
-  error?: string;
+  error?: string | null;
   helperText?: string;
 }
 

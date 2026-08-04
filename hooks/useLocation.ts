@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { LocationParams, CalculationMethod, NaflMethod } from '../types/prayer-times';
+import type { LocationParams, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../types/prayer-times';
 
 const DEFAULT_LOCATION: LocationParams = {
   lat: 33.6844,
   lng: 73.0479,
   timezone: 'Asia/Karachi',
-  method: 'MUSLIM_WORLD_LEAGUE',
-  nafl_method: 'SOLAR_ANGLE_DUHA',
+  calculation_method: 'MUSLIM_WORLD_LEAGUE',
+  madhab: 'SHAFI',
+  high_latitude_rule: 'MIDDLE_OF_THE_NIGHT',
+  nafl_method: 'QUARTER_DAY',
 };
 
 const STORAGE_KEY = 'mawaqit-location';
@@ -63,15 +65,19 @@ export function useLocationFromParams(searchParams: URLSearchParams): LocationPa
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
   const timezone = searchParams.get('timezone');
-  const method = searchParams.get('method');
-  const nafl_method = searchParams.get('nafl_method');
+  const calculation_method = searchParams.get('calculation_method') || searchParams.get('method');
+  const madhab = searchParams.get('madhab');
+  const high_latitude_rule = searchParams.get('highLat') || searchParams.get('high_latitude_rule');
+  const nafl_method = searchParams.get('naflMethod') || searchParams.get('nafl_method');
 
   if (lat && lng) {
     return {
       lat: parseFloat(lat),
       lng: parseFloat(lng),
       timezone: timezone || DEFAULT_LOCATION.timezone,
-      method: (method as CalculationMethod) || DEFAULT_LOCATION.method,
+      calculation_method: (calculation_method as CalculationMethod) || DEFAULT_LOCATION.calculation_method,
+      madhab: (madhab as Madhab) || DEFAULT_LOCATION.madhab,
+      high_latitude_rule: (high_latitude_rule as HighLatitudeRule) || DEFAULT_LOCATION.high_latitude_rule,
       nafl_method: (nafl_method as NaflMethod) || DEFAULT_LOCATION.nafl_method,
     };
   }

@@ -123,7 +123,9 @@ export interface LocationParams {
   lat: number;
   lng: number;
   timezone: string;
-  method: CalculationMethod;
+  calculation_method: CalculationMethod;
+  madhab: Madhab;
+  high_latitude_rule: HighLatitudeRule;
   nafl_method: NaflMethod;
 }
 

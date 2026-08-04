@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Select, type SelectOption } from '../../components/ui/Select';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { cn } from '../../components/ui/utils';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select, type SelectOption } from '@/components/ui/Select';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface LocationInputProps {
   lat: number;
@@ -14,7 +13,7 @@ interface LocationInputProps {
   onChange: (updates: { lat?: number; lng?: number; timezone?: string }) => void;
   onGeolocation: () => void;
   geolocationLoading?: boolean;
-  error?: string;
+  error?: string | null;
   disabled?: boolean;
 }
 

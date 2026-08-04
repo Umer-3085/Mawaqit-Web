@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent } from '../../components/ui/Card';
-import { cn } from '../../components/ui/utils';
+import { Card, CardContent } from '@/components/ui/Card';
+import { cn } from '@/components/ui/utils';
 
 interface PrayerTimeCardProps {
   label: string;

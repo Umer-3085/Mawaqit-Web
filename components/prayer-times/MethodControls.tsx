@@ -1,9 +1,8 @@
 'use client';
 
-import { Select, type SelectOption } from '../../components/ui/Select';
-import { MethodSelect } from '../../components/ui/MethodSelect';
+import { Select, type SelectOption } from '@/components/ui/Select';
+import { MethodSelect } from '@/components/ui/MethodSelect';
 import type { CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
-import { cn } from '../../components/ui/utils';
 
 interface MethodControlsProps {
   calculationMethod: CalculationMethod;
@@ -58,7 +57,7 @@ export function MethodControls({
         label="Madhab"
         options={MADHAB_OPTIONS}
         value={madhab}
-        onChange={(v) => onChange({ madhab: v })}
+        onChange={(v: Madhab) => onChange({ madhab: v })}
         disabled={disabled}
         placeholder="Select madhab"
       />
@@ -66,7 +65,7 @@ export function MethodControls({
         label="High Latitude Rule"
         options={HIGH_LATITUDE_OPTIONS}
         value={highLatitudeRule}
-        onChange={(v) => onChange({ highLatitudeRule: v })}
+        onChange={(v: HighLatitudeRule) => onChange({ highLatitudeRule: v })}
         disabled={disabled}
         placeholder="Select rule"
       />
@@ -74,7 +73,7 @@ export function MethodControls({
         label="Nafl Method"
         options={NAFL_METHOD_OPTIONS}
         value={naflMethod}
-        onChange={(v) => onChange({ naflMethod: v })}
+        onChange={(v: NaflMethod) => onChange({ naflMethod: v })}
         disabled={disabled}
         placeholder="Select method"
       />

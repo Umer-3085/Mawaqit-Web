@@ -1,44 +1,66 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTodayPrayerTimes } from '../../hooks/usePrayerTimes';
-import { useLocation, useUpdateLocation } from '../../hooks/useLocationMutations';
+import { useUpdateLocation } from '../../hooks/useLocationMutations';
 import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { ErrorAlert } from '../../components/ui/ErrorAlert';
-import { cn } from '../../components/ui/utils';
-import { Button } from '@/ui';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { Button } from '@/components/ui/Button';
 
 interface TodayPrayerTimesClientProps {
   initialData: PrayerTimesResponse | null;
   initialParams: LocationParams;
 }
 
+interface ClientParams {
+  lat: number;
+  lng: number;
+  timezone: string;
+  calculation_method: CalculationMethod;
+  madhab: Madhab;
+  high_latitude_rule: HighLatitudeRule;
+  nafl_method: NaflMethod;
+}
+
 const DEBOUNCE_MS = 300;
+
+function toClientParams(params: LocationParams): ClientParams {
+  return {
+    lat: params.lat,
+    lng: params.lng,
+    timezone: params.timezone,
+    calculation_method: params.calculation_method,
+    madhab: params.madhab,
+    high_latitude_rule: params.high_latitude_rule,
+    nafl_method: params.nafl_method,
+  };
+}
+
+function toLocationParams(params: ClientParams): LocationParams {
+  return {
+    lat: params.lat,
+    lng: params.lng,
+    timezone: params.timezone,
+    calculation_method: params.calculation_method,
+    madhab: params.madhab,
+    high_latitude_rule: params.high_latitude_rule,
+    nafl_method: params.nafl_method,
+  };
+}
 
 export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPrayerTimesClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const [params, setParams] = useState<LocationParams & {
-    calculationMethod: CalculationMethod;
-    madhab: Madhab;
-    highLatitudeRule: HighLatitudeRule;
-    naflMethod: NaflMethod;
-  }>({
-    ...initialParams,
-    calculationMethod: initialParams.method,
-    madhab: 'SHAFI',
-    highLatitudeRule: 'MIDDLE_OF_THE_NIGHT',
-    naflMethod: initialParams.nafl_method,
-  });
-
+  const [params, setParams] = useState<ClientParams>(toClientParams(initialParams));
   const [geolocationLoading, setGeolocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { updateLocation } = useUpdateLocation();
 
@@ -47,43 +69,50 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
       lat: params.lat,
       lng: params.lng,
       timezone: params.timezone,
-      calculation_method: params.calculationMethod,
+      calculation_method: params.calculation_method,
       madhab: params.madhab,
-      high_latitude_rule: params.highLatitudeRule,
-      nafl_method: params.naflMethod,
+      high_latitude_rule: params.high_latitude_rule,
+      nafl_method: params.nafl_method,
     },
     { fallbackData: initialData ?? undefined }
   );
 
   const debouncedPush = useCallback(
-    (() => {
-      let timeout: NodeJS.Timeout;
-      return (newParams: typeof params) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          const sp = new URLSearchParams();
-          sp.set('lat', newParams.lat.toString());
-          sp.set('lng', newParams.lng.toString());
-          sp.set('timezone', newParams.timezone);
-          sp.set('method', newParams.calculationMethod);
-          sp.set('madhab', newParams.madhab);
-          sp.set('highLat', newParams.highLatitudeRule);
-          sp.set('naflMethod', newParams.naflMethod);
-          router.push(`/prayer-times?${sp.toString()}`, { scroll: false });
-        }, DEBOUNCE_MS);
-      };
-    })(),
+    (newParams: ClientParams) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      debounceTimeoutRef.current = setTimeout(() => {
+        const sp = new URLSearchParams();
+        sp.set('lat', newParams.lat.toString());
+        sp.set('lng', newParams.lng.toString());
+        sp.set('timezone', newParams.timezone);
+        sp.set('calculation_method', newParams.calculation_method);
+        sp.set('madhab', newParams.madhab);
+        sp.set('high_latitude_rule', newParams.high_latitude_rule);
+        sp.set('nafl_method', newParams.nafl_method);
+        router.push(`/prayer-times?${sp.toString()}`, { scroll: false });
+      }, DEBOUNCE_MS);
+    },
     [router]
   );
 
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleChange = useCallback(
-    async (updates: Partial<typeof params>) => {
+    async (updates: Partial<ClientParams>) => {
       const newParams = { ...params, ...updates };
       setParams(newParams);
       debouncedPush(newParams);
       setError(null);
       try {
-        await updateLocation(newParams);
+        await updateLocation(toLocationParams(newParams));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to update location');
       }
@@ -177,10 +206,10 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
           Calculation Methods
         </h2>
         <MethodControls
-          calculationMethod={params.calculationMethod}
+          calculationMethod={params.calculation_method}
           madhab={params.madhab}
-          highLatitudeRule={params.highLatitudeRule}
-          naflMethod={params.naflMethod}
+          highLatitudeRule={params.high_latitude_rule}
+          naflMethod={params.nafl_method}
           onChange={handleChange}
         />
       </section>
@@ -203,7 +232,7 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
 
       <section aria-labelledby="nafl-heading" className="space-y-2">
         <h2 id="nafl-heading" className="text-lg font-semibold text-text">
-          Nafl &amp; Elevation
+          Nafl & Elevation
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {naflTimes.map((item, idx) =>

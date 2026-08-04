@@ -1,9 +1,9 @@
 'use client';
 
-import { Select, type SelectOption } from '@/components/ui/Select';
-import { MethodSelect } from '@/components/ui/MethodSelect';
-import type { CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
-import { cn } from '@/components/ui/utils';
+import { Select, type SelectOption } from '../../components/ui/Select';
+import { MethodSelect } from '../../components/ui/MethodSelect';
+import type { CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
+import { cn } from '../../components/ui/utils';
 
 interface MethodControlsProps {
   calculationMethod: CalculationMethod;

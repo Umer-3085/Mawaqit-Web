@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Select, type SelectOption } from '@/components/ui/Select';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { cn } from '@/components/ui/utils';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Select, type SelectOption } from '../../components/ui/Select';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { cn } from '../../components/ui/utils';
 
 interface LocationInputProps {
   lat: number;

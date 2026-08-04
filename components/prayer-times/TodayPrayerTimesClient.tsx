@@ -2,15 +2,15 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTodayPrayerTimes } from '@/hooks/usePrayerTimes';
-import { useLocation, useUpdateLocation } from '@/hooks/useLocationMutations';
-import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
+import { useTodayPrayerTimes } from '../../hooks/usePrayerTimes';
+import { useLocation, useUpdateLocation } from '../../hooks/useLocationMutations';
+import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import { cn } from '@/components/ui/utils';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ErrorAlert } from '../../components/ui/ErrorAlert';
+import { cn } from '../../components/ui/utils';
 
 interface TodayPrayerTimesClientProps {
   initialData: PrayerTimesResponse | null;

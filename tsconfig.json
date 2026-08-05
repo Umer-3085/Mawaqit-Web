@@ -18,12 +18,12 @@
         "name": "next"
       }
     ],
-"paths": {
-    "@/*": ["./src/*", "./types/*", "./lib/*", "./hooks/*"],
-    "@/components/*": ["./components/*"],
-    "@/hooks/*": ["./hooks/*"],
-    "@/types/*": ["./types/*"]
-  },
+    "paths": {
+      "@/*": ["./lib/*", "./hooks/*", "./types/*", "./src/*"],
+      "@/components/*": ["./components/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/types/*": ["./types/*"]
+    },
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true

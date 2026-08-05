@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { apiClient } from '../../../lib/api';
 import { TodayPrayerTimesClient } from '@/components/prayer-times';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { PrayerTimesClientWrapper } from '@/components/prayer-times/PrayerTimesClientWrapper';
 import type { LocationParams } from '../../../types/prayer-times';
 
 export const metadata: Metadata = {
-  title: 'Today\'s Prayer Times — Mawaqit مواقيت',
+  title: "Today's Prayer Times — Mawaqit مواقيت",
   description: 'Calculated obligatory and Nafl prayer times for your current location using selected calculation methods.',
 };
 
@@ -67,7 +68,7 @@ export default async function PrayerTimesPage({ searchParams }: PageProps) {
 
   return (
     <PageContainer>
-      <TodayPrayerTimesClient initialData={initialData} initialParams={location} />
+      <PrayerTimesClientWrapper initialData={initialData} initialParams={location} />
     </PageContainer>
   );
-}
+}

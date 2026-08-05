@@ -1,4 +1,4 @@
-import { HijriDate } from 'hijri-js';
+import { initialize } from 'hijri-js';
 
 export interface FormattedDate {
   gregorian: string;
@@ -33,9 +33,16 @@ const ARABIC_WEEKDAYS = [
   'السبت',
 ];
 
+const hijriConverter = initialize();
+
 export function formatDateWithHijri(isoDate: string): FormattedDate {
   const gregDate = new Date(isoDate + 'T00:00:00');
-  const hijri = new HijriDate(gregDate);
+  const hijri = hijriConverter.gregorianToHijri(
+    String(gregDate.getFullYear()),
+    String(gregDate.getMonth() + 1),
+    String(gregDate.getDate()),
+    '/'
+  );
 
   const gregorian = gregDate.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -45,9 +52,9 @@ export function formatDateWithHijri(isoDate: string): FormattedDate {
   });
 
   const weekday = ARABIC_WEEKDAYS[gregDate.getDay()];
-  const hijriDay = hijri.getDate();
-  const hijriMonth = ARABIC_MONTHS[hijri.getMonth()];
-  const hijriYear = hijri.getFullYear();
+  const hijriDay = hijri.day;
+  const hijriMonth = ARABIC_MONTHS[hijri.month - 1];
+  const hijriYear = hijri.year;
 
   const hijriFormatted = 'يوم ' + weekday + '، ' + hijriDay + ' ' + hijriMonth + ' ' + hijriYear + ' ه';
 

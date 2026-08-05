@@ -1,11 +1,10 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { apiClient } from '../../../../lib/api';
 import { parseLocationParams, getTodayISO, addDaysISO } from '../../../../lib/date-utils';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Header } from '@/components/layout/Header';
 import { RangePrayerTimesClient } from '@/components/prayer-times/RangePrayerTimesClient';
-import type { PrayerTimesRangeResponse, LocationParams, DateRangeParams } from '@/types/prayer-times';
+import type { PrayerTimesRangeResponse, DateRangeParams } from '@/types/prayer-times';
 
 export const revalidate = 3600;
 
@@ -27,8 +26,8 @@ function getDefaultRange(): { startDate: string; endDate: string } {
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
   const params = await searchParams;
-  const start = Array.isArray(params.start_date) ? params.start_date[0] : params.start_date;
-  const end = Array.isArray(params.end_date) ? params.end_date[0] : params.end_date;
+  const start = Array.isArray(params['start_date']) ? params['start_date'][0] : params['start_date'];
+  const end = Array.isArray(params['end_date']) ? params['end_date'][0] : params['end_date'];
 
   const { startDate, endDate } = getDefaultRange();
   const startDisplay = start || startDate;
@@ -73,8 +72,8 @@ export default async function RangePage({
 }) {
   const params = await searchParams;
   const locationParams = parseLocationParams(params);
-  const rawStart = Array.isArray(params.start_date) ? params.start_date[0] : params.start_date;
-  const rawEnd = Array.isArray(params.end_date) ? params.end_date[0] : params.end_date;
+  const rawStart = Array.isArray(params['start_date']) ? params['start_date'][0] : params['start_date'];
+  const rawEnd = Array.isArray(params['end_date']) ? params['end_date'][0] : params['end_date'];
 
   const { startDate: defaultStart, endDate: defaultEnd } = getDefaultRange();
   const startDate = rawStart || defaultStart;
@@ -93,7 +92,7 @@ export default async function RangePage({
       start_date: startDate,
       end_date: endDate,
     };
-    initialData = await fetchRangeData(rangeParams);
+    initialData = await fetchRangeData(rangeParams) ?? null;
     if (!initialData) {
       initialError = 'Failed to load prayer times for this range';
     }

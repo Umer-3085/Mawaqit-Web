@@ -13,7 +13,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { formatDateWithHijri, getTodayISO, addDaysISO, subDaysISO } from '@/lib/date-utils';
+import { formatDateWithHijri, getTodayISO, addDaysISO, subDaysISO } from '../../lib/date-utils';
 import { cn } from '@/components/ui/utils';
 
 interface RangePrayerTimesClientProps {
@@ -69,7 +69,8 @@ function getDateRange(startDate: string, endDate: string): string[] {
   const current = new Date(start);
   
   while (current <= end) {
-    dates.push(current.toISOString().split('T')[0]);
+    const iso = current.toISOString().split('T')[0];
+    if (iso) dates.push(iso);
     current.setDate(current.getDate() + 1);
   }
   return dates;
@@ -247,7 +248,7 @@ export function RangePrayerTimesClient({
               Prayer Times Range
             </h1>
             <p className='text-text-muted text-sm'>
-              {formatDateWithHijri(startDate)} – {formatDateWithHijri(endDate)}
+              {formatDateWithHijri(startDate).gregorian} – {formatDateWithHijri(endDate).gregorian}
             </p>
           </div>
           <div className='flex flex-wrap items-center gap-2'>
@@ -306,14 +307,22 @@ export function RangePrayerTimesClient({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
               <div className='lg:col-span-2 space-y-4'>
                 <LocationInput
-                  params={params}
+                  lat={params.lat}
+                  lng={params.lng}
+                  timezone={params.timezone}
                   onChange={handleChange}
                   geolocationLoading={geolocationLoading}
                   onGeolocation={handleGeolocation}
                 />
               </div>
               <div className='lg:col-span-2 space-y-4'>
-                <MethodControls params={params} onChange={handleChange} />
+                <MethodControls
+                  calculationMethod={params.calculation_method}
+                  madhab={params.madhab}
+                  highLatitudeRule={params.high_latitude_rule}
+                  naflMethod={params.nafl_method}
+                  onChange={handleChange}
+                />
               </div>
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border'>
@@ -402,7 +411,7 @@ export function RangePrayerTimesClient({
                       <tr className={cn('border-t border-border hover:bg-surface/50', index % 2 === 0 && 'bg-background')}>
                         <td className='px-3 py-3 font-medium text-text sticky left-0 z-10 border-r border-border'>
                           <div className='flex flex-col'>
-                            <span>{formatDateWithHijri(date)}</span>
+                            <span>{formatDateWithHijri(date).gregorian}</span>
                           </div>
                         </td>
                         {obligatoryColumns.map((key) => (

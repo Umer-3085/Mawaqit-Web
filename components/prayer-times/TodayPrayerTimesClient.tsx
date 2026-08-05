@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTodayPrayerTimes, usePrayerTimes } from '../../hooks/usePrayerTimes';
 import { useUpdateLocation } from '../../hooks/useLocationMutations';
-import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod, SingleDayParams } from '../../types/prayer-times';
+import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';

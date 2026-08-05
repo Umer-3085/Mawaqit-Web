@@ -4,16 +4,14 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePrayerTimesRange } from '@/hooks/usePrayerTimes';
 import { useUpdateLocation } from '@/hooks/useLocationMutations';
-import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod, DateRangeParams } from '@/types/prayer-times';
+import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
-import { PrayerTimeCard } from './PrayerTimeCard';
 import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { formatDateWithHijri, getTodayISO, addDaysISO, subDaysISO } from '../../lib/date-utils';
+import { formatDateWithHijri, getTodayISO, subDaysISO } from '../../lib/date-utils';
 import { cn } from '@/components/ui/utils';
 
 interface RangePrayerTimesClientProps {
@@ -36,7 +34,7 @@ interface ClientParams {
 }
 
 const DEBOUNCE_MS = 300;
-const DEFAULT_DAYS = 7;
+
 
 function toClientParams(params: LocationParams): ClientParams {
   return {
@@ -60,20 +58,6 @@ function toLocationParams(params: ClientParams): LocationParams {
     high_latitude_rule: params.high_latitude_rule,
     nafl_method: params.nafl_method,
   };
-}
-
-function getDateRange(startDate: string, endDate: string): string[] {
-  const dates: string[] = [];
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const current = new Date(start);
-  
-  while (current <= end) {
-    const iso = current.toISOString().split('T')[0];
-    if (iso) dates.push(iso);
-    current.setDate(current.getDate() + 1);
-  }
-  return dates;
 }
 
 export function RangePrayerTimesClient({
@@ -225,19 +209,9 @@ export function RangePrayerTimesClient({
 
   const displayData = data ?? initialData;
 
-  const obligatoryColumns: (keyof PrayerTimesResponse)[] = [
+  const obligatoryColumns: ('fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha')[] = [
     'fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'
   ];
-
-  const naflColumns: (keyof PrayerTimesResponse)[] = [
-    'ishraq', 'duha_start', 'duha_end', 'awwabin_start', 'awwabin_end'
-  ];
-
-  const renderTimeCell = (time: string | undefined, isNext = false) => (
-    <td className={cn('px-3 py-2 text-center text-sm font-mono', isNext && 'text-primary font-semibold')}>
-      {time ? time.slice(0, 5) : '—'}
-    </td>
-  );
 
   return (
     <div className='space-y-6'>
@@ -326,24 +300,40 @@ export function RangePrayerTimesClient({
               </div>
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border'>
-              <Input
-                type='date'
-                label='Start Date'
-                value={startDate}
-                onChange={(e) => handleDateChange('start', e.target.value)}
-                max={subDaysISO(getTodayISO(), 1)}
-                min={subDaysISO(getTodayISO(), 30)}
-                className='w-full'
-              />
-              <Input
-                type='date'
-                label='End Date'
-                value={endDate}
-                onChange={(e) => handleDateChange('end', e.target.value)}
-                max={subDaysISO(getTodayISO(), 1)}
-                min={subDaysISO(getTodayISO(), 30)}
-                className='w-full'
-              />
+              <div className='w-full'>
+                <label
+                  htmlFor='start-date'
+                  className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
+                >
+                  Start Date
+                </label>
+                <input
+                  id='start-date'
+                  type='date'
+                  value={startDate}
+                  onChange={(e) => handleDateChange('start', e.target.value)}
+                  max={subDaysISO(getTodayISO(), 1)}
+                  min={subDaysISO(getTodayISO(), 30)}
+                  className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
+                />
+              </div>
+              <div className='w-full'>
+                <label
+                  htmlFor='end-date'
+                  className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
+                >
+                  End Date
+                </label>
+                <input
+                  id='end-date'
+                  type='date'
+                  value={endDate}
+                  onChange={(e) => handleDateChange('end', e.target.value)}
+                  max={subDaysISO(getTodayISO(), 1)}
+                  min={subDaysISO(getTodayISO(), 30)}
+                  className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
+                />
+              </div>
             </div>
             <div className='flex justify-end'>
               <Button variant='primary' onClick={handleDateConfirm} disabled={!isValidRange}>
@@ -400,15 +390,14 @@ export function RangePrayerTimesClient({
                 </tr>
               </thead>
               <tbody>
-                {displayData.map((day, index) => {
+                {displayData.map((day) => {
                   const date = day.date;
-                  const isNext = false;
-                  const rowData = displayData[index];
+                  const rowData = day;
                   const hasNafl = rowData.ishraq || rowData.duha_start || rowData.duha_end || rowData.awwabin_start || rowData.awwabin_end;
                   
                   return (
-                    <React.Fragment key={date}>
-                      <tr className={cn('border-t border-border hover:bg-surface/50', index % 2 === 0 && 'bg-background')}>
+                    <>
+                      <tr className={cn('border-t border-border hover:bg-surface/50')}>
                         <td className='px-3 py-3 font-medium text-text sticky left-0 z-10 border-r border-border'>
                           <div className='flex flex-col'>
                             <span>{formatDateWithHijri(date).gregorian}</span>
@@ -435,7 +424,7 @@ export function RangePrayerTimesClient({
                         </td>
                       </tr>
                       {hasNafl && (
-                        <tr className={cn('border-t border-border', index % 2 === 0 && 'bg-background')}>
+                        <tr className='border-t border-border'>
                           <td colSpan={12} className='p-0'>
                             <div
                               className={cn(
@@ -471,14 +460,14 @@ export function RangePrayerTimesClient({
                                   <p className='text-text font-mono'>
                                     {rowData.awwabin_start ? rowData.awwabin_start.slice(0, 5) : '—'} – {rowData.awwabin_end ? rowData.awwabin_end.slice(0, 5) : '—'}
                                   </p>
-                                  <p className='text-text-muted'>(6 rak'ahs after Maghrib)</p>
+                                  <p className='text-text-muted'>(6 rak&apos;ahs after Maghrib)</p>
                                 </div>
                               </div>
                             </div>
                           </td>
                         </tr>
                       )}
-                    </React.Fragment>
+                    </>
                   );
                 })}
               </tbody>

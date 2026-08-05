@@ -4,7 +4,7 @@ import { parseLocationParams, getTodayISO, addDaysISO } from '../../../../lib/da
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Header } from '@/components/layout/Header';
 import { RangePrayerTimesClient } from '@/components/prayer-times/RangePrayerTimesClient';
-import type { PrayerTimesRangeResponse, DateRangeParams } from '@/types/prayer-times';
+import type { PrayerTimesRangeResponse, DateRangeParams, LocationParams, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod, PrayerTimesResponse } from '@/types/prayer-times';
 
 export const revalidate = 3600;
 
@@ -71,7 +71,16 @@ export default async function RangePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const locationParams = parseLocationParams(params);
+  const rawLocationParams = parseLocationParams(params);
+  const locationParams: LocationParams = {
+    lat: rawLocationParams.lat,
+    lng: rawLocationParams.lng,
+    timezone: rawLocationParams.timezone,
+    calculation_method: rawLocationParams.calculation_method as CalculationMethod,
+    madhab: rawLocationParams.madhab as Madhab,
+    high_latitude_rule: rawLocationParams.high_latitude_rule as HighLatitudeRule,
+    nafl_method: rawLocationParams.nafl_method as NaflMethod,
+  };
   const rawStart = Array.isArray(params['start_date']) ? params['start_date'][0] : params['start_date'];
   const rawEnd = Array.isArray(params['end_date']) ? params['end_date'][0] : params['end_date'];
 
@@ -81,18 +90,25 @@ export default async function RangePage({
 
   const validation = validateDateRange(startDate, endDate);
 
-  let initialData: PrayerTimesRangeResponse | null = null;
+  let initialData: PrayerTimesResponse[] | null = null;
   let initialError: string | null = null;
 
   if (!validation.valid) {
     initialError = validation.error || 'Invalid date range';
   } else {
     const rangeParams: DateRangeParams = {
-      ...locationParams,
+      lat: locationParams.lat,
+      lng: locationParams.lng,
+      timezone: locationParams.timezone,
+      calculation_method: locationParams.calculation_method as CalculationMethod,
+      madhab: locationParams.madhab as Madhab,
+      high_latitude_rule: locationParams.high_latitude_rule as HighLatitudeRule,
+      nafl_method: locationParams.nafl_method as NaflMethod,
       start_date: startDate,
       end_date: endDate,
     };
-    initialData = await fetchRangeData(rangeParams) ?? null;
+    const rangeResponse = await fetchRangeData(rangeParams);
+    initialData = rangeResponse?.items ?? null;
     if (!initialData) {
       initialError = 'Failed to load prayer times for this range';
     }

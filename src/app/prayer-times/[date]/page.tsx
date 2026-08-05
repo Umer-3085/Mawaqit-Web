@@ -1,7 +1,8 @@
 ﻿import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { apiClient } from '../../../../lib/api';
-import { TodayPrayerTimesClient } from '@/components/prayer-times';
+import { PrayerTimesClientWrapper } from '@/components/prayer-times/PrayerTimesClientWrapper';
+import { PageContainer } from '@/components/layout/PageContainer';
 import type { LocationParams } from '../../../../types/prayer-times';
 import { formatDateWithHijri } from '../../../../lib/date-utils';
 
@@ -124,12 +125,14 @@ export default async function PrayerTimesDatePage({ params, searchParams }: Page
     initialData = null as never;
   }
 
-  return (
-    <TodayPrayerTimesClient
-      initialData={initialData}
-      initialParams={location}
-      isDatePage={true}
-      dateParam={date}
-    />
+return (
+    <PageContainer>
+      <PrayerTimesClientWrapper
+        initialData={initialData}
+        initialParams={location}
+        isDatePage={true}
+        dateParam={date}
+      />
+    </PageContainer>
   );
 }

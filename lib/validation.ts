@@ -92,16 +92,27 @@ export const PrayerTimesResponseSchema: z.ZodType<PrayerTimesResponse> = z.objec
   nafl_method: NaflMethodEnum.nullable().optional(),
 });
 
-export const PrayerTimesRangeResponseSchema: z.ZodType<PrayerTimesRangeResponse> = z.object({
-  items: z.array(PrayerTimesResponseSchema),
-  start_date: DateStringSchema,
-  end_date: DateStringSchema,
-});
+export const PrayerTimesRangeResponseSchema: z.ZodType<PrayerTimesRangeResponse> = z.preprocess(
+  (val) => {
+    if (Array.isArray(val)) {
+      return {
+        items: val,
+        start_date: val[0]?.date ?? '',
+        end_date: val[val.length - 1]?.date ?? '',
+      };
+    }
+    return val;
+  },
+  z.object({
+    items: z.array(PrayerTimesResponseSchema),
+    start_date: z.string(),
+    end_date: z.string(),
+  })
+);
 
-export const SingleDayParamsSchema = z.object({
+export const BaseParamsSchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  prayer_date: DateStringSchema.optional(),
   calculation_method: CalculationMethodEnum.default('MUSLIM_WORLD_LEAGUE'),
   madhab: MadhabEnum.default('SHAFI'),
   high_latitude_rule: HighLatitudeRuleEnum.default('MIDDLE_OF_THE_NIGHT'),
@@ -109,8 +120,12 @@ export const SingleDayParamsSchema = z.object({
   nafl_method: NaflMethodEnum.default('QUARTER_DAY'),
 });
 
-export const DateRangeParamsSchema = SingleDayParamsSchema.extend({
-  prayer_date: z.never(),
+export const SingleDayParamsSchema = BaseParamsSchema.extend({
+  prayer_date: DateStringSchema.optional(),
+});
+
+export const DateRangeParamsSchema = BaseParamsSchema.extend({
+  prayer_date: z.undefined().optional(),
   start_date: DateStringSchema,
   end_date: DateStringSchema,
 });

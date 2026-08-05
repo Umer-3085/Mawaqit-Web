@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTodayPrayerTimes } from '../../hooks/usePrayerTimes';
+import { useTodayPrayerTimes, usePrayerTimes } from '../../hooks/usePrayerTimes';
 import { useUpdateLocation } from '../../hooks/useLocationMutations';
-import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
+import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod, SingleDayParams } from '../../types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
@@ -83,9 +83,10 @@ export function TodayPrayerTimesClient({
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { updateLocation } = useUpdateLocation();
+const { updateLocation } = useUpdateLocation();
 
-  const { data, error: swrError, isLoading, mutate } = useTodayPrayerTimes(
+  // Use different hooks based on whether it's a date page or today page
+  const todayHook = useTodayPrayerTimes(
     {
       lat: params.lat,
       lng: params.lng,
@@ -97,6 +98,24 @@ export function TodayPrayerTimesClient({
     },
     { fallbackData: initialData ?? undefined }
   );
+
+  const dateHook = usePrayerTimes(
+    isDatePage && dateParam
+      ? {
+          lat: params.lat,
+          lng: params.lng,
+          timezone: params.timezone,
+          calculation_method: params.calculation_method,
+          madhab: params.madhab,
+          high_latitude_rule: params.high_latitude_rule,
+          nafl_method: params.nafl_method,
+          prayer_date: dateParam,
+        }
+      : null,
+    { fallbackData: initialData ?? undefined }
+  );
+
+  const { data, error: swrError, isLoading, mutate } = isDatePage ? dateHook : todayHook;
 
   const buildUrl = useCallback(
     (newParams: ClientParams) => {

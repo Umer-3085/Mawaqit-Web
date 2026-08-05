@@ -67,11 +67,14 @@ export function TodayPrayerTimesClient({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayISO());
 
-  const handleDateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    if (date) {
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(e.target.value);
+  };
+
+  const handleDateConfirm = () => {
+    if (selectedDate) {
       const params = new URLSearchParams(window.location.search);
-      router.push('/prayer-times/' + date + '?' + params.toString());
+      router.push('/prayer-times/' + selectedDate + '?' + params.toString());
     }
     setShowDatePicker(false);
   };
@@ -319,14 +322,16 @@ const { updateLocation } = useUpdateLocation();
                 <input
                   type='date'
                   value={selectedDate}
-                  onChange={handleDateSelect}
-                  onBlur={() => setShowDatePicker(false)}
+                  onChange={handleDateChange}
                   className='w-full px-4 py-3 rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary'
                   max={getTodayISO()}
                 />
                 <div className='flex justify-end gap-2 mt-4'>
                   <Button variant='ghost' size='sm' onClick={() => setShowDatePicker(false)}>
                     Cancel
+                  </Button>
+                  <Button variant='primary' size='sm' onClick={handleDateConfirm}>
+                    Go to Date
                   </Button>
                 </div>
               </div>

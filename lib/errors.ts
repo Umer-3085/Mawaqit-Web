@@ -1,5 +1,3 @@
-import { overwrite } from "zod";
-
 export class ApiError extends Error {
   constructor(
     public readonly status: number,

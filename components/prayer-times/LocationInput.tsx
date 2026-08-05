@@ -29,16 +29,20 @@ export function LocationInput({
   error,
   disabled = false,
 }: LocationInputProps) {
+  const [prevLat, setPrevLat] = useState(lat);
+  const [prevLng, setPrevLng] = useState(lng);
   const [latInput, setLatInput] = useState(lat.toString());
   const [lngInput, setLngInput] = useState(lng.toString());
 
-  useEffect(() => {
+  if (lat !== prevLat) {
+    setPrevLat(lat);
     setLatInput(lat.toString());
-  }, [lat]);
+  }
 
-  useEffect(() => {
+  if (lng !== prevLng) {
+    setPrevLng(lng);
     setLngInput(lng.toString());
-  }, [lng]);
+  }
 
   const timezoneOptions: SelectOption[] = TIMEZONES.map((tz) => ({
     value: tz,

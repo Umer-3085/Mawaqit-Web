@@ -48,7 +48,7 @@ export function Header() {
               href="/prayer-times"
               className="px-3.5 py-2 text-sm font-medium text-text hover:text-primary hover:bg-surface rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
             >
-              Today's Times
+              Today&apos;s Times
             </Link>
           </nav>
 

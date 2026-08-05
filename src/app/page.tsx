@@ -27,7 +27,7 @@ export default function Home() {
       <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
         <Link href="/prayer-times">
           <Button size="lg" className="px-8 font-semibold shadow-md shadow-primary/20">
-            View Today's Prayer Times →
+            View Today&apos;s Prayer Times →
           </Button>
         </Link>
       </div>

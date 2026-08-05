@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { apiClient } from '../../../../lib/api';
-import { parseLocationParams, getTodayISO, addDaysISO } from '../../../../lib/date-utils';
+import { parseLocationParams, getTodayISO, subDaysISO } from '../../../../lib/date-utils';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Header } from '@/components/layout/Header';
 import { RangePrayerTimesClient } from '@/components/prayer-times/RangePrayerTimesClient';
 import type { PrayerTimesRangeResponse, DateRangeParams, LocationParams, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod, PrayerTimesResponse } from '@/types/prayer-times';
 
@@ -19,9 +18,9 @@ async function fetchRangeData(params: DateRangeParams): Promise<PrayerTimesRange
 }
 
 function getDefaultRange(): { startDate: string; endDate: string } {
-  const today = getTodayISO();
-  const endDate = addDaysISO(today, DEFAULT_DAYS - 1);
-  return { startDate: today, endDate };
+  const endDate = getTodayISO();
+  const startDate = subDaysISO(endDate, DEFAULT_DAYS - 1);
+  return { startDate, endDate };
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
@@ -127,25 +126,20 @@ export default async function RangePage({
   const canonicalUrl = `/prayer-times/range?${canonicalParams.toString()}`;
 
   return (
-    <html lang='en'>
-      <head>
-        <link rel='canonical' href={canonicalUrl} />
-      </head>
-      <body>
-        <Header />
-        <main id='main-content'>
-          <PageContainer>
-            <RangePrayerTimesClient
-              initialData={initialData}
-              initialParams={locationParams}
-              startDate={startDate}
-              endDate={endDate}
-              initialError={initialError}
-              isValidRange={validation.valid}
-            />
-          </PageContainer>
-        </main>
-      </body>
-    </html>
+    <>
+      <link rel='canonical' href={canonicalUrl} />
+      <main id='main-content'>
+        <PageContainer>
+          <RangePrayerTimesClient
+            initialData={initialData}
+            initialParams={locationParams}
+            startDate={startDate}
+            endDate={endDate}
+            initialError={initialError}
+            isValidRange={validation.valid}
+          />
+        </PageContainer>
+      </main>
+    </>
   );
 }

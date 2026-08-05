@@ -1,11 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useLocation } from '@/hooks/useLocation';
 
 export function Header() {
+  const pathname = usePathname();
   const { location } = useLocation();
+
+  const isTodayActive = pathname === '/prayer-times' || pathname === '/';
+  const isRangeActive = pathname?.startsWith('/prayer-times/range');
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md transition-colors duration-300">
@@ -43,12 +48,26 @@ export function Header() {
             </div>
           )}
 
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/prayer-times"
-              className="px-3.5 py-2 text-sm font-medium text-text hover:text-primary hover:bg-surface rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+              className={`px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 ${
+                isTodayActive
+                  ? 'bg-primary/10 text-primary font-semibold'
+                  : 'text-text hover:text-primary hover:bg-surface'
+              }`}
             >
               Today&apos;s Times
+            </Link>
+            <Link
+              href="/prayer-times/range"
+              className={`px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 ${
+                isRangeActive
+                  ? 'bg-primary/10 text-primary font-semibold'
+                  : 'text-text hover:text-primary hover:bg-surface'
+              }`}
+            >
+              Range View
             </Link>
           </nav>
 

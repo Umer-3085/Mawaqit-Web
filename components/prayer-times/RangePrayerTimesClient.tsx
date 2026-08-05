@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePrayerTimesRange } from '@/hooks/usePrayerTimes';
 import { useUpdateLocation } from '@/hooks/useLocationMutations';
@@ -199,7 +199,7 @@ export function RangePrayerTimesClient({
   const handleQuickRange = useCallback(
     (days: number) => {
       const today = getTodayISO();
-      const newEnd = subDaysISO(today, 1);
+      const newEnd = today;
       const newStart = subDaysISO(newEnd, days - 1);
       setStartDate(newStart);
       setEndDate(newEnd);
@@ -231,7 +231,7 @@ export function RangePrayerTimesClient({
                 variant='ghost'
                 size='sm'
                 onClick={() => handleQuickRange(7)}
-                className={cn('rounded-l-lg', startDate === subDaysISO(subDaysISO(getTodayISO(), 1), 6) && 'bg-primary/10 text-primary')}
+                className={cn('rounded-l-lg', endDate === getTodayISO() && startDate === subDaysISO(getTodayISO(), 6) && 'bg-primary/10 text-primary')}
               >
                 7 Days
               </Button>
@@ -239,7 +239,7 @@ export function RangePrayerTimesClient({
                 variant='ghost'
                 size='sm'
                 onClick={() => handleQuickRange(14)}
-                className={cn(startDate === subDaysISO(subDaysISO(getTodayISO(), 1), 13) && 'bg-primary/10 text-primary')}
+                className={cn(endDate === getTodayISO() && startDate === subDaysISO(getTodayISO(), 13) && 'bg-primary/10 text-primary')}
               >
                 14 Days
               </Button>
@@ -247,7 +247,7 @@ export function RangePrayerTimesClient({
                 variant='ghost'
                 size='sm'
                 onClick={() => handleQuickRange(30)}
-                className={cn('rounded-r-lg', startDate === subDaysISO(subDaysISO(getTodayISO(), 1), 29) && 'bg-primary/10 text-primary')}
+                className={cn('rounded-r-lg', endDate === getTodayISO() && startDate === subDaysISO(getTodayISO(), 29) && 'bg-primary/10 text-primary')}
               >
                 30 Days
               </Button>
@@ -277,68 +277,81 @@ export function RangePrayerTimesClient({
         </header>
 
         {controlsOpen && (
-          <Card className='space-y-4 p-4'>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-              <div className='lg:col-span-2 space-y-4'>
-                <LocationInput
-                  lat={params.lat}
-                  lng={params.lng}
-                  timezone={params.timezone}
-                  onChange={handleChange}
-                  geolocationLoading={geolocationLoading}
-                  onGeolocation={handleGeolocation}
-                />
-              </div>
-              <div className='lg:col-span-2 space-y-4'>
-                <MethodControls
-                  calculationMethod={params.calculation_method}
-                  madhab={params.madhab}
-                  highLatitudeRule={params.high_latitude_rule}
-                  naflMethod={params.nafl_method}
-                  onChange={handleChange}
-                />
-              </div>
+          <Card className='p-6 space-y-6'>
+            <div className='border-b border-border/40 pb-5'>
+              <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-3'>
+                Location Settings
+              </h2>
+              <LocationInput
+                lat={params.lat}
+                lng={params.lng}
+                timezone={params.timezone}
+                onChange={handleChange}
+                onGeolocation={handleGeolocation}
+                geolocationLoading={geolocationLoading}
+                error={error}
+              />
             </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border'>
-              <div className='w-full'>
-                <label
-                  htmlFor='start-date'
-                  className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
-                >
-                  Start Date
-                </label>
-                <input
-                  id='start-date'
-                  type='date'
-                  value={startDate}
-                  onChange={(e) => handleDateChange('start', e.target.value)}
-                  max={subDaysISO(getTodayISO(), 1)}
-                  min={subDaysISO(getTodayISO(), 30)}
-                  className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
-                />
-              </div>
-              <div className='w-full'>
-                <label
-                  htmlFor='end-date'
-                  className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
-                >
-                  End Date
-                </label>
-                <input
-                  id='end-date'
-                  type='date'
-                  value={endDate}
-                  onChange={(e) => handleDateChange('end', e.target.value)}
-                  max={subDaysISO(getTodayISO(), 1)}
-                  min={subDaysISO(getTodayISO(), 30)}
-                  className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
-                />
-              </div>
+
+            <div className='border-b border-border/40 pb-5'>
+              <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-3'>
+                Calculation Methods & Preferences
+              </h2>
+              <MethodControls
+                calculationMethod={params.calculation_method}
+                madhab={params.madhab}
+                highLatitudeRule={params.high_latitude_rule}
+                naflMethod={params.nafl_method}
+                onChange={handleChange}
+              />
             </div>
-            <div className='flex justify-end'>
-              <Button variant='primary' onClick={handleDateConfirm} disabled={!isValidRange}>
-                Apply Range
-              </Button>
+
+            <div className='space-y-4'>
+              <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-1'>
+                Date Range Selection
+              </h2>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 items-start'>
+                <div>
+                  <label
+                    htmlFor='start-date'
+                    className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
+                  >
+                    Start Date
+                  </label>
+                  <input
+                    id='start-date'
+                    type='date'
+                    value={startDate}
+                    onChange={(e) => handleDateChange('start', e.target.value)}
+                    max={getTodayISO()}
+                    className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor='end-date'
+                    className='block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5'
+                  >
+                    End Date
+                  </label>
+                  <input
+                    id='end-date'
+                    type='date'
+                    value={endDate}
+                    onChange={(e) => handleDateChange('end', e.target.value)}
+                    max={getTodayISO()}
+                    className='w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px] bg-surface text-text placeholder:text-text-muted/60 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary border-border hover:border-border-focus'
+                  />
+                </div>
+              </div>
+              <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1'>
+                <span className='text-xs text-text-muted'>
+                  Max range: <strong className='text-text font-semibold'>30 days</strong> (up to today)
+                </span>
+                <Button variant='primary' size='sm' onClick={handleDateConfirm} disabled={!isValidRange} className='w-full sm:w-auto font-semibold shadow-sm'>
+                  Apply Range
+                </Button>
+              </div>
             </div>
           </Card>
         )}
@@ -396,28 +409,31 @@ export function RangePrayerTimesClient({
                   const hasNafl = rowData.ishraq || rowData.duha_start || rowData.duha_end || rowData.awwabin_start || rowData.awwabin_end;
                   
                   return (
-                    <>
-                      <tr className={cn('border-t border-border hover:bg-surface/50')}>
+                    <Fragment key={date}>
+                      <tr
+                        onClick={() => setExpandedRow(expandedRow === date ? null : date)}
+                        className={cn('border-t border-border hover:bg-surface/50 cursor-pointer')}
+                      >
                         <td className='px-3 py-3 font-medium text-text sticky left-0 z-10 border-r border-border'>
                           <div className='flex flex-col'>
                             <span>{formatDateWithHijri(date).gregorian}</span>
                           </div>
                         </td>
                         {obligatoryColumns.map((key) => (
-                          <td key={key} className='px-3 py-2 text-center text-sm font-mono border-r border-border'>
+                          <td key={key} className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                             {rowData[key] ? rowData[key]!.slice(0, 5) : '—'}
                           </td>
                         ))}
-                        <td className='px-3 py-2 text-center text-sm font-mono border-r border-border'>
+                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}
                         </td>
-                        <td className='px-3 py-2 text-center text-sm font-mono border-r border-border'>
+                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'}
                         </td>
-                        <td className='px-3 py-2 text-center text-sm font-mono border-r border-border'>
+                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.duha_end ? rowData.duha_end.slice(0, 5) : '—'}
                         </td>
-                        <td className='px-3 py-2 text-center text-sm font-mono'>
+                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text'>
                           {rowData.awwabin_start && rowData.awwabin_end
                             ? `${rowData.awwabin_start.slice(0, 5)} – ${rowData.awwabin_end.slice(0, 5)}`
                             : '—'}
@@ -436,28 +452,28 @@ export function RangePrayerTimesClient({
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Elevation Angles</p>
                                   {rowData.ishraq_elevation !== null && rowData.ishraq_elevation !== undefined && (
-                                    <p className='text-text'>Ishraq: {rowData.ishraq_elevation}°</p>
+                                    <p className='text-text font-medium tabular-nums'>Ishraq: {rowData.ishraq_elevation}°</p>
                                   )}
                                   {rowData.duha_start_elevation !== null && rowData.duha_start_elevation !== undefined && (
-                                    <p className='text-text'>Duha Start: {rowData.duha_start_elevation}°</p>
+                                    <p className='text-text font-medium tabular-nums'>Duha Start: {rowData.duha_start_elevation}°</p>
                                   )}
                                   <p className='text-text'>Nafl Method: {rowData.nafl_method || '—'}</p>
                                 </div>
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Ishraq</p>
-                                  <p className='text-text font-mono'>{rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}</p>
+                                  <p className='text-text font-semibold tabular-nums'>{rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}</p>
                                   <p className='text-text-muted'>(Sunrise + ~20 min)</p>
                                 </div>
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Duha</p>
-                                  <p className='text-text font-mono'>
+                                  <p className='text-text font-semibold tabular-nums'>
                                     {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'} – {rowData.duha_end ? rowData.duha_end.slice(0, 5) : '—'}
                                   </p>
                                   <p className='text-text-muted'>(Forenoon prayer window)</p>
                                 </div>
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Awwabin</p>
-                                  <p className='text-text font-mono'>
+                                  <p className='text-text font-semibold tabular-nums'>
                                     {rowData.awwabin_start ? rowData.awwabin_start.slice(0, 5) : '—'} – {rowData.awwabin_end ? rowData.awwabin_end.slice(0, 5) : '—'}
                                   </p>
                                   <p className='text-text-muted'>(6 rak&apos;ahs after Maghrib)</p>
@@ -467,7 +483,7 @@ export function RangePrayerTimesClient({
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>

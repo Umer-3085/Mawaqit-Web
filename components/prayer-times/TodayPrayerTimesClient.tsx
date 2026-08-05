@@ -64,6 +64,17 @@ export function TodayPrayerTimesClient({
   dateParam,
 }: TodayPrayerTimesClientProps) {
   const router = useRouter();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayISO());
+
+  const handleDateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
+    if (date) {
+      const params = new URLSearchParams(window.location.search);
+      router.push('/prayer-times/' + date + '?' + params.toString());
+    }
+    setShowDatePicker(false);
+  };
 
   const [params, setParams] = useState<ClientParams>(toClientParams(initialParams));
   const [geolocationLoading, setGeolocationLoading] = useState(false);

@@ -23,8 +23,8 @@ export function PrayerTimesClientWrapper({
   const handleDateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
     if (date) {
-      setSelectedDate(date);
-      router.push('/prayer-times/' + date);
+      const params = new URLSearchParams(window.location.search);
+      router.push('/prayer-times/' + date + '?' + params.toString());
     }
     setShowDatePicker(false);
   };

@@ -51,10 +51,10 @@ export function formatDateWithHijri(isoDate: string): FormattedDate {
     day: 'numeric',
   });
 
-  const weekday = ARABIC_WEEKDAYS[gregDate.getDay()];
-  const hijriDay = hijri.day;
-  const hijriMonth = ARABIC_MONTHS[hijri.month - 1];
-  const hijriYear = hijri.year;
+  const weekday = ARABIC_WEEKDAYS[gregDate.getDay()] ?? '';
+  const hijriDay = Number(hijri.day);
+  const hijriMonth = ARABIC_MONTHS[Number(hijri.month) - 1];
+  const hijriYear = Number(hijri.year);
 
   const hijriFormatted = 'يوم ' + weekday + '، ' + hijriDay + ' ' + hijriMonth + ' ' + hijriYear + ' ه';
 
@@ -81,5 +81,5 @@ export function formatGregorianOnly(isoDate: string): string {
 
 export function getTodayISO(): string {
   const now = new Date();
-  return now.toISOString().split('T')[0];
+  return now.toISOString().split('T')[0] ?? '';
 }

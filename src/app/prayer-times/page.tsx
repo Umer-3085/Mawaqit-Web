@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { apiClient } from '../../../lib/api';
-import { TodayPrayerTimesClient } from '@/components/prayer-times';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { PrayerTimesClientWrapper } from '@/components/prayer-times/PrayerTimesClientWrapper';
 import type { LocationParams } from '../../../types/prayer-times';

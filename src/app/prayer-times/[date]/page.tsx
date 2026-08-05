@@ -25,8 +25,16 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 function isValidDate(dateStr: string): boolean {
   if (!DATE_REGEX.test(dateStr)) return false;
-  const date = new Date(dateStr + 'T00:00:00');
-  return date instanceof Date && !isNaN(date.getTime()) && date.toISOString().startsWith(dateStr);
+  const parts = dateStr.split('-');
+  const year = Number(parts[0]);
+  const month = Number(parts[1]);
+  const day = Number(parts[2]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date instanceof Date &&
+    !isNaN(date.getTime()) &&
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day;
 }
 
 function parseSearchParams(params: Awaited<PageProps['searchParams']>): LocationParams {

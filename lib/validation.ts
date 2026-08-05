@@ -1,9 +1,5 @@
 import { z } from 'zod';
 import type {
-  CalculationMethod,
-  Madhab,
-  HighLatitudeRule,
-  NaflMethod,
   ParsedTime,
   ParsedDate,
   PrayerTimesResponse,

@@ -38,11 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         <label
           htmlFor={id}
-          className={cn(
-            'block text-sm font-medium text-text',
-            'dark:text-text',
-            'mb-1.5'
-          )}
+          className="block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5"
         >
           {label}
           {required && <span className="text-error ml-1" aria-hidden="true">*</span>}
@@ -56,14 +52,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={describedBy}
           className={cn(
-            'w-full px-4 py-2.5 rounded-lg border',
-            'bg-surface text-text placeholder:text-text-muted',
-            'dark:bg-surface dark:text-text dark:placeholder:text-text-muted',
-            'transition-colors duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+            'w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px]',
+            'bg-surface text-text placeholder:text-text-muted/60',
+            'transition-all duration-150 ease-out',
+            'focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             error
-              ? 'border-error focus:ring-error'
+              ? 'border-error focus:ring-error/20 focus:border-error'
               : 'border-border hover:border-border-focus',
             className
           )}
@@ -73,7 +68,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <p
             id={errorId}
             role="alert"
-            className="mt-1.5 text-sm text-error"
+            className="mt-1.5 text-xs text-error font-medium"
           >
             {error}
           </p>
@@ -81,7 +76,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {helperText && !error && (
           <p
             id={helperId}
-            className="mt-1.5 text-sm text-text-muted"
+            className="mt-1.5 text-xs text-text-muted"
           >
             {helperText}
           </p>
@@ -90,4 +85,4 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-Input.displayName = 'Input';
+Input.displayName = 'Input';

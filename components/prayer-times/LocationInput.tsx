@@ -29,8 +29,20 @@ export function LocationInput({
   error,
   disabled = false,
 }: LocationInputProps) {
+  const [prevLat, setPrevLat] = useState(lat);
+  const [prevLng, setPrevLng] = useState(lng);
   const [latInput, setLatInput] = useState(lat.toString());
   const [lngInput, setLngInput] = useState(lng.toString());
+
+  if (lat !== prevLat) {
+    setPrevLat(lat);
+    setLatInput(lat.toString());
+  }
+
+  if (lng !== prevLng) {
+    setPrevLng(lng);
+    setLngInput(lng.toString());
+  }
 
   const timezoneOptions: SelectOption[] = TIMEZONES.map((tz) => ({
     value: tz,
@@ -68,7 +80,7 @@ export function LocationInput({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-start">
         <Input
           label="Latitude"
           type="number"
@@ -80,7 +92,6 @@ export function LocationInput({
           placeholder="33.6844"
           disabled={disabled}
           error={error}
-          helperText="Decimal degrees (-90 to 90)"
         />
         <Input
           label="Longitude"
@@ -93,7 +104,6 @@ export function LocationInput({
           placeholder="73.0479"
           disabled={disabled}
           error={error}
-          helperText="Decimal degrees (-180 to 180)"
         />
         <Select
           label="Timezone"
@@ -106,28 +116,33 @@ export function LocationInput({
         />
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onGeolocation}
-        disabled={disabled || geolocationLoading}
-        className="w-full sm:w-auto"
-      >
-        {geolocationLoading ? (
-          <>
-            <LoadingSpinner size="sm" className="mr-2" />
-            Locating…
-          </>
-        ) : (
-          'Use My Location'
-        )}
-      </Button>
-
-      {error && (
-        <p className="text-sm text-error" role="alert">
-          {error}
-        </p>
-      )}
+      <div className="flex items-center justify-between gap-4 pt-1">
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={onGeolocation}
+          disabled={disabled || geolocationLoading}
+          className="w-full sm:w-auto font-semibold shadow-sm"
+        >
+          {geolocationLoading ? (
+            <>
+              <LoadingSpinner size="sm" color="current" className="mr-2" />
+              Detecting Location…
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Use My Location
+            </>
+          )}
+        </Button>
+        <span className="text-xs text-text-muted hidden sm:inline-block">
+          Decimal degrees (-90..90, -180..180)
+        </span>
+      </div>
     </div>
   );
 }

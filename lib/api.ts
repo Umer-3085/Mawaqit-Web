@@ -1,4 +1,4 @@
-import { ApiError, NetworkError, TimeoutError, isApiError, isNetworkError, isTimeoutError } from './errors';
+import { ApiError, TimeoutError, isApiError, isNetworkError, isTimeoutError } from './errors';
 import {
   PrayerTimesResponse,
   PrayerTimesRangeResponse,
@@ -10,7 +10,6 @@ import {
   PrayerTimesRangeResponseSchema,
   SingleDayParamsSchema,
   DateRangeParamsSchema,
-  parsePrayerTimesResponse,
 } from './validation';
 
 const DEFAULT_TIMEOUT = 10000;

@@ -51,55 +51,57 @@ function SelectComponent<T = string>(
     <div className="w-full">
       <label
         htmlFor={id}
-        className={cn(
-          'block text-sm font-medium text-text',
-          'dark:text-text',
-          'mb-1.5'
-        )}
+        className="block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5"
       >
         {label}
         {required && <span className="text-error ml-1" aria-hidden="true">*</span>}
       </label>
-      <select
-        ref={ref}
-        id={id}
-        disabled={disabled}
-        required={required}
-        aria-invalid={error ? 'true' : 'false'}
-        aria-describedby={describedBy}
-        onChange={handleChange}
-        className={cn(
-          'w-full px-4 py-2.5 rounded-lg border appearance-none',
-          'bg-surface text-text',
-          'dark:bg-surface dark:text-text',
-          'transition-colors duration-150',
-          'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          error
-            ? 'border-error focus:ring-error'
-            : 'border-border hover:border-border-focus',
-          className
-        )}
-        {...props}
-      >
-        {placeholder && (
-          <option value="" disabled>
-            {placeholder}
-          </option>
-        )}
-        {options.map((option) => (
-          <option key={String(option.value)} value={String(option.value)} disabled={option.disabled}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          ref={ref}
+          id={id}
+          disabled={disabled}
+          required={required}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={describedBy}
+          onChange={handleChange}
+          className={cn(
+            'w-full px-3.5 py-2 pr-9 rounded-lg border appearance-none text-sm min-h-[44px]',
+            'bg-surface text-text cursor-pointer',
+            'transition-all duration-150 ease-out',
+            'focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            error
+              ? 'border-error focus:ring-error/20 focus:border-error'
+              : 'border-border hover:border-border-focus',
+            className
+          )}
+          {...props}
+        >
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
+          {options.map((option) => (
+            <option key={String(option.value)} value={String(option.value)} disabled={option.disabled}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted">
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
       {error && (
-        <p id={errorId} role="alert" className="mt-1.5 text-sm text-error">
+        <p id={errorId} role="alert" className="mt-1.5 text-xs text-error font-medium">
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p id={helperId} className="mt-1.5 text-sm text-text-muted">
+        <p id={helperId} className="mt-1.5 text-xs text-text-muted">
           {helperText}
         </p>
       )}
@@ -110,4 +112,4 @@ function SelectComponent<T = string>(
 SelectComponent.displayName = 'Select';
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(SelectComponent) as
-  <T = string>(props: SelectProps<T> & { ref?: React.Ref<HTMLSelectElement> }) => React.ReactElement | null;
+  <T = string>(props: SelectProps<T> & { ref?: React.Ref<HTMLSelectElement> }) => React.ReactElement | null;

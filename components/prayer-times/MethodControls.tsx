@@ -10,22 +10,22 @@ interface MethodControlsProps {
   highLatitudeRule: HighLatitudeRule;
   naflMethod: NaflMethod;
   onChange: (updates: {
-    calculationMethod?: CalculationMethod;
+    calculation_method?: CalculationMethod;
     madhab?: Madhab;
-    highLatitudeRule?: HighLatitudeRule;
-    naflMethod?: NaflMethod;
+    high_latitude_rule?: HighLatitudeRule;
+    nafl_method?: NaflMethod;
   }) => void;
   disabled?: boolean;
 }
 
 const MADHAB_OPTIONS: SelectOption<Madhab>[] = [
-  { value: 'SHAFI', label: 'Shafi\'i' },
-  { value: 'HANAFI', label: 'Hanafi' },
+  { value: 'SHAFI', label: 'Standard (Shafi\'i, Maliki, Hanbali)' },
+  { value: 'HANAFI', label: 'Hanafi (Later Asr)' },
 ];
 
 const HIGH_LATITUDE_OPTIONS: SelectOption<HighLatitudeRule>[] = [
-  { value: 'MIDDLE_OF_THE_NIGHT', label: 'Middle of the Night' },
-  { value: 'SEVENTH_OF_THE_NIGHT', label: '1/7th of the Night' },
+  { value: 'MIDDLE_OF_THE_NIGHT', label: 'Middle of Night' },
+  { value: 'SEVENTH_OF_THE_NIGHT', label: '1/7th Night' },
   { value: 'TWILIGHT_ANGLE', label: 'Twilight Angle' },
 ];
 
@@ -46,15 +46,15 @@ export function MethodControls({
   disabled = false,
 }: MethodControlsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-start">
       <MethodSelect
         value={calculationMethod}
-        onChange={(v) => onChange({ calculationMethod: v })}
+        onChange={(v) => onChange({ calculation_method: v })}
         disabled={disabled}
-        label="Calculation Method"
+        label="Authority"
       />
       <Select
-        label="Madhab"
+        label="Asr Calculation (Madhab)"
         options={MADHAB_OPTIONS}
         value={madhab}
         onChange={(v: Madhab) => onChange({ madhab: v })}
@@ -65,7 +65,7 @@ export function MethodControls({
         label="High Latitude Rule"
         options={HIGH_LATITUDE_OPTIONS}
         value={highLatitudeRule}
-        onChange={(v: HighLatitudeRule) => onChange({ highLatitudeRule: v })}
+        onChange={(v: HighLatitudeRule) => onChange({ high_latitude_rule: v })}
         disabled={disabled}
         placeholder="Select rule"
       />
@@ -73,10 +73,10 @@ export function MethodControls({
         label="Nafl Method"
         options={NAFL_METHOD_OPTIONS}
         value={naflMethod}
-        onChange={(v: NaflMethod) => onChange({ naflMethod: v })}
+        onChange={(v: NaflMethod) => onChange({ nafl_method: v })}
         disabled={disabled}
         placeholder="Select method"
       />
     </div>
   );
-}
+}

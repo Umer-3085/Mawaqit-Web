@@ -6,7 +6,6 @@ import type {
   SingleDayParams,
   DateRangeParams,
   PrayerTimesResponse,
-  PrayerTimesRangeResponse,
 } from '../types/prayer-times';
 
 const fetcher = async (params: SingleDayParams): Promise<PrayerTimesResponse> => {

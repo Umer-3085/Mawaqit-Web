@@ -8,6 +8,7 @@ import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, Hi
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
+import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
@@ -59,6 +60,7 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
   const [params, setParams] = useState<ClientParams>(toClientParams(initialParams));
   const [geolocationLoading, setGeolocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [controlsOpen, setControlsOpen] = useState(true);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -122,7 +124,7 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
 
   const handleGeolocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError('Geolocation not supported');
+      setError('Geolocation not supported by your browser');
       return;
     }
     setGeolocationLoading(true);
@@ -147,6 +149,34 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
 
   const displayData = data ?? initialData;
 
+  // Determine next prayer
+  const getNextPrayerIndex = () => {
+    if (!displayData) return -1;
+    const now = new Date();
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+
+    const times = [
+      displayData.fajr,
+      displayData.sunrise,
+      displayData.dhuhr,
+      displayData.asr,
+      displayData.maghrib,
+      displayData.isha,
+    ];
+
+    for (let i = 0; i < times.length; i++) {
+      const t = times[i];
+      if (!t) continue;
+      const parts = t.split(':');
+      const h = parseInt(parts[0] || '0', 10);
+      const m = parseInt(parts[1] || '0', 10);
+      if (h * 60 + m > currentMins) return i;
+    }
+    return 0; // Tomorrow's Fajr
+  };
+
+  const nextPrayerIdx = getNextPrayerIndex();
+
   const obligatoryTimes = displayData
     ? [
         { label: 'Fajr', time: displayData.fajr, isObligatory: true },
@@ -168,96 +198,162 @@ export function TodayPrayerTimesClient({ initialData, initialParams }: TodayPray
       ]
     : [];
 
-  if (isLoading && !initialData) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <LoadingSpinner size="lg" />
-        <p className="text-text-muted">Loading prayer times…</p>
-      </div>
-    );
-  }
+  const todayFormatted = displayData?.date
+    ? new Date(displayData.date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page Title & Date Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
+            Today's Prayer Times
+            <span className="font-arabic text-primary text-xl font-normal" dir="rtl">
+              أوقات الصلاة
+            </span>
+          </h1>
+          <p className="text-sm text-text-muted mt-1">{todayFormatted}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setControlsOpen(!controlsOpen)}
+            className="flex items-center gap-2 text-xs font-semibold"
+          >
+            <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {controlsOpen ? 'Hide Controls' : 'Location & Methods'}
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => mutate()}
+            disabled={isLoading}
+            className="text-xs"
+          >
+            {isLoading ? <LoadingSpinner size="sm" /> : 'Refresh'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Error Alert */}
       {(swrError || error) && (
         <ErrorAlert
           message={error ?? swrError?.message ?? 'Failed to load prayer times'}
           onDismiss={() => setError(null)}
+          onRetry={() => mutate()}
         />
       )}
 
-      <section aria-labelledby="location-heading" className="space-y-2">
-        <h2 id="location-heading" className="text-lg font-semibold text-text">
-          Location
-        </h2>
-        <LocationInput
-          lat={params.lat}
-          lng={params.lng}
-          timezone={params.timezone}
-          onChange={handleChange}
-          onGeolocation={handleGeolocation}
-          geolocationLoading={geolocationLoading}
-          error={error}
-        />
-      </section>
-
-      <section aria-labelledby="methods-heading" className="space-y-2">
-        <h2 id="methods-heading" className="text-lg font-semibold text-text">
-          Calculation Methods
-        </h2>
-        <MethodControls
-          calculationMethod={params.calculation_method}
-          madhab={params.madhab}
-          highLatitudeRule={params.high_latitude_rule}
-          naflMethod={params.nafl_method}
-          onChange={handleChange}
-        />
-      </section>
-
-      <section aria-labelledby="obligatory-heading" className="space-y-2">
-        <h2 id="obligatory-heading" className="text-lg font-semibold text-text">
-          Obligatory Prayers
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {obligatoryTimes.map((item, idx) => (
-            <PrayerTimeCard
-              key={idx}
-              label={item.label}
-              time={item.time}
-              isObligatory={item.isObligatory}
+      {/* Single Controls Card (Location + Methods collapsible) */}
+      <div className={controlsOpen ? 'block' : 'hidden md:block'}>
+        <Card className="p-6 space-y-6">
+          <div className="border-b border-border/40 pb-5">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
+              Location Settings
+            </h2>
+            <LocationInput
+              lat={params.lat}
+              lng={params.lng}
+              timezone={params.timezone}
+              onChange={handleChange}
+              onGeolocation={handleGeolocation}
+              geolocationLoading={geolocationLoading}
+              error={error}
             />
-          ))}
-        </div>
-      </section>
+          </div>
 
-      <section aria-labelledby="nafl-heading" className="space-y-2">
-        <h2 id="nafl-heading" className="text-lg font-semibold text-text">
-          Nafl & Elevation
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {naflTimes.map((item, idx) =>
-            item.time || item.elevation ? (
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">
+              Calculation Methods & Preferences
+            </h2>
+            <MethodControls
+              calculationMethod={params.calculation_method}
+              madhab={params.madhab}
+              highLatitudeRule={params.high_latitude_rule}
+              naflMethod={params.nafl_method}
+              onChange={handleChange}
+            />
+          </div>
+        </Card>
+      </div>
+
+      {/* Obligatory Prayers Section */}
+      <section aria-labelledby="obligatory-heading" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 id="obligatory-heading" className="text-lg font-bold text-text flex items-center gap-2">
+            <span>Obligatory Prayers</span>
+            <span className="text-xs font-normal text-text-muted">(الصلوات المفروضة)</span>
+          </h2>
+        </div>
+
+        {isLoading && !displayData ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-32 rounded-xl bg-surface-elevated/60 animate-pulse border border-border/30" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {obligatoryTimes.map((item, idx) => (
               <PrayerTimeCard
                 key={idx}
                 label={item.label}
                 time={item.time}
-                elevation={item.elevation}
+                isObligatory={item.isObligatory}
+                isNext={idx === nextPrayerIdx}
               />
-            ) : null
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      <Button variant="ghost" size="sm" onClick={() => mutate()} disabled={isLoading}>
-        {isLoading ? (
-          <>
-            <LoadingSpinner size="sm" className="mr-2" />
-            Refreshing…
-          </>
+      {/* Nafl & Elevation Section */}
+      <section aria-labelledby="nafl-heading" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 id="nafl-heading" className="text-lg font-bold text-text flex items-center gap-2">
+            <span>Nafl Prayers & Solar Angle</span>
+            <span className="text-xs font-normal text-text-muted">(النوافل والشروق)</span>
+          </h2>
+        </div>
+
+        {isLoading && !displayData ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-28 rounded-xl bg-surface-elevated/60 animate-pulse border border-border/30" />
+            ))}
+          </div>
         ) : (
-          'Refresh Now'
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {naflTimes.map((item, idx) =>
+              item.time || item.elevation ? (
+                <PrayerTimeCard
+                  key={idx}
+                  label={item.label}
+                  time={item.time}
+                  elevation={item.elevation}
+                />
+              ) : null
+            )}
+          </div>
         )}
-      </Button>
+      </section>
     </div>
   );
-}
+}

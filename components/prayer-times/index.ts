@@ -1,5 +1,7 @@
 export { TodayPrayerTimesClient } from './TodayPrayerTimesClient';
 export { LocationInput } from './LocationInput';
+export { LocationPicker } from './LocationPicker';
+export { LocationMap } from './LocationMap';
 export { MethodControls } from './MethodControls';
 export { PrayerTimeCard } from './PrayerTimeCard';
 export { RangePrayerTimesClient } from './RangePrayerTimesClient';

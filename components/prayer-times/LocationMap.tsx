@@ -31,17 +31,16 @@ interface LocationMapProps {
   className?: string;
 }
 
-function MapEvents({ onLocationChange }: { onLocationChange: (lat: number, lng: number, address?: string) => void }) {
-  const map = useMapEvents({
+function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
+  useMapEvents({
     click(e) {
-      onLocationChange(e.latlng.lat, e.latlng.lng);
+      onLocationSelect(e.latlng.lat, e.latlng.lng);
     },
   });
   return null;
 }
 
 function GeolocationControl({ onLocate }: { onLocate: () => void }) {
-  const map = useMapEvents({});
   
   return (
     <div className="leaflet-control leaflet-bar leaflet-control-custom" style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
@@ -76,6 +75,21 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
   useEffect(() => {
     setPosition({ lat, lng });
   }, [lat, lng]);
+
+  // Attach drag event listener to marker
+  useEffect(() => {
+    if (markerRef.current && !disabled) {
+      markerRef.current.on('dragend', (e) => {
+        const { lat, lng } = e.target.getLatLng();
+        setPosition({ lat, lng });
+      });
+    }
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.off('dragend');
+      }
+    };
+  }, [disabled]);
 
   // Reverse geocode on position change
   useEffect(() => {
@@ -167,12 +181,9 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker
+            ref={markerRef}
             position={[position.lat, position.lng]}
             draggable={!disabled}
-            onDragend={(e) => {
-              const { lat, lng } = e.target.getLatLng();
-              setPosition({ lat, lng });
-            }}
           >
             <Popup>
               <div className="p-1 text-sm">
@@ -183,7 +194,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
               </div>
             </Popup>
           </Marker>
-          <MapEvents onLocationChange={onLocationChange} />
+          <MapEvents onLocationSelect={(lat, lng) => setPosition({ lat, lng })} />
           <GeolocationControl onLocate={handleLocate} />
         </MapContainer>
 

@@ -39,6 +39,7 @@ export function ElevationTooltip({
   position = 'top',
 }: ElevationTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [actualPosition, setActualPosition] = useState(position);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const childRef = useRef<HTMLSpanElement>(null);
 
@@ -51,6 +52,37 @@ export function ElevationTooltip({
     }
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible || !tooltipRef.current || !childRef.current) return;
+
+    const tooltip = tooltipRef.current;
+    const child = childRef.current;
+    const childRect = child.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    // Check if tooltip would go off screen
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let newPosition = position;
+
+    if (position === 'top') {
+      if (childRect.top - tooltipRect.height - 8 < 0) {
+        newPosition = 'right';
+      }
+    } else if (position === 'right') {
+      if (childRect.right + tooltipRect.width + 8 > viewportWidth) {
+        newPosition = 'left';
+      }
+    } else if (position === 'left') {
+      if (childRect.left - tooltipRect.width - 8 < 0) {
+        newPosition = 'right';
+      }
+    }
+
+    setActualPosition(newPosition);
+  }, [isVisible, position]);
 
   const content = typeof TOOLTIP_CONTENT[prayerName] === 'function'
     ? TOOLTIP_CONTENT[prayerName](naflMethod)
@@ -80,16 +112,16 @@ export function ElevationTooltip({
             'absolute z-50 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg shadow-lg',
             'whitespace-nowrap max-w-[280px] text-wrap',
             'animate-fade-in-up',
-            positionClasses[position]
+            positionClasses[actualPosition]
           )}
           role="tooltip"
         >
           <div className="font-semibold text-primary mb-0.5">{elevation}° Solar Angle</div>
           <div>{content}</div>
           <div className="absolute w-0 h-0 border-4 border-transparent">
-            {position === 'top' && <div className="bottom-[-8px] left-1/2 -translate-x-1/2 border-t-white dark:border-t-gray-100" />}
-            {position === 'right' && <div className="left-[-8px] top-1/2 -translate-y-1/2 border-r-white dark:border-r-gray-100" />}
-            {position === 'left' && <div className="right-[-8px] top-1/2 -translate-y-1/2 border-l-white dark:border-l-gray-100" />}
+            {actualPosition === 'top' && <div className="bottom-[-8px] left-1/2 -translate-x-1/2 border-t-white dark:border-t-gray-100" />}
+            {actualPosition === 'right' && <div className="left-[-8px] top-1/2 -translate-y-1/2 border-r-white dark:border-r-gray-100" />}
+            {actualPosition === 'left' && <div className="right-[-8px] top-1/2 -translate-y-1/2 border-l-white dark:border-l-gray-100" />}
           </div>
         </div>
       )}

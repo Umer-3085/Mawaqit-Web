@@ -87,7 +87,6 @@ export function TodayPrayerTimesClient({
   const [geolocationLoading, setGeolocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [controlsOpen, setControlsOpen] = useState(true);
-  const [methodInfoVariant, setMethodInfoVariant] = useState<'collapsible' | 'separate'>('collapsible');
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -344,15 +343,6 @@ const { updateLocation } = useUpdateLocation();
             View Range
           </Button>
 
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => setMethodInfoVariant(methodInfoVariant === 'collapsible' ? 'separate' : 'collapsible')}
-            className='text-xs'
-          >
-            MethodInfo: {methodInfoVariant}
-          </Button>
-
           {showDatePicker && (
             <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
               <div className='bg-surface rounded-xl p-6 w-full max-w-md shadow-xl border border-border'>
@@ -418,7 +408,7 @@ const { updateLocation } = useUpdateLocation();
             />
           </div>
 
-          {/* MethodInfo - Collapsible variant (default) */}
+          {/* MethodInfo - Collapsible variant */}
           <MethodInfo
             calculation_method={params.calculation_method}
             madhab={params.madhab}
@@ -426,30 +416,6 @@ const { updateLocation } = useUpdateLocation();
             nafl_method={params.nafl_method}
             variant="collapsible"
           />
-
-          {/* MethodInfo - Separate card variant (toggle to test) */}
-          {methodInfoVariant === 'separate' && (
-            <Card className='p-4 space-y-3 mt-4'>
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-                  Method Details (Separate Card)
-                </h3>
-                <button
-                  onClick={() => setMethodInfoVariant('collapsible')}
-                  className="text-xs text-text-muted hover:text-text"
-                >
-                  Switch to Collapsible
-                </button>
-              </div>
-              <MethodInfo
-                calculation_method={params.calculation_method}
-                madhab={params.madhab}
-                high_latitude_rule={params.high_latitude_rule}
-                nafl_method={params.nafl_method}
-                variant="separate"
-              />
-            </Card>
-          )}
         </Card>
       </div>
 

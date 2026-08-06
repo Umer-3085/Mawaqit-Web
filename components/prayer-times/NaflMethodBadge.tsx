@@ -44,10 +44,7 @@ export function NaflMethodBadge({ method, variant = 'inline', className }: NaflM
         naflMethod={method}
         position="left"
       >
-        <span
-          className={cn(baseClasses, variantClasses.corner, className)}
-          title={description}
-        >
+        <span className={cn(baseClasses, variantClasses.corner, className)}>
           {label}
         </span>
       </ElevationTooltip>
@@ -59,12 +56,9 @@ export function NaflMethodBadge({ method, variant = 'inline', className }: NaflM
       elevation={0}
       prayerName="duha"
       naflMethod={method}
-      position="top"
+      position="right"
     >
-      <span
-        className={cn(baseClasses, variantClasses.inline, className)}
-        title={description}
-      >
+      <span className={cn(baseClasses, variantClasses.inline, className)}>
         {label}
       </span>
     </ElevationTooltip>

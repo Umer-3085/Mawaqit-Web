@@ -73,12 +73,6 @@ export function PrayerTimeCard({
         </span>
       )}
 
-      {showNaflBadge && naflMethod && (
-        <div className="absolute top-2 right-2">
-          <NaflMethodBadge method={naflMethod} variant="corner" />
-        </div>
-      )}
-
       {/* Header: English & Arabic Labels */}
       <div className="flex items-center justify-between w-full mb-2 gap-1">
         <span className={cn('text-xs font-semibold uppercase tracking-wider', isNext ? 'text-primary' : 'text-text-muted')}>

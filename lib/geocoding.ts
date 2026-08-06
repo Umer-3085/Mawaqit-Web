@@ -6,10 +6,8 @@ export interface GeocodeResult {
 
 export async function reverseGeocode(lat: number, lng: number): Promise<GeocodeResult | null> {
   try {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=en`;
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mawaqit/1.0 (mawaqit.app)' },
-    });
+    const url = `/api/geocoding/reverse?lat=${lat}&lng=${lng}`;
+    const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
     const addr = data.address || {};

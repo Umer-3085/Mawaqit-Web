@@ -95,8 +95,8 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     }
     setSearchLoading(true);
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=en`;
-      const res = await fetch(url, { headers: { 'User-Agent': 'Mawaqit/1.0' } });
+      const url = `/api/geocoding/search?q=${encodeURIComponent(query)}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Search failed');
       const data = await res.json();
       setSearchResults(data.map((item: any) => ({

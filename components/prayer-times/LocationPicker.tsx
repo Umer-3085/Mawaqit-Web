@@ -1,9 +1,24 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { LocationInput } from './LocationInput';
-import { LocationMap } from './LocationMap';
 import { cn } from '@/components/ui/utils';
+
+const LocationMap = dynamic(
+  () => import('./LocationMap').then((mod) => mod.LocationMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[300px] h-[300px] w-full bg-surface-elevated/40 animate-pulse rounded-xl border border-border/40 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <span className="text-xs text-text-muted">Loading map component...</span>
+        </div>
+      </div>
+    ),
+  }
+);
 
 interface LocationPickerProps {
   lat: number;

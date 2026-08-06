@@ -8,6 +8,8 @@ import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, Hi
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
+import { MethodInfo } from './MethodInfo';
+import { NaflMethodBadge } from './NaflMethodBadge';
 import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
@@ -56,7 +58,6 @@ function toLocationParams(params: ClientParams): LocationParams {
     madhab: params.madhab,
     high_latitude_rule: params.high_latitude_rule,
     nafl_method: params.nafl_method,
-    cityName: params.cityName,
   };
 }
 
@@ -89,7 +90,7 @@ export function TodayPrayerTimesClient({
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { updateLocation } = useUpdateLocation();
+const { updateLocation } = useUpdateLocation();
 
   // Use different hooks based on whether it's a date page or today page
   const todayHook = useTodayPrayerTimes(
@@ -296,9 +297,9 @@ export function TodayPrayerTimesClient({
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
             </svg>
             {controlsOpen ? 'Hide Controls' : 'Location & Methods'}
-          </Button>
+</Button>
 
-          <Button
+<Button
             variant='ghost'
             size='sm'
             onClick={() => mutate()}
@@ -391,7 +392,6 @@ export function TodayPrayerTimesClient({
               onGeolocation={handleGeolocation}
               geolocationLoading={geolocationLoading}
               error={error}
-              cityName={params.cityName}
             />
           </div>
 
@@ -407,6 +407,15 @@ export function TodayPrayerTimesClient({
               onChange={handleChange}
             />
           </div>
+
+          {/* MethodInfo - Collapsible variant */}
+          <MethodInfo
+            calculation_method={params.calculation_method}
+            madhab={params.madhab}
+            high_latitude_rule={params.high_latitude_rule}
+            nafl_method={params.nafl_method}
+            variant="collapsible"
+          />
         </Card>
       </div>
 
@@ -447,6 +456,9 @@ export function TodayPrayerTimesClient({
             <span>Nafl Prayers & Solar Angle</span>
             <span className='text-xs font-normal text-text-muted'>(النوافل والشروق)</span>
           </h2>
+          <div className="flex items-center gap-2">
+            <NaflMethodBadge method={params.nafl_method} variant="inline" />
+          </div>
         </div>
 
         {isLoading && !displayData ? (
@@ -464,6 +476,9 @@ export function TodayPrayerTimesClient({
                   label={item.label}
                   time={item.time}
                   elevation={item.elevation}
+                  elevationTooltip={true}
+                  naflMethod={params.nafl_method}
+                  showNaflBadge={true}
                 />
               ) : null
             )}

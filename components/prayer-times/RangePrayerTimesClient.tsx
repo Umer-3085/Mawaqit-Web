@@ -7,6 +7,8 @@ import { useUpdateLocation } from '@/hooks/useLocationMutations';
 import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
+import { MethodInfo } from './MethodInfo';
+import { NaflMethodBadge } from './NaflMethodBadge';
 import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
@@ -359,6 +361,15 @@ export function RangePrayerTimesClient({
                 </Button>
               </div>
             </div>
+
+            {/* MethodInfo - Collapsible variant */}
+            <MethodInfo
+              calculation_method={params.calculation_method}
+              madhab={params.madhab}
+              high_latitude_rule={params.high_latitude_rule}
+              nafl_method={params.nafl_method}
+              variant="collapsible"
+            />
           </Card>
         )}
 
@@ -433,7 +444,7 @@ export function RangePrayerTimesClient({
                         <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}
                         </td>
-                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
+<td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'}
                         </td>
                         <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
@@ -463,7 +474,7 @@ export function RangePrayerTimesClient({
                                   {rowData.duha_start_elevation !== null && rowData.duha_start_elevation !== undefined && (
                                     <p className='text-text font-medium tabular-nums'>Duha Start: {rowData.duha_start_elevation}°</p>
                                   )}
-                                  <p className='text-text'>Nafl Method: {rowData.nafl_method || '—'}</p>
+                                  <p className='text-text'>Nafl Method: <NaflMethodBadge method={params.nafl_method} variant="inline" /></p>
                                 </div>
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Ishraq</p>
@@ -480,7 +491,9 @@ export function RangePrayerTimesClient({
                                 <div className='space-y-1'>
                                   <p className='text-text-muted uppercase tracking-wider font-semibold'>Awwabin</p>
                                   <p className='text-text font-semibold tabular-nums'>
-                                    {rowData.awwabin_start ? rowData.awwabin_start.slice(0, 5) : '—'} – {rowData.awwabin_end ? rowData.awwabin_end.slice(0, 5) : '—'}
+                                    {rowData.awwabin_start && rowData.awwabin_end
+                                      ? `${rowData.awwabin_start.slice(0, 5)} – ${rowData.awwabin_end.slice(0, 5)}`
+                                      : '—'}
                                   </p>
                                   <p className='text-text-muted'>(6 rak&apos;ahs after Maghrib)</p>
                                 </div>

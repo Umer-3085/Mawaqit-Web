@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { cn } from '@/components/ui/utils';
-import { reverseGeocode } from '@/lib/geocoding';
+import { reverseGeocode } from '../../lib/geocoding';
 
 // Fix default marker icon
 const DefaultIcon = L.icon({

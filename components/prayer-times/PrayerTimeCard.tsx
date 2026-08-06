@@ -1,6 +1,9 @@
 'use client';
 
 import { cn } from '@/components/ui/utils';
+import { ElevationTooltip } from './ElevationTooltip';
+import { NaflMethodBadge } from './NaflMethodBadge';
+import type { NaflMethod } from '@/types/prayer-times';
 
 export interface PrayerTimeCardProps {
   label: string;
@@ -10,6 +13,10 @@ export interface PrayerTimeCardProps {
   isObligatory?: boolean;
   isNext?: boolean;
   className?: string;
+  // NEW PROPS
+  elevationTooltip?: boolean;
+  naflMethod?: NaflMethod;
+  showNaflBadge?: boolean;
 }
 
 const ARABIC_LABELS: Record<string, string> = {
@@ -26,6 +33,12 @@ const ARABIC_LABELS: Record<string, string> = {
   'Awwabin End': 'نهاية الأوابين',
 };
 
+const PRAYER_TO_TOOLTIP: Record<string, 'ishraq' | 'duha'> = {
+  Ishraq: 'ishraq',
+  'Duha Start': 'duha',
+  'Duha End': 'duha',
+};
+
 export function PrayerTimeCard({
   label,
   arabicLabel,
@@ -34,8 +47,14 @@ export function PrayerTimeCard({
   isObligatory = false,
   isNext = false,
   className,
+  elevationTooltip = false,
+  naflMethod,
+  showNaflBadge = false,
 }: PrayerTimeCardProps) {
   const arLabel = arabicLabel || ARABIC_LABELS[label];
+  const tooltipType = PRAYER_TO_TOOLTIP[label];
+
+  const timeDisplay = time ?? '—';
 
   return (
     <div
@@ -54,6 +73,12 @@ export function PrayerTimeCard({
         </span>
       )}
 
+      {showNaflBadge && naflMethod && (
+        <div className="absolute top-2 right-2">
+          <NaflMethodBadge method={naflMethod} variant="corner" />
+        </div>
+      )}
+
       {/* Header: English & Arabic Labels */}
       <div className="flex items-center justify-between w-full mb-2 gap-1">
         <span className={cn('text-xs font-semibold uppercase tracking-wider', isNext ? 'text-primary' : 'text-text-muted')}>
@@ -69,14 +94,25 @@ export function PrayerTimeCard({
       {/* Time Display */}
       <div className="my-1">
         <span className={cn('text-2xl sm:text-3xl font-bold tabular-nums tracking-tight', isNext ? 'text-primary font-extrabold' : 'text-text')}>
-          {time ?? '—'}
+          {timeDisplay}
         </span>
       </div>
 
       {/* Elevation or status subtext */}
       {elevation !== undefined && elevation !== null ? (
         <span className="text-[11px] text-text-muted font-mono mt-1">
-          {elevation}° solar angle
+          {elevationTooltip && tooltipType && naflMethod ? (
+            <ElevationTooltip
+              elevation={elevation}
+              prayerName={tooltipType}
+              naflMethod={naflMethod}
+              position="top"
+            >
+              {elevation}° solar angle
+            </ElevationTooltip>
+          ) : (
+            <>{elevation}° solar angle</>
+          )}
         </span>
       ) : (
         <span className="text-[11px] text-text-muted/60 mt-1 uppercase tracking-xs">
@@ -85,4 +121,4 @@ export function PrayerTimeCard({
       )}
     </div>
   );
-}
+}

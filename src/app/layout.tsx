@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
+import 'leaflet/dist/leaflet.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';

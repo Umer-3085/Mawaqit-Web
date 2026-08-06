@@ -8,6 +8,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing coordinates' }, { status: 400 });
   }
 
+  // 1. Try Nominatim
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=en`;
     const res = await fetch(url, {
@@ -15,13 +16,39 @@ export async function GET(request: Request) {
         'User-Agent': 'Mawaqit/1.0 (mawaqit-web; contact@mawaqit.app)',
       },
     });
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Reverse geocode failed' }, { status: res.status });
+    if (res.ok && res.status !== 429) {
+      const data = await res.json();
+      return NextResponse.json(data);
     }
-    const data = await res.json();
-    return NextResponse.json(data);
   } catch (err) {
-    console.error('Proxy reverse geocode error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.warn('Nominatim reverse failed, falling back to Photon...', err);
   }
+
+  // 2. Fallback to Photon
+  try {
+    const url = `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const geojson = await res.json();
+      const feature = geojson.features?.[0];
+      if (feature) {
+        const props = feature.properties || {};
+        const displayName = [props.name, props.street, props.city, props.state, props.country]
+          .filter(Boolean)
+          .join(', ');
+        const mapped = {
+          display_name: displayName,
+          address: {
+            city: props.city || props.town || props.village || props.suburb,
+            country: props.country,
+          },
+        };
+        return NextResponse.json(mapped);
+      }
+    }
+  } catch (err) {
+    console.error('Photon reverse failed:', err);
+  }
+
+  return NextResponse.json({ error: 'Geocoding failed' }, { status: 500 });
 }

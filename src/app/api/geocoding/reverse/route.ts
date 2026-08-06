@@ -16,12 +16,15 @@ export async function GET(request: Request) {
         'User-Agent': 'Mawaqit/1.0 (mawaqit-web; contact@mawaqit.app)',
       },
     });
-    if (res.ok && res.status !== 429) {
+    if (res.ok) {
       const data = await res.json();
-      return NextResponse.json(data);
+      // Nominatim returns { error: "..." } for invalid coords like ocean
+      if (data && !data.error) {
+        return NextResponse.json(data);
+      }
     }
-  } catch (err) {
-    console.warn('Nominatim reverse failed, falling back to Photon...', err);
+  } catch {
+    // Silently fall through to Photon
   }
 
   // 2. Fallback to Photon
@@ -36,19 +39,22 @@ export async function GET(request: Request) {
         const displayName = [props.name, props.street, props.city, props.state, props.country]
           .filter(Boolean)
           .join(', ');
-        const mapped = {
-          display_name: displayName,
+        return NextResponse.json({
+          display_name: displayName || 'Unknown location',
           address: {
             city: props.city || props.town || props.village || props.suburb,
             country: props.country,
           },
-        };
-        return NextResponse.json(mapped);
+        });
       }
     }
-  } catch (err) {
-    console.error('Photon reverse failed:', err);
+  } catch {
+    // Both services failed
   }
 
-  return NextResponse.json({ error: 'Geocoding failed' }, { status: 500 });
+  // 3. Graceful fallback — return a minimal valid response instead of 500
+  return NextResponse.json({
+    display_name: `${lat}, ${lng}`,
+    address: {},
+  });
 }

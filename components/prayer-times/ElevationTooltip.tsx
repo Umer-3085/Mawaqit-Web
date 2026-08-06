@@ -7,7 +7,7 @@ interface ElevationTooltipProps {
   elevation: number;
   prayerName: 'ishraq' | 'duha';
   naflMethod?: string;
-  children: React.ReactElement;
+  children: React.ReactNode;
   position?: 'top' | 'right' | 'left';
 }
 

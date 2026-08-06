@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { ElevationTooltip } from './ElevationTooltip';
 import { cn } from '@/components/ui/utils';
 import type { NaflMethod } from '@/types/prayer-times';

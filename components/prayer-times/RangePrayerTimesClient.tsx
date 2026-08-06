@@ -7,6 +7,9 @@ import { useUpdateLocation } from '@/hooks/useLocationMutations';
 import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
+import { MethodInfo } from './MethodInfo';
+import { NaflMethodBadge } from './NaflMethodBadge';
+import { PrayerTimeCard } from './PrayerTimeCard';
 import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
@@ -79,6 +82,8 @@ export function RangePrayerTimesClient({
   const [error, setError] = useState<string | null>(initialError);
   const [controlsOpen, setControlsOpen] = useState(true);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [rangeRowVariant, setRangeRowVariant] = useState<'grid' | 'table'>('grid');
+  const [methodInfoVariant, setMethodInfoVariant] = useState<'collapsible' | 'separate'>('collapsible');
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -278,6 +283,24 @@ export function RangePrayerTimesClient({
             >
               {isLoading ? <LoadingSpinner size='sm' /> : 'Refresh'}
             </Button>
+
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => setMethodInfoVariant(methodInfoVariant === 'collapsible' ? 'separate' : 'collapsible')}
+              className='text-xs'
+            >
+              MethodInfo: {methodInfoVariant}
+            </Button>
+
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => setRangeRowVariant(rangeRowVariant === 'grid' ? 'table' : 'grid')}
+              className='text-xs'
+            >
+              Range: {rangeRowVariant}
+            </Button>
           </div>
         </header>
 
@@ -359,6 +382,39 @@ export function RangePrayerTimesClient({
                 </Button>
               </div>
             </div>
+
+            {/* MethodInfo - Collapsible variant (default) */}
+            <MethodInfo
+              calculation_method={params.calculation_method}
+              madhab={params.madhab}
+              high_latitude_rule={params.high_latitude_rule}
+              nafl_method={params.nafl_method}
+              variant="collapsible"
+            />
+
+            {/* MethodInfo - Separate card variant (toggle to test) */}
+            {methodInfoVariant === 'separate' && (
+              <Card className='p-4 space-y-3 mt-4'>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                    Method Details (Separate Card)
+                  </h3>
+                  <button
+                    onClick={() => setMethodInfoVariant('collapsible')}
+                    className="text-xs text-text-muted hover:text-text"
+                  >
+                    Switch to Collapsible
+                  </button>
+                </div>
+                <MethodInfo
+                  calculation_method={params.calculation_method}
+                  madhab={params.madhab}
+                  high_latitude_rule={params.high_latitude_rule}
+                  nafl_method={params.nafl_method}
+                  variant="separate"
+                />
+              </Card>
+            )}
           </Card>
         )}
 
@@ -433,7 +489,7 @@ export function RangePrayerTimesClient({
                         <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}
                         </td>
-                        <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
+<td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
                           {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'}
                         </td>
                         <td className='px-3 py-2 text-center text-sm font-semibold tabular-nums text-text border-r border-border'>
@@ -454,36 +510,76 @@ export function RangePrayerTimesClient({
                                 expandedRow === date ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                               )}
                             >
-                              <div className='p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs'>
-                                <div className='space-y-1'>
-                                  <p className='text-text-muted uppercase tracking-wider font-semibold'>Elevation Angles</p>
-                                  {rowData.ishraq_elevation !== null && rowData.ishraq_elevation !== undefined && (
-                                    <p className='text-text font-medium tabular-nums'>Ishraq: {rowData.ishraq_elevation}°</p>
+                              {/* Variant A: 5-Card Grid (matches Today page) */}
+                              {rangeRowVariant === 'grid' && (
+                                <div className='p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3'>
+                                  {[
+                                    { label: 'Ishraq', time: rowData.ishraq, elevation: rowData.ishraq_elevation },
+                                    { label: 'Duha Start', time: rowData.duha_start, elevation: rowData.duha_start_elevation },
+                                    { label: 'Duha End', time: rowData.duha_end, elevation: null },
+                                    { label: 'Awwabin Start', time: rowData.awwabin_start, elevation: null },
+                                    { label: 'Awwabin End', time: rowData.awwabin_end, elevation: null },
+                                  ].map((item, idx) =>
+                                    item.time || item.elevation ? (
+                                      <PrayerTimeCard
+                                        key={idx}
+                                        label={item.label}
+                                        time={item.time}
+                                        elevation={item.elevation}
+                                        elevationTooltip={true}
+                                        naflMethod={params.nafl_method}
+                                        showNaflBadge={true}
+                                      />
+                                    ) : null
                                   )}
-                                  {rowData.duha_start_elevation !== null && rowData.duha_start_elevation !== undefined && (
-                                    <p className='text-text font-medium tabular-nums'>Duha Start: {rowData.duha_start_elevation}°</p>
-                                  )}
-                                  <p className='text-text'>Nafl Method: {rowData.nafl_method || '—'}</p>
                                 </div>
-                                <div className='space-y-1'>
-                                  <p className='text-text-muted uppercase tracking-wider font-semibold'>Ishraq</p>
-                                  <p className='text-text font-semibold tabular-nums'>{rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}</p>
-                                  <p className='text-text-muted'>(Sunrise + ~20 min)</p>
+                              )}
+
+                              {/* Variant B: Enhanced Table Row (original layout) */}
+                              {rangeRowVariant === 'table' && (
+                                <div className='p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs'>
+                                  <div className='space-y-1'>
+                                    <p className='text-text-muted uppercase tracking-wider font-semibold'>Elevation Angles</p>
+                                    {rowData.ishraq_elevation !== null && rowData.ishraq_elevation !== undefined && (
+                                      <p className='text-text font-medium tabular-nums'>Ishraq: {rowData.ishraq_elevation}°</p>
+                                    )}
+                                    {rowData.duha_start_elevation !== null && rowData.duha_start_elevation !== undefined && (
+                                      <p className='text-text font-medium tabular-nums'>Duha Start: {rowData.duha_start_elevation}°</p>
+                                    )}
+                                    <p className='text-text'>Nafl Method: <NaflMethodBadge method={params.nafl_method} variant="inline" /></p>
+                                  </div>
+                                  <div className='space-y-1'>
+                                    <p className='text-text-muted uppercase tracking-wider font-semibold'>Ishraq</p>
+                                    <p className='text-text font-semibold tabular-nums'>{rowData.ishraq ? rowData.ishraq.slice(0, 5) : '—'}</p>
+                                    <p className='text-text-muted'>(Sunrise + ~20 min)</p>
+                                  </div>
+                                  <div className='space-y-1'>
+                                    <p className='text-text-muted uppercase tracking-wider font-semibold'>Duha</p>
+                                    <p className='text-text font-semibold tabular-nums'>
+                                      {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'} – {rowData.duha_end ? rowData.duha_end.slice(0, 5) : '—'}
+                                    </p>
+                                    <p className='text-text-muted'>(Forenoon prayer window)</p>
+                                  </div>
+                                  <div className='space-y-1'>
+                                    <p className='text-text-muted uppercase tracking-wider font-semibold'>Awwabin</p>
+                                    <p className='text-text font-semibold tabular-nums'>
+                                      {rowData.awwabin_start && rowData.awwabin_end
+                                        ? `${rowData.awwabin_start.slice(0, 5)} – ${rowData.awwabin_end.slice(0, 5)}`
+                                        : '—'}
+                                    </p>
+                                    <p className='text-text-muted'>(6 rak&apos;ahs after Maghrib)</p>
+                                  </div>
                                 </div>
-                                <div className='space-y-1'>
-                                  <p className='text-text-muted uppercase tracking-wider font-semibold'>Duha</p>
-                                  <p className='text-text font-semibold tabular-nums'>
-                                    {rowData.duha_start ? rowData.duha_start.slice(0, 5) : '—'} – {rowData.duha_end ? rowData.duha_end.slice(0, 5) : '—'}
-                                  </p>
-                                  <p className='text-text-muted'>(Forenoon prayer window)</p>
-                                </div>
-                                <div className='space-y-1'>
-                                  <p className='text-text-muted uppercase tracking-wider font-semibold'>Awwabin</p>
-                                  <p className='text-text font-semibold tabular-nums'>
-                                    {rowData.awwabin_start ? rowData.awwabin_start.slice(0, 5) : '—'} – {rowData.awwabin_end ? rowData.awwabin_end.slice(0, 5) : '—'}
-                                  </p>
-                                  <p className='text-text-muted'>(6 rak&apos;ahs after Maghrib)</p>
-                                </div>
+                              )}
+
+                              {/* Toggle button for range row variant */}
+                              <div className="px-4 pb-3 pt-2 border-t border-border/40 flex items-center justify-end">
+                                <button
+                                  onClick={() => setRangeRowVariant(rangeRowVariant === 'grid' ? 'table' : 'grid')}
+                                  className="text-xs text-text-muted hover:text-text px-2 py-1 rounded hover:bg-surface"
+                                >
+                                  Switch to {rangeRowVariant === 'grid' ? 'Table' : 'Grid'} View
+                                </button>
                               </div>
                             </div>
                           </td>

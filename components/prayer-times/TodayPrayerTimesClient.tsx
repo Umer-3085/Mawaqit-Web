@@ -8,11 +8,14 @@ import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, Hi
 import { LocationInput } from './LocationInput';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
+import { MethodInfo } from './MethodInfo';
+import { NaflMethodBadge } from './NaflMethodBadge';
 import { Card } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
 import { formatDateWithHijri, getTodayISO } from '../../lib/date-utils';
+import { reverseGeocode } from '../../lib/geocoding';
 
 interface TodayPrayerTimesClientProps {
   initialData: PrayerTimesResponse | null;
@@ -29,6 +32,7 @@ interface ClientParams {
   madhab: Madhab;
   high_latitude_rule: HighLatitudeRule;
   nafl_method: NaflMethod;
+  cityName?: string;
 }
 
 const DEBOUNCE_MS = 300;
@@ -83,6 +87,7 @@ export function TodayPrayerTimesClient({
   const [geolocationLoading, setGeolocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [controlsOpen, setControlsOpen] = useState(true);
+  const [methodInfoVariant, setMethodInfoVariant] = useState<'collapsible' | 'separate'>('collapsible');
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -179,12 +184,14 @@ const { updateLocation } = useUpdateLocation();
     setGeolocationLoading(true);
     setError(null);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const cityData = await reverseGeocode(position.coords.latitude, position.coords.longitude);
         handleChange({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           timezone: tz,
+          cityName: cityData?.city,
         });
         setGeolocationLoading(false);
       },
@@ -337,6 +344,15 @@ const { updateLocation } = useUpdateLocation();
             View Range
           </Button>
 
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={() => setMethodInfoVariant(methodInfoVariant === 'collapsible' ? 'separate' : 'collapsible')}
+            className='text-xs'
+          >
+            MethodInfo: {methodInfoVariant}
+          </Button>
+
           {showDatePicker && (
             <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
               <div className='bg-surface rounded-xl p-6 w-full max-w-md shadow-xl border border-border'>
@@ -401,6 +417,39 @@ const { updateLocation } = useUpdateLocation();
               onChange={handleChange}
             />
           </div>
+
+          {/* MethodInfo - Collapsible variant (default) */}
+          <MethodInfo
+            calculation_method={params.calculation_method}
+            madhab={params.madhab}
+            high_latitude_rule={params.high_latitude_rule}
+            nafl_method={params.nafl_method}
+            variant="collapsible"
+          />
+
+          {/* MethodInfo - Separate card variant (toggle to test) */}
+          {methodInfoVariant === 'separate' && (
+            <Card className='p-4 space-y-3 mt-4'>
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                  Method Details (Separate Card)
+                </h3>
+                <button
+                  onClick={() => setMethodInfoVariant('collapsible')}
+                  className="text-xs text-text-muted hover:text-text"
+                >
+                  Switch to Collapsible
+                </button>
+              </div>
+              <MethodInfo
+                calculation_method={params.calculation_method}
+                madhab={params.madhab}
+                high_latitude_rule={params.high_latitude_rule}
+                nafl_method={params.nafl_method}
+                variant="separate"
+              />
+            </Card>
+          )}
         </Card>
       </div>
 
@@ -441,6 +490,9 @@ const { updateLocation } = useUpdateLocation();
             <span>Nafl Prayers & Solar Angle</span>
             <span className='text-xs font-normal text-text-muted'>(النوافل والشروق)</span>
           </h2>
+          <div className="flex items-center gap-2">
+            <NaflMethodBadge method={params.nafl_method} variant="inline" />
+          </div>
         </div>
 
         {isLoading && !displayData ? (
@@ -458,6 +510,9 @@ const { updateLocation } = useUpdateLocation();
                   label={item.label}
                   time={item.time}
                   elevation={item.elevation}
+                  elevationTooltip={true}
+                  naflMethod={params.nafl_method}
+                  showNaflBadge={true}
                 />
               ) : null
             )}

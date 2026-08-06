@@ -59,6 +59,7 @@ function toLocationParams(params: ClientParams): LocationParams {
     madhab: params.madhab,
     high_latitude_rule: params.high_latitude_rule,
     nafl_method: params.nafl_method,
+    cityName: params.cityName,
   };
 }
 

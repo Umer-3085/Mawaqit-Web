@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -40,6 +40,25 @@ function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: 
   return null;
 }
 
+/** 
+ * Controller to solve the Leaflet hidden/tab container size-collapse bug.
+ * Calls map.invalidateSize() on mount/update and centers the map view.
+ */
+function MapController({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+
+  useEffect(() => {
+    // Run after a micro-task to ensure container layout has completed in the browser
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+      map.setView([lat, lng], map.getZoom() || 13);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [map, lat, lng]);
+
+  return null;
+}
+
 export function LocationMap({ lat, lng, onLocationChange, disabled = false, className }: LocationMapProps) {
   const [position, setPosition] = useState({ lat, lng });
   const [prevLat, setPrevLat] = useState(lat);
@@ -51,7 +70,6 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
   const [showResults, setShowResults] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
 
   // Synchronize state during render phase if props change
@@ -132,10 +150,6 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     setSearchQuery(result.displayName);
     setShowResults(false);
     setSearchResults([]);
-    // Pan map to selected result
-    if (mapRef.current) {
-      mapRef.current.setView([result.lat, result.lng], 13);
-    }
   };
 
   const handleLocate = () => {
@@ -146,11 +160,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     setMapError(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const newPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        setPosition(newPos);
-        if (mapRef.current) {
-          mapRef.current.setView([newPos.lat, newPos.lng], 15);
-        }
+        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       },
       (err) => setMapError(err.message),
       { enableHighAccuracy: true, timeout: 10000 }
@@ -160,12 +170,8 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
   return (
     <div className={cn('relative', className)}>
       {/* Map Container */}
-      <div
-        className="relative border border-border/40 rounded-xl overflow-hidden"
-        style={{ height: '100%', minHeight: '300px', maxHeight: '50vh' }}
-      >
+      <div className="relative border border-border/40 rounded-xl overflow-hidden h-[350px] w-full">
         <MapContainer
-          ref={mapRef}
           center={[position.lat, position.lng]}
           zoom={13}
           scrollWheelZoom={!disabled}
@@ -191,6 +197,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
             </Popup>
           </Marker>
           <MapEvents onLocationSelect={(lat, lng) => setPosition({ lat, lng })} />
+          <MapController lat={position.lat} lng={position.lng} />
         </MapContainer>
 
         {/* Floating Geolocation Button */}

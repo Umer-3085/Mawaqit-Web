@@ -67,36 +67,42 @@ export function LocationPicker({
 
   return (
     <div className="space-y-4">
-      {/* Tab Buttons */}
-      <div className="flex gap-1 p-1 bg-surface/50 border border-border/40 rounded-lg">
+      {/* Segmented Tab Control */}
+      <div className="flex gap-1 p-1 bg-surface-elevated/60 border border-border/40 rounded-lg">
         <button
           type="button"
           onClick={() => handleTabChange('manual')}
           className={cn(
-            'flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors',
+            'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-150 ease-out',
             activeTab === 'manual'
               ? 'bg-primary text-white shadow-sm'
-              : 'text-text-muted hover:text-text'
+              : 'text-text-muted hover:text-text hover:bg-surface/60'
           )}
         >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
           Manual
         </button>
         <button
           type="button"
           onClick={() => handleTabChange('map')}
           className={cn(
-            'flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors',
+            'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-150 ease-out',
             activeTab === 'map'
               ? 'bg-primary text-white shadow-sm'
-              : 'text-text-muted hover:text-text'
+              : 'text-text-muted hover:text-text hover:bg-surface/60'
           )}
         >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
           Map
         </button>
       </div>
 
       {/* Tab Panels */}
-      <div className="space-y-4">
+      <div>
         {activeTab === 'manual' && (
           <LocationInput
             lat={mapLat}
@@ -125,17 +131,6 @@ export function LocationPicker({
           </div>
         )}
       </div>
-
-      {/* City Name Display (shared) */}
-      {(cityName || mapAddress) && (
-        <div className="text-sm text-text-muted flex items-center gap-1">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          {cityName || mapAddress}
-        </div>
-      )}
     </div>
   );
 }

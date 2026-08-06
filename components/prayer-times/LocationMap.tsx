@@ -10,7 +10,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { cn } from '@/components/ui/utils';
 import { reverseGeocode } from '../../lib/geocoding';
 
-// Fix default marker icon
+// Fix default marker icon for Leaflet in Next.js
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -31,6 +31,7 @@ interface LocationMapProps {
   className?: string;
 }
 
+/** Handles click-to-set-marker on the map */
 function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
@@ -38,26 +39,6 @@ function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: 
     },
   });
   return null;
-}
-
-function GeolocationControl({ onLocate }: { onLocate: () => void }) {
-  
-  return (
-    <div className="leaflet-control leaflet-bar leaflet-control-custom" style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onLocate}
-        className="shadow-lg"
-        title="Use my location"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      </Button>
-    </div>
-  );
 }
 
 export function LocationMap({ lat, lng, onLocationChange, disabled = false, className }: LocationMapProps) {
@@ -76,7 +57,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     setPosition({ lat, lng });
   }, [lat, lng]);
 
-  // Attach drag event listener to marker
+  // Attach drag event listener to marker via ref
   useEffect(() => {
     if (markerRef.current && !disabled) {
       markerRef.current.on('dragend', (e) => {
@@ -106,7 +87,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     return () => { cancelled = true; };
   }, [position.lat, position.lng, onLocationChange]);
 
-  // Forward geocode search with debounce
+  // Forward geocode search with 300ms debounce
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -144,6 +125,10 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     setSearchQuery(result.displayName);
     setShowResults(false);
     setSearchResults([]);
+    // Pan map to selected result
+    if (mapRef.current) {
+      mapRef.current.setView([result.lat, result.lng], 13);
+    }
   };
 
   const handleLocate = () => {
@@ -167,7 +152,11 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
 
   return (
     <div className={cn('relative', className)}>
-      <div className="relative" style={{ height: '100%', minHeight: '300px', maxHeight: '50vh', borderRadius: '0.75rem', overflow: 'hidden' }}>
+      {/* Map Container */}
+      <div
+        className="relative border border-border/40 rounded-xl overflow-hidden"
+        style={{ height: '100%', minHeight: '300px', maxHeight: '50vh' }}
+      >
         <MapContainer
           ref={mapRef}
           center={[position.lat, position.lng]}
@@ -188,18 +177,35 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
             <Popup>
               <div className="p-1 text-sm">
                 <p className="font-medium">{address || 'Selected location'}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs opacity-60">
                   {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
                 </p>
               </div>
             </Popup>
           </Marker>
           <MapEvents onLocationSelect={(lat, lng) => setPosition({ lat, lng })} />
-          <GeolocationControl onLocate={handleLocate} />
         </MapContainer>
 
+        {/* Floating Geolocation Button */}
+        <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLocate}
+            disabled={disabled}
+            className="shadow-lg bg-surface/95 backdrop-blur-sm"
+            title="Use my location"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </Button>
+        </div>
+
+        {/* Map Error Toast */}
         {mapError && (
-          <div className="absolute bottom-2 left-2 right-2 bg-red-500/90 text-white text-xs px-3 py-2 rounded shadow-lg animate-fade-in-up">
+          <div className="absolute bottom-2 left-2 right-2 bg-error/90 text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity duration-150">
             {mapError}
           </div>
         )}
@@ -224,14 +230,14 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
           )}
         </div>
         {showResults && searchResults.length > 0 && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-md max-h-60 overflow-auto">
             {searchResults.map((result, idx) => (
               <button
                 key={idx}
                 onClick={() => selectResult(result)}
-                className="w-full px-3 py-2 text-left text-sm hover:bg-surface-elevated transition-colors border-b last:border-0"
+                className="w-full px-4 py-2.5 text-left text-sm text-text hover:bg-surface-elevated transition-colors duration-150 border-b border-border/40 last:border-0 first:rounded-t-xl last:rounded-b-xl"
               >
-                {result.displayName}
+                <span className="line-clamp-2">{result.displayName}</span>
               </button>
             ))}
           </div>
@@ -240,12 +246,19 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
 
       {/* Address Display */}
       {address && (
-        <div className="mt-3 p-3 bg-surface/50 border border-border/40 rounded-lg">
-          <p className="text-xs text-text-muted uppercase tracking-wider font-semibold mb-1">Address</p>
-          <p className="text-sm text-text break-words">{address}</p>
-          <p className="text-[11px] text-text-muted/60 mt-1 font-mono">
-            {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
-          </p>
+        <div className="mt-3 p-3 bg-surface/50 border border-border/40 rounded-xl">
+          <div className="flex items-start gap-2">
+            <svg className="w-4 h-4 text-primary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <div className="min-w-0">
+              <p className="text-sm text-text break-words leading-relaxed">{address}</p>
+              <p className="text-[11px] text-text-muted/60 mt-1 font-mono tabular-nums">
+                {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </div>

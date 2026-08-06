@@ -12,6 +12,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
 import { formatDateWithHijri, getTodayISO, subDaysISO } from '../../lib/date-utils';
+import { reverseGeocode } from '../../lib/geocoding';
 import { cn } from '@/components/ui/utils';
 
 interface RangePrayerTimesClientProps {
@@ -31,6 +32,7 @@ interface ClientParams {
   madhab: Madhab;
   high_latitude_rule: HighLatitudeRule;
   nafl_method: NaflMethod;
+  cityName?: string;
 }
 
 const DEBOUNCE_MS = 300;
@@ -57,6 +59,7 @@ function toLocationParams(params: ClientParams): LocationParams {
     madhab: params.madhab,
     high_latitude_rule: params.high_latitude_rule,
     nafl_method: params.nafl_method,
+    cityName: params.cityName,
   };
 }
 
@@ -179,12 +182,14 @@ export function RangePrayerTimesClient({
     setGeolocationLoading(true);
     setError(null);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const cityData = await reverseGeocode(position.coords.latitude, position.coords.longitude);
         handleChange({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           timezone: tz,
+          cityName: cityData?.city,
         });
         setGeolocationLoading(false);
       },
@@ -290,6 +295,7 @@ export function RangePrayerTimesClient({
                 onGeolocation={handleGeolocation}
                 geolocationLoading={geolocationLoading}
                 error={error}
+                cityName={params.cityName}
               />
             </div>
 

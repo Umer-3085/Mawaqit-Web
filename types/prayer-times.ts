@@ -127,6 +127,7 @@ export interface LocationParams {
   madhab: Madhab;
   high_latitude_rule: HighLatitudeRule;
   nafl_method: NaflMethod;
+  cityName?: string;
 }
 
 export interface ParsedPrayerTimesResponse extends PrayerTimesResponse {

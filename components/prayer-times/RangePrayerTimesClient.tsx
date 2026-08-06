@@ -289,7 +289,7 @@ export function RangePrayerTimesClient({
               <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-3'>
                 Location Settings
               </h2>
-              <LocationInput
+              <LocationPicker
                 lat={params.lat}
                 lng={params.lng}
                 timezone={params.timezone}

@@ -384,7 +384,7 @@ const { updateLocation } = useUpdateLocation();
             <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-3'>
               Location Settings
             </h2>
-            <LocationInput
+            <LocationPicker
               lat={params.lat}
               lng={params.lng}
               timezone={params.timezone}
@@ -392,6 +392,7 @@ const { updateLocation } = useUpdateLocation();
               onGeolocation={handleGeolocation}
               geolocationLoading={geolocationLoading}
               error={error}
+              cityName={params.cityName}
             />
           </div>
 

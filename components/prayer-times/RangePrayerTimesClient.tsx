@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePrayerTimesRange } from '@/hooks/usePrayerTimes';
 import { useUpdateLocation } from '@/hooks/useLocationMutations';
 import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '@/types/prayer-times';
-import { LocationInput } from './LocationInput';
+import { LocationPicker } from './LocationPicker';
 import { MethodControls } from './MethodControls';
 import { MethodInfo } from './MethodInfo';
 import { NaflMethodBadge } from './NaflMethodBadge';

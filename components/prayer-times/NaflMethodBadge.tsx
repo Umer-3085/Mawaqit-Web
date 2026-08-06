@@ -28,7 +28,6 @@ const METHOD_DESCRIPTIONS: Record<NaflMethod, string> = {
 
 export function NaflMethodBadge({ method, variant = 'inline', className }: NaflMethodBadgeProps) {
   const label = METHOD_LABELS[method];
-  const description = METHOD_DESCRIPTIONS[method];
 
   const baseClasses = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider';
   const variantClasses = {

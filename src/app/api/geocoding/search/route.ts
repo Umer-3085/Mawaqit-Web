@@ -29,7 +29,22 @@ export async function GET(request: Request) {
     const res = await fetch(url);
     if (res.ok) {
       const geojson = await res.json();
-      const mapped = (geojson.features || []).map((feature: any) => {
+      interface PhotonFeature {
+        properties: {
+          name?: string;
+          street?: string;
+          city?: string;
+          state?: string;
+          country?: string;
+          town?: string;
+          village?: string;
+          suburb?: string;
+        };
+        geometry: {
+          coordinates: [number, number];
+        };
+      }
+      const mapped = (geojson.features || []).map((feature: PhotonFeature) => {
         const props = feature.properties || {};
         const coords = feature.geometry?.coordinates || [0, 0];
         const displayName = [props.name, props.street, props.city, props.state, props.country]

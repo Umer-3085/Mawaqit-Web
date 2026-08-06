@@ -42,6 +42,8 @@ function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: 
 
 export function LocationMap({ lat, lng, onLocationChange, disabled = false, className }: LocationMapProps) {
   const [position, setPosition] = useState({ lat, lng });
+  const [prevLat, setPrevLat] = useState(lat);
+  const [prevLng, setPrevLng] = useState(lng);
   const [address, setAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Array<{ lat: number; lng: number; displayName: string }>>([]);
@@ -52,21 +54,25 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
 
-  useEffect(() => {
+  // Synchronize state during render phase if props change
+  if (lat !== prevLat || lng !== prevLng) {
+    setPrevLat(lat);
+    setPrevLng(lng);
     setPosition({ lat, lng });
-  }, [lat, lng]);
+  }
 
   // Attach drag event listener to marker via ref
   useEffect(() => {
-    if (markerRef.current && !disabled) {
-      markerRef.current.on('dragend', (e) => {
+    const currentMarker = markerRef.current;
+    if (currentMarker && !disabled) {
+      currentMarker.on('dragend', (e) => {
         const { lat, lng } = e.target.getLatLng();
         setPosition({ lat, lng });
       });
     }
     return () => {
-      if (markerRef.current) {
-        markerRef.current.off('dragend');
+      if (currentMarker) {
+        currentMarker.off('dragend');
       }
     };
   }, [disabled]);
@@ -98,11 +104,13 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
       const res = await fetch(url);
       if (!res.ok) throw new Error('Search failed');
       const data = await res.json();
-      setSearchResults(data.map((item: any) => ({
-        lat: parseFloat(item.lat),
-        lng: parseFloat(item.lon),
-        displayName: item.display_name,
-      })));
+      setSearchResults(
+        data.map((item: { lat: string | number; lon: string | number; display_name: string }) => ({
+          lat: typeof item.lat === 'string' ? parseFloat(item.lat) : item.lat,
+          lng: typeof item.lon === 'string' ? parseFloat(item.lon) : item.lon,
+          displayName: item.display_name,
+        }))
+      );
       setShowResults(true);
     } catch (err) {
       console.error('Search error:', err);

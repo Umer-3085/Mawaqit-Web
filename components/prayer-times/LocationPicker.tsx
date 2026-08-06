@@ -53,12 +53,17 @@ export function LocationPicker({
   const [activeTab, setActiveTab] = useState<'manual' | 'map'>(getInitialTab);
   const [mapLat, setMapLat] = useState(lat);
   const [mapLng, setMapLng] = useState(lng);
+  const [prevLat, setPrevLat] = useState(lat);
+  const [prevLng, setPrevLng] = useState(lng);
   const [mapAddress, setMapAddress] = useState<string>('');
 
-  useEffect(() => {
+  // Synchronize state during render phase if props change
+  if (lat !== prevLat || lng !== prevLng) {
+    setPrevLat(lat);
+    setPrevLng(lng);
     setMapLat(lat);
     setMapLng(lng);
-  }, [lat, lng]);
+  }
 
   const handleTabChange = useCallback((tab: 'manual' | 'map') => {
     setActiveTab(tab);

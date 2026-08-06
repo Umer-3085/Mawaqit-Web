@@ -63,7 +63,6 @@ export function ElevationTooltip({
 
     // Check if tooltip would go off screen
     const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
 
     let newPosition = position;
 

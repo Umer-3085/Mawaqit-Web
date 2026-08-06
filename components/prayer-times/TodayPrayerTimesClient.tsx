@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTodayPrayerTimes, usePrayerTimes } from '../../hooks/usePrayerTimes';
 import { useUpdateLocation } from '../../hooks/useLocationMutations';
 import type { LocationParams, PrayerTimesResponse, CalculationMethod, Madhab, HighLatitudeRule, NaflMethod } from '../../types/prayer-times';
-import { LocationInput } from './LocationInput';
+import { LocationPicker } from './LocationPicker';
 import { MethodControls } from './MethodControls';
 import { PrayerTimeCard } from './PrayerTimeCard';
 import { MethodInfo } from './MethodInfo';
@@ -384,7 +384,7 @@ const { updateLocation } = useUpdateLocation();
             <h2 className='text-xs font-bold uppercase tracking-wider text-primary mb-3'>
               Location Settings
             </h2>
-            <LocationInput
+            <LocationPicker
               lat={params.lat}
               lng={params.lng}
               timezone={params.timezone}
@@ -392,6 +392,7 @@ const { updateLocation } = useUpdateLocation();
               onGeolocation={handleGeolocation}
               geolocationLoading={geolocationLoading}
               error={error}
+              cityName={params.cityName}
             />
           </div>
 
@@ -478,7 +479,6 @@ const { updateLocation } = useUpdateLocation();
                   elevation={item.elevation}
                   elevationTooltip={true}
                   naflMethod={params.nafl_method}
-                  showNaflBadge={true}
                 />
               ) : null
             )}

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select, type SelectOption } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface LocationInputProps {
@@ -11,7 +11,7 @@ interface LocationInputProps {
   lng: number;
   timezone: string;
   onChange: (updates: { lat?: number; lng?: number; timezone?: string }) => void;
-  onGeolocation: () => void;
+  onGeolocation?: () => void;
   geolocationLoading?: boolean;
   error?: string | null;
   disabled?: boolean;
@@ -118,6 +118,27 @@ export function LocationInput({
         />
       </div>
 
+      {/* Geolocation Button */}
+      {onGeolocation && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onGeolocation}
+          disabled={disabled || geolocationLoading}
+          className="flex items-center gap-2 text-xs font-semibold"
+        >
+          {geolocationLoading ? (
+            <LoadingSpinner size="sm" />
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          )}
+          {geolocationLoading ? 'Detecting…' : 'Use My Location'}
+        </Button>
+      )}
+
       {cityName && (
         <div className="text-sm text-text-muted flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -128,33 +149,9 @@ export function LocationInput({
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-4 pt-1">
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={onGeolocation}
-          disabled={disabled || geolocationLoading}
-          className="w-full sm:w-auto font-semibold shadow-sm"
-        >
-          {geolocationLoading ? (
-            <>
-              <LoadingSpinner size="sm" color="current" className="mr-2" />
-              Detecting Location…
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Use My Location
-            </>
-          )}
-        </Button>
-        <span className="text-xs text-text-muted hidden sm:inline-block">
-          Decimal degrees (-90..90, -180..180)
-        </span>
-      </div>
+      <p className="text-xs text-text-muted hidden sm:inline-block">
+        Decimal degrees (-90..90, -180..180)
+      </p>
     </div>
   );
 }

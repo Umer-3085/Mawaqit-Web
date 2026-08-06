@@ -2,7 +2,6 @@
 
 import { cn } from '@/components/ui/utils';
 import { ElevationTooltip } from './ElevationTooltip';
-import { NaflMethodBadge } from './NaflMethodBadge';
 import type { NaflMethod } from '@/types/prayer-times';
 
 export interface PrayerTimeCardProps {
@@ -16,7 +15,6 @@ export interface PrayerTimeCardProps {
   // NEW PROPS
   elevationTooltip?: boolean;
   naflMethod?: NaflMethod;
-  showNaflBadge?: boolean;
 }
 
 const ARABIC_LABELS: Record<string, string> = {
@@ -49,7 +47,6 @@ export function PrayerTimeCard({
   className,
   elevationTooltip = false,
   naflMethod,
-  showNaflBadge = false,
 }: PrayerTimeCardProps) {
   const arLabel = arabicLabel || ARABIC_LABELS[label];
   const tooltipType = PRAYER_TO_TOOLTIP[label];

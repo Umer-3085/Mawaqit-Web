@@ -13,7 +13,6 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
 import { formatDateWithHijri, getTodayISO } from '../../lib/date-utils';
-import { reverseGeocode } from '../../lib/geocoding';
 
 interface TodayPrayerTimesClientProps {
   initialData: PrayerTimesResponse | null;
@@ -30,7 +29,6 @@ interface ClientParams {
   madhab: Madhab;
   high_latitude_rule: HighLatitudeRule;
   nafl_method: NaflMethod;
-  cityName?: string;
 }
 
 const DEBOUNCE_MS = 300;
@@ -56,7 +54,6 @@ function toLocationParams(params: ClientParams): LocationParams {
     madhab: params.madhab,
     high_latitude_rule: params.high_latitude_rule,
     nafl_method: params.nafl_method,
-    cityName: params.cityName,
   };
 }
 
@@ -89,7 +86,7 @@ export function TodayPrayerTimesClient({
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { updateLocation } = useUpdateLocation();
+const { updateLocation } = useUpdateLocation();
 
   // Use different hooks based on whether it's a date page or today page
   const todayHook = useTodayPrayerTimes(
@@ -182,14 +179,12 @@ export function TodayPrayerTimesClient({
     setGeolocationLoading(true);
     setError(null);
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const cityData = await reverseGeocode(position.coords.latitude, position.coords.longitude);
         handleChange({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           timezone: tz,
-          cityName: cityData?.city,
         });
         setGeolocationLoading(false);
       },
@@ -296,9 +291,9 @@ export function TodayPrayerTimesClient({
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
             </svg>
             {controlsOpen ? 'Hide Controls' : 'Location & Methods'}
-          </Button>
+</Button>
 
-          <Button
+<Button
             variant='ghost'
             size='sm'
             onClick={() => mutate()}
@@ -391,7 +386,6 @@ export function TodayPrayerTimesClient({
               onGeolocation={handleGeolocation}
               geolocationLoading={geolocationLoading}
               error={error}
-              cityName={params.cityName}
             />
           </div>
 

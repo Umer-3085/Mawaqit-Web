@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -479,7 +479,6 @@ const { updateLocation } = useUpdateLocation();
                   elevation={item.elevation}
                   elevationTooltip={true}
                   naflMethod={params.nafl_method}
-                  showNaflBadge={true}
                 />
               ) : null
             )}

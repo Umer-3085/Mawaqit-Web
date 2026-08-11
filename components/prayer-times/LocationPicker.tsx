@@ -95,7 +95,7 @@ export function LocationPicker({
           className={cn(
             'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-150 ease-out',
             activeTab === 'manual'
-              ? 'bg-primary text-white shadow-sm'
+              ? 'bg-lime text-black shadow-sm'
               : 'text-text-muted hover:text-text hover:bg-surface/60'
           )}
         >
@@ -110,7 +110,7 @@ export function LocationPicker({
           className={cn(
             'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-150 ease-out',
             activeTab === 'map'
-              ? 'bg-primary text-white shadow-sm'
+              ? 'bg-lime text-black shadow-sm'
               : 'text-text-muted hover:text-text hover:bg-surface/60'
           )}
         >

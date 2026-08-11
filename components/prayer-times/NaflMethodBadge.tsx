@@ -28,11 +28,16 @@ const METHOD_DESCRIPTIONS: Record<NaflMethod, string> = {
 
 export function NaflMethodBadge({ method, variant = 'inline', className }: NaflMethodBadgeProps) {
   const label = METHOD_LABELS[method];
+  const isQuarterDay = method === 'QUARTER_DAY';
 
   const baseClasses = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider';
   const variantClasses = {
-    corner: 'bg-primary/10 text-primary border border-primary/20',
-    inline: 'bg-surface border border-border/40 text-text-muted',
+    corner: isQuarterDay 
+      ? 'bg-ivory text-black border border-ivory/20'
+      : 'bg-lime text-black border border-lime/20',
+    inline: isQuarterDay
+      ? 'bg-ivory/10 text-ivory border border-ivory/20'
+      : 'bg-lime/10 text-lime border border-lime/20',
   };
 
   if (variant === 'corner') {

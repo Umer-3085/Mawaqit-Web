@@ -108,19 +108,20 @@ export function ElevationTooltip({
         <div
           ref={tooltipRef}
           className={cn(
-            'absolute z-50 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 rounded-lg shadow-lg',
+            'absolute z-50 px-3 py-2 text-xs text-text rounded-lg shadow-lg',
+            'bg-surface-elevated border border-border/40',
             'whitespace-nowrap max-w-[280px] text-wrap',
             'animate-fade-in-up',
             positionClasses[actualPosition]
           )}
           role="tooltip"
         >
-          <div className="font-semibold text-primary mb-0.5">{elevation}° Solar Angle</div>
+          <div className="font-semibold text-lime mb-0.5">{elevation}° Solar Angle</div>
           <div>{content}</div>
           <div className="absolute w-0 h-0 border-4 border-transparent">
-            {actualPosition === 'top' && <div className="bottom-[-8px] left-1/2 -translate-x-1/2 border-t-white dark:border-t-gray-100" />}
-            {actualPosition === 'right' && <div className="left-[-8px] top-1/2 -translate-y-1/2 border-r-white dark:border-r-gray-100" />}
-            {actualPosition === 'left' && <div className="right-[-8px] top-1/2 -translate-y-1/2 border-l-white dark:border-l-gray-100" />}
+            {actualPosition === 'top' && <div className="bottom-[-8px] left-1/2 -translate-x-1/2 border-t-surface-elevated" />}
+            {actualPosition === 'right' && <div className="left-[-8px] top-1/2 -translate-y-1/2 border-r-surface-elevated" />}
+            {actualPosition === 'left' && <div className="right-[-8px] top-1/2 -translate-y-1/2 border-l-surface-elevated" />}
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@ import { cn } from './utils';
 export interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  color?: 'primary' | 'white' | 'current';
+  color?: 'lime' | 'white' | 'current';
   'aria-label'?: string;
 }
 
@@ -16,7 +16,7 @@ const sizeClasses = {
 };
 
 const colorClasses = {
-  primary: 'text-primary',
+  lime: 'text-lime',
   white: 'text-white',
   current: 'text-current',
 };
@@ -24,7 +24,7 @@ const colorClasses = {
 export function LoadingSpinner({
   size = 'md',
   className,
-  color = 'current',
+  color = 'lime',
   'aria-label': ariaLabel = 'Loading',
 }: LoadingSpinnerProps) {
   return (

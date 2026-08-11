@@ -3,17 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { useState } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { cn } from '@/components/ui/utils';
 
 interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
-  active?: boolean;
 }
 
-const navItems: NavItem[] = [
+const navItems = [
   {
     label: 'Prayer Times',
     href: '/prayer-times',
@@ -52,265 +51,170 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function Navbar() {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const MobileDrawerContext = createContext<{
+  isOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
+} | null>(null);
+
+export function MobileDrawerProvider({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openDrawer = () => setIsOpen(true);
+  const closeDrawer = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Brand Wordmark - Left */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg p-1 flex-shrink-0"
-        >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-            ☪
-          </div>
-          <div className="hidden sm:flex flex-col">
-            <span className="font-bold text-lg leading-none tracking-tight text-text flex items-center gap-1.5">
-              Mawaqit
-              <span className="font-arabic text-primary text-base font-semibold" dir="rtl">
-                مواقيت
-              </span>
-            </span>
-          </div>
-        </Link>
-
-        {/* Desktop Navigation - Right */}
-        <nav className="hidden md:flex items-center gap-1.5 sm:gap-2 flex-1 justify-end">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
-                  isActive
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'text-text-muted hover:text-primary hover:bg-surface'
-                )}
-              >
-                <span className="flex items-center justify-center">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          className="md:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
-          onClick={() => setMobileMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-
-        {/* Theme Toggle - Far Right */}
-        <ThemeToggle />
-      </div>
-
-      {/* Mobile Drawer Overlay */}
+    <MobileDrawerContext.Provider value={{ isOpen, openDrawer, closeDrawer }}>
+      {children}
       <MobileDrawer />
-    </header>
+    </MobileDrawerContext.Provider>
   );
 }
 
+function useMobileDrawer() {
+  const context = useContext(MobileDrawerContext);
+  if (!context) {
+    throw new Error('useMobileDrawer must be used within MobileDrawerProvider');
+  }
+  return context;
+}
+
 function MobileDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, closeDrawer } = useMobileDrawer();
   const pathname = usePathname();
 
-  const openDrawer = () => setIsOpen(true);
-  const closeDrawer = () => setIsOpen(false);
-
-  const toggleDrawer = () => setIsOpen(!isOpen);
-
-  // We need to communicate with the navbar button - use a shared state approach
-  // For now, we'll use a simple approach with a custom event
-  if (typeof window !== 'undefined') {
-    // Listen for custom event to open drawer
-    const handleOpenDrawer = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpenDrawer);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpenDrawer);
-  }
-
-  return null;
-}
-
-// Separate component for the actual drawer to avoid SSR issues
-function MobileDrawerContent() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
-  // Listen for open event from navbar
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
-
-  return null;
-}
-
-// Actual drawer component
-function Drawer() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
-  const closeDrawer = () => setIsOpen(false);
-
-  // Listen for open event
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
-
-  return null;
-}
-
-// Simplified approach - combine everything in one component
-function MobileDrawerComponent() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
-  const openDrawer = () => setIsOpen(true);
-  const closeDrawer = () => setIsOpen(false);
-
-  // Listen for open event from navbar button
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
-
-  return null;
-}
-
-// Final simplified approach - use a single component with useEffect for event listener
-function MobileDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
-  const closeDrawer = () => setIsOpen(false);
-
-  // Listen for open event from navbar
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
-
-  return null;
-}
-
-// Actually, let me just create a proper component with the event listener inside useEffect
-export function MobileDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
-  const closeDrawer = () => setIsOpen(false);
-
-  // Listen for open event from navbar
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
-
-  return null;
-}
-
-// Actually, let me just write the complete proper component
-export function Navbar() {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  if (!isOpen) return null;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Brand Wordmark - Left */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg p-1 flex-shrink-0"
-        >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-            ☪
+    <>
+      <div
+        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+        onClick={closeDrawer}
+        aria-hidden="true"
+      />
+      <div
+        className="fixed right-0 top-0 z-50 w-80 max-w-[85vw] h-full bg-surface-elevated border-l border-border shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+      >
+        <div className="flex flex-col h-full">
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <span className="text-lg font-semibold text-text">Navigation</span>
+            <button
+              onClick={() => closeDrawer()}
+              className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface transition-colors"
+              aria-label="Close menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <div className="hidden sm:flex flex-col">
-            <span className="font-bold text-lg leading-none tracking-tight text-text flex items-center gap-1.5">
-              Mawaqit
-              <span className="font-arabic text-primary text-base font-semibold" dir="rtl">
-                مواقيت
-              </span>
-            </span>
+
+          {/* Navigation Items */}
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => closeDrawer()}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                    isActive
+                      ? 'bg-primary/10 text-primary font-semibold'
+                      : 'text-text-muted hover:text-primary hover:bg-surface'
+                  )}
+                >
+                  <span className="flex items-center justify-center w-6 h-6">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Theme Toggle in Drawer */}
+          <div className="p-4 border-t border-border">
+            <ThemeToggle />
           </div>
-        </Link>
-
-        {/* Desktop Navigation - Right */}
-        <nav className="hidden md:flex items-center gap-1.5 sm:gap-2 flex-1 justify-end">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
-                  isActive
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'text-text-muted hover:text-primary hover:bg-surface'
-                )}
-              >
-                <span className="flex items-center justify-center">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          className="md:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
-          onClick={() => {
-            if (typeof window !== 'undefined') {
-              window.dispatchEvent(new CustomEvent('open-mobile-drawer'));
-            }
-          }}
-          aria-label="Open menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-
-        {/* Theme Toggle - Far Right */}
-        <ThemeToggle />
+        </div>
       </div>
-    </header>
+    </>
   );
 }
 
-export function MobileDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
+export function Navbar() {
   const pathname = usePathname();
 
-  const closeDrawer = () => setIsOpen(false);
+  return (
+    <MobileDrawerProvider>
+      <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          {/* Brand Wordmark - Left */}
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-lg p-1 flex-shrink-0"
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-colors duration-200">
+              ☪
+            </div>
+            <div className="hidden sm:flex flex-col">
+              <span className="font-bold text-lg leading-none tracking-tight text-text flex items-center gap-1.5">
+                Mawaqit
+                <span className="font-arabic text-primary text-base font-semibold" dir="rtl">
+                  مواقيت
+                </span>
+              </span>
+            </div>
+          </Link>
 
-  // Listen for open event from navbar
-  if (typeof window !== 'undefined') {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-mobile-drawer', handleOpen);
-    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
-  }
+          {/* Desktop Navigation - Right */}
+          <nav className="hidden md:flex items-center gap-1.5 sm:gap-2 flex-1 justify-end">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                    isActive
+                      ? 'bg-primary/10 text-primary font-semibold'
+                      : 'text-text-muted hover:text-primary hover:bg-surface'
+                  )}
+                >
+                  <span className="flex items-center justify-center">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
 
-  return null;
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            className="md:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('open-mobile-drawer'));
+              }
+            }}
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          {/* Theme Toggle - Far Right */}
+          <ThemeToggle />
+        </div>
+      </header>
+    </MobileDrawerProvider>
+  );
 }

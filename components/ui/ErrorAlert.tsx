@@ -60,7 +60,7 @@ export function ErrorAlert({
         <p className="text-sm text-error/90 leading-relaxed">{message}</p>
         {onRetry && (
           <div className="mt-3">
-            <Button variant="danger" size="sm" onClick={onRetry}>
+            <Button variant="secondary" size="sm" onClick={onRetry}>
               {retryLabel}
             </Button>
           </div>

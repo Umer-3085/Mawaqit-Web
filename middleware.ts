@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 // This is a stub middleware for future authentication implementation
 // Currently allows all requests through
 
-export function middleware(_request: NextRequest) {
+export function middleware() {
   // For now, allow all requests
   // In the future, add authentication checks here
   // Example:

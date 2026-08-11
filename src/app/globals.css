@@ -6,21 +6,25 @@
   --color-lime-hover: var(--color-lime-hover);
   --color-lime-light: var(--color-lime-light);
   --color-lime-muted: var(--color-lime-muted);
+  --color-lime-ink: var(--color-lime-ink);
+  --color-lime-ink-hover: var(--color-lime-ink-hover);
 
   /* Brand Colors - Ivory Secondary */
   --color-ivory: var(--color-ivory);
   --color-ivory-hover: var(--color-ivory-hover);
   --color-ivory-muted: var(--color-ivory-muted);
+  --color-ivory-ink: var(--color-ivory-ink);
+  --color-ivory-ink-hover: var(--color-ivory-ink-hover);
 
   /* Core Semantic */
-  --color-primary: var(--color-lime);
-  --color-primary-hover: var(--color-lime-hover);
-  --color-primary-light: var(--color-lime-light);
-  --color-primary-muted: var(--color-lime-muted);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-muted: var(--color-primary-muted);
 
-  --color-secondary: var(--color-ivory);
-  --color-secondary-hover: var(--color-ivory-hover);
-  --color-secondary-muted: var(--color-ivory-muted);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-hover: var(--color-secondary-hover);
+  --color-secondary-muted: var(--color-secondary-muted);
 
   /* Neutrals */
   --color-background: var(--color-background);
@@ -51,24 +55,47 @@
 }
 
 :root {
-  /* AJ Islamic Library Palette - Light Mode (minimal use) */
+  /* AJ Islamic Library Palette - Light Mode */
   --color-lime: #C8E85A;
   --color-lime-hover: #B5D64A;
   --color-lime-light: #D4EB7A;
   --color-lime-muted: #C8E85A33;
 
+  /* Darker "Ink" variants for Light Mode visibility */
+  --color-lime-ink: #5B7B1A;
+  --color-lime-ink-hover: #4A6615;
+  --color-lime-ink-light: #7A9B2F;
+
   --color-ivory: #F2E39A;
   --color-ivory-hover: #E8D88A;
   --color-ivory-muted: #F2E39A33;
 
+  /* Darker "Ink" variants for Ivory */
+  --color-ivory-ink: #6B5A00;
+  --color-ivory-ink-hover: #554A00;
+  --color-ivory-ink-light: #988210;
+
+  /* Light Mode Semantic Mapping - using darker "ink" variants */
+  --color-primary: #5B7B1A;
+  --color-primary-hover: #4A6615;
+  --color-primary-light: #7A9B2F;
+  --color-primary-muted: #5B7B1A33;
+
+  --color-secondary: #6B5A00;
+  --color-secondary-hover: #554A00;
+  --color-secondary-light: #988210;
+  --color-secondary-muted: #6B5A0033;
+
+  /* Neutrals - Light Mode */
   --color-background: #FAFAF5;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #FFFFFF;
+  --color-surface-hover: #F5F3E8;
   --color-text: #1A1A18;
-  --color-text-secondary: #4A4A42;
-  --color-text-muted: #6F706A;
-  --color-border: #E8E4D8;
-  --color-border-focus: #C8E85A;
+  --color-text-secondary: #3A3A32;
+  --color-text-muted: #5A5A4A;
+  --color-border: #C8C0A8;
+  --color-border-focus: #5B7B1A;
 
   --color-error: #C0392B;
   --color-success: #27AE60;
@@ -90,6 +117,29 @@
   --color-ivory: #F2E39A;
   --color-ivory-hover: #E8D88A;
   --color-ivory-muted: #F2E39A20;
+
+  /* Deep Black Layers */
+  --color-background: #050505;
+  --color-surface: #0D0D0D;
+  --color-surface-elevated: #121212;
+  --color-surface-hover: #1A1A1A;
+  --color-border: #242424;
+  --color-border-focus: #C8E85A;
+
+  /* Warm Text Hierarchy */
+  --color-text: #F5F3E8;
+  --color-text-secondary: #D4D0C0;
+  --color-text-muted: #6F706A;
+
+  /* Dark Mode Semantic - Bright AJ Palette */
+  --color-primary: #C8E85A;
+  --color-primary-hover: #B5D64A;
+  --color-primary-light: #D4EB7A;
+  --color-primary-muted: #C8E85A20;
+
+  --color-secondary: #F2E39A;
+  --color-secondary-hover: #E8D88A;
+  --color-secondary-muted: #F2E39A20;
 
   /* Deep Black Layers */
   --color-background: #050505;
@@ -182,16 +232,12 @@ body {
 /* Focus ring utility */
 .focus-ring-lime {
   outline: none;
-  /* ring: 4px;
-  ring-color: var(--color-lime);
-  ring-opacity: 0.4;
-  ring-offset: 2px;
-  ring-offset-color: var(--color-background); */
 }
 
 /* Text color utilities */
 .text-lime { color: var(--color-lime); }
 .text-ivory { color: var(--color-ivory); }
+.text-label { color: var(--color-lime-ink); }
 .text-text-secondary { color: var(--color-text-secondary); }
 
 /* Border utilities */

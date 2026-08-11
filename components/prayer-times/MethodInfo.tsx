@@ -118,9 +118,9 @@ const METHOD_INFO: Record<string, { title: string; description: string; link?: s
 
 function MethodInfoItem({ title, description, link }: { title: string; description: string; link?: string }) {
   return (
-    <div className="p-3 rounded-lg bg-surface/50 border border-border/40">
+    <div className="p-3 rounded-lg bg-surface/50 border border-black/40">
       <div className="flex items-center justify-between gap-2">
-        <h4 className="text-sm font-semibold text-text">{title}</h4>
+        <h4 className="text-sm font-semibold text-ivory">{title}</h4>
         {link && (
           <a
             href={link}
@@ -175,8 +175,8 @@ export function MethodInfo({
 
   if (variant === 'separate') {
     return (
-      <Card className="p-4 space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-primary mb-2">
+      <Card className="p-4 space-y-3 bg-ivory/5 border-black/40">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-ivory mb-2">
           Method Details
         </h3>
         {renderContent()}
@@ -186,18 +186,18 @@ export function MethodInfo({
 
   // Collapsible variant
   return (
-    <div className="border-t border-border/40 pt-4">
+    <div className="border-t border-black/40 pt-4">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-2 py-2 text-sm font-medium text-text-muted hover:text-text transition-colors"
+        className="flex items-center justify-between w-full px-2 py-2 text-sm font-medium text-text-muted hover:text-ivory transition-colors"
         aria-expanded={isOpen}
       >
         <span className="flex items-center gap-2">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="w-4 h-4 text-ivory" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          Method Details
+          <span className="text-ivory font-medium">Method Details</span>
         </span>
         <svg
           className={cn('w-4 h-4 transition-transform', isOpen && 'rotate-180')}

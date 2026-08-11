@@ -50,7 +50,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       <div className="w-full">
         <label
           htmlFor={id}
-          className="block text-xs font-semibold text-ivory uppercase tracking-wide mb-1.5"
+          className="block text-xs font-semibold text-label uppercase tracking-wide mb-1.5"
         >
           {label}
           {required && <span className="text-error ml-1" aria-hidden="true">*</span>}

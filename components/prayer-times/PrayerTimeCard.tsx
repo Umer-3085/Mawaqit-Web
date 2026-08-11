@@ -58,23 +58,23 @@ export function PrayerTimeCard({
         'relative flex flex-col items-center justify-between p-4 rounded-xl transition-all duration-150 ease-out select-none',
         'bg-surface-elevated border border-border/40 shadow-sm hover:shadow-md',
         isObligatory && 'ring-2 ring-lime/20 border-lime/30',
-        isNext && 'bg-lime/5 ring-2 ring-lime border-lime shadow-md',
+        isNext && 'bg-ivory/5 ring-2 ring-ivory border-ivory shadow-md',
         className
       )}
     >
       {isNext && (
-        <span className="absolute -top-2.5 px-2.5 py-0.5 rounded-full bg-lime text-black text-[10px] font-semibold tracking-wider uppercase shadow-sm">
+        <span className="absolute -top-2.5 px-2.5 py-0.5 rounded-full bg-ivory text-black text-[10px] font-semibold tracking-wider uppercase shadow-sm">
           Next Prayer
         </span>
       )}
 
       {/* Header: English & Arabic Labels */}
       <div className="flex items-center justify-between w-full mb-2 gap-1">
-        <span className={cn('text-xs font-semibold uppercase tracking-wider', isNext ? 'text-lime' : 'text-text-muted')}>
+        <span className={cn('text-xs font-semibold uppercase tracking-wider', isNext ? 'text-ivory' : 'text-text-muted')}>
           {label}
         </span>
         {arLabel && (
-          <span className={cn('font-arabic text-sm font-semibold', isNext ? 'text-lime' : 'text-text-muted/80')} dir="rtl">
+          <span className={cn('font-arabic text-sm font-semibold', isNext ? 'text-ivory' : 'text-text-muted/80')} dir="rtl">
             {arLabel}
           </span>
         )}
@@ -82,7 +82,7 @@ export function PrayerTimeCard({
 
       {/* Time Display */}
       <div className="my-1">
-        <span className={cn('text-2xl sm:text-3xl font-bold tabular-nums tracking-tight', isNext ? 'text-lime font-extrabold' : 'text-text')}>
+        <span className={cn('text-2xl sm:text-3xl font-bold tabular-nums tracking-tight', isNext ? 'text-ivory font-extrabold' : 'text-text')}>
           {timeDisplay}
         </span>
       </div>

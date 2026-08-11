@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         <label
           htmlFor={id}
-          className="block text-xs font-semibold text-text-muted uppercase tracking-wide mb-1.5"
+          className="block text-xs font-semibold text-ivory uppercase tracking-wide mb-1.5"
         >
           {label}
           {required && <span className="text-error ml-1" aria-hidden="true">*</span>}
@@ -55,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             'w-full px-3.5 py-2 rounded-lg border text-sm min-h-[44px]',
             'bg-surface text-text placeholder:text-text-muted/60',
             'transition-all duration-150 ease-out',
-            'focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary',
+            'focus:outline-none focus:ring-4 focus:ring-lime/40 focus:border-lime',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             error
               ? 'border-error focus:ring-error/20 focus:border-error'

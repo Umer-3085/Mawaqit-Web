@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { Button } from "@/components/ui/Button";
 
 export default function Home() {
   return (
@@ -22,15 +20,6 @@ export default function Home() {
       <p className="text-base sm:text-lg md:text-xl text-text-muted max-w-2xl leading-relaxed mb-8">
         Calculate accurate obligatory and Nafl prayer times using world-standard authorities, custom high-latitude rules, and exact geolocation.
       </p>
-
-      {/* CTA Actions */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
-        <Link href="/prayer-times">
-          <Button size="lg" className="px-8 font-semibold shadow-md shadow-primary/20">
-            View Today&apos;s Prayer Times →
-          </Button>
-        </Link>
-      </div>
 
       {/* Prayer Times Feature Only */}
       <div className="w-full max-w-2xl text-left mt-8">

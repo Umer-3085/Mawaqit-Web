@@ -12,7 +12,7 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-const navItems = [
+const navItems: NavItem[] = [
   {
     label: 'Prayer Times',
     href: '/prayer-times',

@@ -1,5 +1,55 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand Colors - Lime Primary */
+  --color-lime: var(--color-lime);
+  --color-lime-hover: var(--color-lime-hover);
+  --color-lime-light: var(--color-lime-light);
+  --color-lime-muted: var(--color-lime-muted);
+
+  /* Brand Colors - Ivory Secondary */
+  --color-ivory: var(--color-ivory);
+  --color-ivory-hover: var(--color-ivory-hover);
+  --color-ivory-muted: var(--color-ivory-muted);
+
+  /* Core Semantic */
+  --color-primary: var(--color-lime);
+  --color-primary-hover: var(--color-lime-hover);
+  --color-primary-light: var(--color-lime-light);
+  --color-primary-muted: var(--color-lime-muted);
+
+  --color-secondary: var(--color-ivory);
+  --color-secondary-hover: var(--color-ivory-hover);
+  --color-secondary-muted: var(--color-ivory-muted);
+
+  /* Neutrals */
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-border-focus: var(--color-border-focus);
+
+  /* Semantic */
+  --color-error: var(--color-error);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  /* Typography */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-arabic: var(--font-noto-sans-arabic), system-ui, sans-serif;
+  --font-arabic-classical: var(--font-noto-naskh-arabic), system-ui, sans-serif;
+}
+
 :root {
   /* AJ Islamic Library Palette - Light Mode (minimal use) */
   --color-lime: #C8E85A;
@@ -66,55 +116,6 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
 }
 
-@theme inline {
-  /* Brand Colors - Lime Primary */
-  --color-lime: var(--color-lime);
-  --color-lime-hover: var(--color-lime-hover);
-  --color-lime-light: var(--color-lime-light);
-  --color-lime-muted: var(--color-lime-muted);
-
-  /* Brand Colors - Ivory Secondary */
-  --color-ivory: var(--color-ivory);
-  --color-ivory-hover: var(--color-ivory-hover);
-  --color-ivory-muted: var(--color-ivory-muted);
-
-  /* Core Semantic */
-  --color-primary: var(--color-lime);
-  --color-primary-hover: var(--color-lime-hover);
-  --color-primary-light: var(--color-lime-light);
-  --color-primary-muted: var(--color-lime-muted);
-
-  --color-secondary: var(--color-ivory);
-  --color-secondary-hover: var(--color-ivory-hover);
-  --color-secondary-muted: var(--color-ivory-muted);
-
-  /* Neutrals */
-  --color-background: var(--color-background);
-  --color-surface: var(--color-surface);
-  --color-surface-elevated: var(--color-surface-elevated);
-  --color-surface-hover: var(--color-surface-hover);
-  --color-text: var(--color-text);
-  --color-text-secondary: var(--color-text-secondary);
-  --color-text-muted: var(--color-text-muted);
-  --color-border: var(--color-border);
-  --color-border-focus: var(--color-border-focus);
-
-  /* Semantic */
-  --color-error: var(--color-error);
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-info: var(--color-info);
-
-  /* Shadows */
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-
-  /* Typography */
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-arabic: var(--font-noto-sans-arabic), system-ui, sans-serif;
-  --font-arabic-classical: var(--font-noto-naskh-arabic), system-ui, sans-serif;
-}
 
 body {
   background-color: var(--color-background);
@@ -180,7 +181,12 @@ body {
 
 /* Focus ring utility */
 .focus-ring-lime {
-  @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-lime/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  outline: none;
+  ring: 4px;
+  ring-color: var(--color-lime);
+  ring-opacity: 0.4;
+  ring-offset: 2px;
+  ring-offset-color: var(--color-background);
 }
 
 /* Text color utilities */
@@ -192,10 +198,40 @@ body {
 .border-lime { border-color: var(--color-lime); }
 .border-ivory { border-color: var(--color-ivory); }
 
-/* Background utilities */
-.bg-lime-muted { background-color: var(--color-lime-muted); }
-.bg-ivory-muted { background-color: var(--color-ivory-muted); }
-
 /* Surface variants */
 .bg-surface-elevated { background-color: var(--color-surface-elevated); }
 .bg-surface-hover { background-color: var(--color-surface-hover); }
+
+/* Leaflet dark theme popup */
+.leaflet-popup-content-wrapper {
+  background: var(--color-surface-elevated) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--color-text) !important;
+}
+
+.leaflet-popup-content {
+  margin: 0.5rem !important;
+  color: var(--color-text) !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--color-surface-elevated) !important;
+  border: 1px solid var(--color-border) !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.leaflet-popup-close-button {
+  color: var(--color-text-muted) !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: var(--color-lime) !important;
+}
+
+/* Lime marker icon class */
+.lime-marker {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}

@@ -185,7 +185,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     <div className={cn('relative', className)}>
       {/* Map Container */}
       <div className="relative border border-border/40 rounded-xl overflow-hidden h-[350px] w-full">
-<mapContainer
+      <MapContainer
             center={[position.lat, position.lng]}
             zoom={13}
             scrollWheelZoom={!disabled}
@@ -220,7 +220,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
         {/* Floating Geolocation Button */}
         <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
           <Button
-            variant="outline"
+            variant="primary"
             size="sm"
             onClick={handleLocate}
             disabled={disabled}

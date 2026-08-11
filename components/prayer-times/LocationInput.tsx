@@ -121,7 +121,7 @@ export function LocationInput({
       {/* Geolocation Button */}
       {onGeolocation && (
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           onClick={onGeolocation}
           disabled={disabled || geolocationLoading}

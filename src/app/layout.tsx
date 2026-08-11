@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_Arabic } from "next/font/google";
+import { Inter, Noto_Sans_Arabic, Noto_Naskh_Arabic } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
@@ -17,6 +17,11 @@ const notoSansArabic = Noto_Sans_Arabic({
   subsets: ["arabic"],
 });
 
+const notoNaskhArabic = Noto_Naskh_Arabic({
+  variable: "--font-noto-naskh-arabic",
+  subsets: ["arabic"],
+});
+
 export const metadata: Metadata = {
   title: "Mawaqit مواقيت — Precise Islamic Prayer Times",
   description: "Accurate Islamic prayer times based on your exact location, calculation methods, and madhab preferences.",
@@ -30,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${notoSansArabic.variable} h-full antialiased`}
+      className={`${inter.variable} ${notoSansArabic.variable} ${notoNaskhArabic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background text-text selection:bg-primary/20 selection:text-primary">

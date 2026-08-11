@@ -4,7 +4,7 @@ import { Providers } from "./providers";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Header } from '@/components/layout/Header';
+import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
 const inter = Inter({
@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-text selection:bg-primary/20 selection:text-primary">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme={false}>
           <Providers>
-            <Header />
+            <Navbar />
             <div className="flex-1 flex flex-col">{children}</div>
             <Footer />
           </Providers>
@@ -50,4 +50,3 @@ export default function RootLayout({
     </html>
   );
 }
-

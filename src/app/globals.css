@@ -1,129 +1,119 @@
 @import "tailwindcss";
 
 :root {
-  /* Color scales - Primary (Islamic Green) */
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-300: #86efac;
-  --color-primary-400: #4ade80;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #006B3C;
-  --color-primary-700: #15803d;
-  --color-primary-800: #166534;
-  --color-primary-900: #14532d;
-  --color-primary: #006B3C;
-  --color-primary-hover: #005a32;
-  --color-primary-light: #008f4d;
+  /* AJ Islamic Library Palette - Light Mode (minimal use) */
+  --color-lime: #C8E85A;
+  --color-lime-hover: #B5D64A;
+  --color-lime-light: #D4EB7A;
+  --color-lime-muted: #C8E85A33;
 
-  /* Secondary - Gold/Amber */
-  --color-secondary-400: #fbbf24;
-  --color-secondary-500: #f59e0b;
-  --color-secondary-600: #d97706;
-  --color-secondary: #f59e0b;
-  --color-secondary-hover: #d97706;
+  --color-ivory: #F2E39A;
+  --color-ivory-hover: #E8D88A;
+  --color-ivory-muted: #F2E39A33;
 
-  /* Neutrals */
-  --color-background: #ffffff;
-  --color-surface: #f8faf8;
-  --color-surface-elevated: #ffffff;
-  --color-text: #1a1a1a;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-border-focus: #006B3C;
+  --color-background: #FAFAF5;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-text: #1A1A18;
+  --color-text-secondary: #4A4A42;
+  --color-text-muted: #6F706A;
+  --color-border: #E8E4D8;
+  --color-border-focus: #C8E85A;
 
-  /* Semantic */
-  --color-error: #dc2626;
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-info: #2563eb;
+  --color-error: #C0392B;
+  --color-success: #27AE60;
+  --color-warning: #F39C12;
+  --color-info: #2980B9;
 
-  /* Shadow tokens */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .dark {
-  /* Color scales - Primary Dark */
-  --color-primary-50: #052e16;
-  --color-primary-100: #0a4d1f;
-  --color-primary-200: #14532d;
-  --color-primary-300: #1a7f37;
-  --color-primary-400: #22c55e;
-  --color-primary-500: #2ecc71;
-  --color-primary-600: #2ecc71;
-  --color-primary-700: #27ae60;
-  --color-primary-800: #1f8a4c;
-  --color-primary-900: #156636;
-  --color-primary: #2ecc71;
-  --color-primary-hover: #27ae60;
-  --color-primary-light: #58d68d;
+  /* AJ Islamic Library - Deep Black Foundation */
+  --color-lime: #C8E85A;
+  --color-lime-hover: #B5D64A;
+  --color-lime-light: #D4EB7A;
+  --color-lime-muted: #C8E85A20;
 
-  /* Secondary Dark */
-  --color-secondary-400: #fbbf24;
-  --color-secondary-500: #f39c12;
-  --color-secondary-600: #f1c40f;
-  --color-secondary: #f39c12;
-  --color-secondary-hover: #f1c40f;
+  --color-ivory: #F2E39A;
+  --color-ivory-hover: #E8D88A;
+  --color-ivory-muted: #F2E39A20;
 
-  /* Neutrals Dark */
-  --color-background: #0f170f;
-  --color-surface: #1a1f1a;
-  --color-surface-elevated: #242b24;
-  --color-text: #f5f5f5;
-  --color-text-muted: #9ca3af;
-  --color-border: #374151;
-  --color-border-focus: #2ecc71;
+  /* Deep Black Layers */
+  --color-background: #050505;
+  --color-surface: #0D0D0D;
+  --color-surface-elevated: #121212;
+  --color-surface-hover: #1A1A1A;
+  --color-border: #242424;
+  --color-border-focus: #C8E85A;
+
+  /* Warm Text Hierarchy */
+  --color-text: #F5F3E8;
+  --color-text-secondary: #D4D0C0;
+  --color-text-muted: #6F706A;
 
   /* Semantic Dark */
-  --color-error: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #fbbf24;
-  --color-info: #3b82f6;
+  --color-error: #E74C3C;
+  --color-success: #2ECC71;
+  --color-warning: #F39C12;
+  --color-info: #3498DB;
 
-  /* Shadow tokens Dark */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  /* Shadows - Subtle for Dark Mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
 }
 
 @theme inline {
-  --color-primary-50: var(--color-primary-50);
-  --color-primary-100: var(--color-primary-100);
-  --color-primary-200: var(--color-primary-200);
-  --color-primary-300: var(--color-primary-300);
-  --color-primary-400: var(--color-primary-400);
-  --color-primary-500: var(--color-primary-500);
-  --color-primary-600: var(--color-primary-600);
-  --color-primary-700: var(--color-primary-700);
-  --color-primary-800: var(--color-primary-800);
-  --color-primary-900: var(--color-primary-900);
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-hover);
-  --color-primary-light: var(--color-primary-light);
+  /* Brand Colors - Lime Primary */
+  --color-lime: var(--color-lime);
+  --color-lime-hover: var(--color-lime-hover);
+  --color-lime-light: var(--color-lime-light);
+  --color-lime-muted: var(--color-lime-muted);
 
-  --color-secondary-400: var(--color-secondary-400);
-  --color-secondary-500: var(--color-secondary-500);
-  --color-secondary-600: var(--color-secondary-600);
-  --color-secondary: var(--color-secondary);
-  --color-secondary-hover: var(--color-secondary-hover);
+  /* Brand Colors - Ivory Secondary */
+  --color-ivory: var(--color-ivory);
+  --color-ivory-hover: var(--color-ivory-hover);
+  --color-ivory-muted: var(--color-ivory-muted);
 
+  /* Core Semantic */
+  --color-primary: var(--color-lime);
+  --color-primary-hover: var(--color-lime-hover);
+  --color-primary-light: var(--color-lime-light);
+  --color-primary-muted: var(--color-lime-muted);
+
+  --color-secondary: var(--color-ivory);
+  --color-secondary-hover: var(--color-ivory-hover);
+  --color-secondary-muted: var(--color-ivory-muted);
+
+  /* Neutrals */
   --color-background: var(--color-background);
   --color-surface: var(--color-surface);
   --color-surface-elevated: var(--color-surface-elevated);
+  --color-surface-hover: var(--color-surface-hover);
   --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
   --color-border-focus: var(--color-border-focus);
 
+  /* Semantic */
   --color-error: var(--color-error);
   --color-success: var(--color-success);
   --color-warning: var(--color-warning);
   --color-info: var(--color-info);
 
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  /* Typography */
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-arabic: var(--font-noto-sans-arabic), system-ui, sans-serif;
+  --font-arabic-classical: var(--font-noto-naskh-arabic), system-ui, sans-serif;
 }
 
 body {
@@ -134,6 +124,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Animations */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -144,5 +135,67 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes pulse-lime {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-lime-muted); }
+  50% { box-shadow: 0 0 0 8px transparent; }
+}
+
 .animate-fade-in-up { animation: fade-in-up 0.15s ease-out; }
 .animate-fade-in-down { animation: fade-in-down 0.15s ease-out; }
+.animate-pulse-lime { animation: pulse-lime 2s infinite; }
+
+/* Geometric Pattern Utilities */
+.bg-geometric-subtle {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C8E85A' fill-opacity='0.03'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-architectural-lines {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C8E85A' stroke-opacity='0.02' stroke-width='0.5'%3E%3Cpath d='M0 50L100 50M50 0L50 100'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-book-grid {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='120' viewBox='0 0 80 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C8E85A' stroke-opacity='0.015' stroke-width='0.5'%3E%3Crect x='5' y='5' width='70' height='110' rx='2'/%3E%3Cline x1='40' y1='5' x2='40' y2='115'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Radial gradient utilities for hero sections */
+.bg-radial-lime {
+  background: radial-gradient(ellipse at center, var(--color-lime-muted) 0%, transparent 70%);
+}
+
+.bg-radial-ivory {
+  background: radial-gradient(ellipse at center, var(--color-ivory-muted) 0%, transparent 70%);
+}
+
+/* Angular divider */
+.divider-angular {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-lime) 50%, transparent 100%);
+}
+
+.divider-angular-vertical {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 0%, var(--color-lime) 50%, transparent 100%);
+}
+
+/* Focus ring utility */
+.focus-ring-lime {
+  @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-lime/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+/* Text color utilities */
+.text-lime { color: var(--color-lime); }
+.text-ivory { color: var(--color-ivory); }
+.text-text-secondary { color: var(--color-text-secondary); }
+
+/* Border utilities */
+.border-lime { border-color: var(--color-lime); }
+.border-ivory { border-color: var(--color-ivory); }
+
+/* Background utilities */
+.bg-lime-muted { background-color: var(--color-lime-muted); }
+.bg-ivory-muted { background-color: var(--color-ivory-muted); }
+
+/* Surface variants */
+.bg-surface-elevated { background-color: var(--color-surface-elevated); }
+.bg-surface-hover { background-color: var(--color-surface-hover); }

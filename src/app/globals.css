@@ -182,11 +182,11 @@ body {
 /* Focus ring utility */
 .focus-ring-lime {
   outline: none;
-  ring: 4px;
+  /* ring: 4px;
   ring-color: var(--color-lime);
   ring-opacity: 0.4;
   ring-offset: 2px;
-  ring-offset-color: var(--color-background);
+  ring-offset-color: var(--color-background); */
 }
 
 /* Text color utilities */

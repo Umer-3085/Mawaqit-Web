@@ -31,15 +31,16 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Lime marker icon for AJ theme
+// Lime marker icon for AJ theme - using default marker with lime color
 const LimeMarkerIcon = L.icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iNDEiIHZpZXdCb3g9IjAgMCAyNSA0MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyLjUgMEMyOS4wIDAgMjUgMjAuNSAxMi41IDIwLjVTMS41IDIwLjUgMS41IDEyLjVTNSA0LjUgMTIuNSA0LjVaIiBmaWxsPSIjQzhFOEEiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyLjUiIGN5PSIxMi41IiByPSI2IiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPg==',
-  iconRetinaUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iODIiIHZpZXdCb3g9IjAgMCAyNSA0MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyLjUgMEMyOS4wIDAgMjUgMjAuNSAxMi41IDIwLjVTMS41IDIwLjUgMS41IDEyLjVTNSA0LjUgMTIuNSA0LjVaIiBmaWxsPSIjQzhFOEEiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyLjUiIGN5PSIxMi41IiByPSI2IiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPg==',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
+  className: 'lime-marker'
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -194,7 +195,7 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
           >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             subdomains="abcd"
             maxZoom={19}
           />

@@ -9,6 +9,14 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { cn } from '@/components/ui/utils';
 import { reverseGeocode } from '../../lib/geocoding';
 
+interface LocationMapProps {
+  lat: number;
+  lng: number;
+  onLocationChange: (lat: number, lng: number, address?: string) => void;
+  disabled?: boolean;
+  className?: string;
+}
+
 // Fix default marker icon for Leaflet in Next.js
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -18,17 +26,23 @@ const DefaultIcon = L.icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
+  className: 'lime-marker'
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-interface LocationMapProps {
-  lat: number;
-  lng: number;
-  onLocationChange: (lat: number, lng: number, address?: string) => void;
-  disabled?: boolean;
-  className?: string;
-}
+// Lime marker icon for AJ theme
+const LimeMarkerIcon = L.icon({
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iNDEiIHZpZXdCb3g9IjAgMCAyNSA0MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyLjUgMEMyOS4wIDAgMjUgMjAuNSAxMi41IDIwLjVTMS41IDIwLjUgMS41IDEyLjVTNSA0LjUgMTIuNSA0LjVaIiBmaWxsPSIjQzhFOEEiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyLjUiIGN5PSIxMi41IiByPSI2IiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPg==',
+  iconRetinaUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iODIiIHZpZXdCb3g9IjAgMCAyNSA0MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyLjUgMEMyOS4wIDAgMjUgMjAuNSAxMi41IDIwLjVTMS41IDIwLjUgMS41IDEyLjVTNSA0LjUgMTIuNSA0LjVaIiBmaWxsPSIjQzhFOEEiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyLjUiIGN5PSIxMi41IiByPSI2IiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPg==',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 /** Handles click-to-set-marker on the map */
 function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
@@ -171,26 +185,29 @@ export function LocationMap({ lat, lng, onLocationChange, disabled = false, clas
     <div className={cn('relative', className)}>
       {/* Map Container */}
       <div className="relative border border-border/40 rounded-xl overflow-hidden h-[350px] w-full">
-        <MapContainer
-          center={[position.lat, position.lng]}
-          zoom={13}
-          scrollWheelZoom={!disabled}
-          className="h-full w-full"
-          style={{ height: '100%', width: '100%' }}
-        >
+<mapContainer
+            center={[position.lat, position.lng]}
+            zoom={13}
+            scrollWheelZoom={!disabled}
+            className="h-full w-full"
+            style={{ height: '100%', width: '100%' }}
+          >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            subdomains="abcd"
+            maxZoom={19}
           />
           <Marker
             ref={markerRef}
             position={[position.lat, position.lng]}
             draggable={!disabled}
+            icon={LimeMarkerIcon}
           >
-            <Popup>
+            <Popup className="custom-popup">
               <div className="p-1 text-sm">
-                <p className="font-medium">{address || 'Selected location'}</p>
-                <p className="text-xs opacity-60">
+                <p className="font-medium text-text">{address || 'Selected location'}</p>
+                <p className="text-xs text-text-muted/60">
                   {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
                 </p>
               </div>

@@ -18,14 +18,6 @@ const METHOD_LABELS: Record<NaflMethod, string> = {
   MALIKI_DELAYED: 'Maliki',
 };
 
-const METHOD_DESCRIPTIONS: Record<NaflMethod, string> = {
-  STANDARD_15MIN: 'Fixed 15 minutes after sunrise (Ishraq) / before Dhuhr (Duha)',
-  QUARTER_DAY: 'Duha = ¼ of daylight hours after sunrise',
-  SOLAR_ANGLE_SPEAR: 'Solar angle method (Spear calculator variant)',
-  SOLAR_ANGLE_DUHA: 'Solar angle for Duha (typically 15-20°)',
-  MALIKI_DELAYED: 'Maliki school: delayed Asr, specific Duha timing',
-};
-
 export function NaflMethodBadge({ method, variant = 'inline', className }: NaflMethodBadgeProps) {
   const label = METHOD_LABELS[method];
   const isQuarterDay = method === 'QUARTER_DAY';

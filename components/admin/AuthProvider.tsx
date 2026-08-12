@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { apiClient } from '@/lib/api';
-import { getToken, getUser, setToken, setUser, clearToken, isAuthenticated } from '@/lib/auth';
+import { apiClient } from '@/api';
+import { getToken, getUser, setToken, setUser, clearToken } from '@/auth';
 
 interface AuthContextType {
   token: string | null;

@@ -49,7 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await apiClient.postForm('/admin/logout', {});
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
     } catch {
       // Ignore logout errors
     }

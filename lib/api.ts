@@ -150,6 +150,24 @@ export class ApiClient {
     );
   }
 
+  async postForm<T>(path: string, body: Record<string, string>): Promise<T> {
+    const formData = new URLSearchParams(body);
+    return fetchWithRetry<T>(
+      `${this.baseURL}${path}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+        body: formData.toString(),
+      },
+      this.timeoutMs,
+      this.retryOptions
+    );
+  }
+
+  async adminLogin(username: string, password: string): Promise<{ access_token: string; token_type: string }> {
+    return this.postForm<{ access_token: string; token_type: string }>('/admin/login', { username, password });
+  }
+
   async getPrayerTimes(params: SingleDayParams): Promise<PrayerTimesResponse> {
     const validated = SingleDayParamsSchema.parse(params);
     const queryParams = {

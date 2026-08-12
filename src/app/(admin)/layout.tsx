@@ -19,7 +19,7 @@ export default function AdminLayout({
         <div className="min-h-screen bg-background flex">
           {!isLoginPage && <AdminSidebar />}
           <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
-            {!isLoginPage && <AdminTopBar onMenuClick={() => {}} title={getPageTitle(pathname)} />}
+            {!isLoginPage && <AdminTopBar title={getPageTitle(pathname)} />}
             <main className="flex-1 p-6">{children}</main>
           </div>
         </div>

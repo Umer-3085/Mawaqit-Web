@@ -2,18 +2,19 @@
 
 import { useAuth } from '@/components/admin/AuthProvider';
 import { useRouter } from 'next/navigation';
+import { useAdminSidebar } from '@/components/admin/AdminSidebar';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/components/ui/utils';
 import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface AdminTopBarProps {
-  onMenuClick: () => void;
   title?: string;
 }
 
-export function AdminTopBar({ onMenuClick, title }: AdminTopBarProps) {
+export function AdminTopBar({ title }: AdminTopBarProps) {
   const { user, logout, isAuthenticated } = useAuth();
+  const { openSidebar } = useAdminSidebar();
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ export function AdminTopBar({ onMenuClick, title }: AdminTopBarProps) {
           <button
             type="button"
             className="lg:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
-            onClick={onMenuClick}
+            onClick={openSidebar}
             aria-label="Open menu"
           >
             <Menu className="w-6 h-6" />

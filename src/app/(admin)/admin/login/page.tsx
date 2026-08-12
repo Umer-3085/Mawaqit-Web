@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/components/admin/AuthProvider';
 
-export default function AdminLoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '/admin/dashboard';
@@ -35,6 +36,48 @@ export default function AdminLoginPage() {
   };
 
   return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input
+        label="Username"
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+        autoComplete="username"
+        disabled={submitting || authLoading}
+        placeholder="Enter username"
+      />
+      <Input
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        autoComplete="current-password"
+        disabled={submitting || authLoading}
+        placeholder="Enter password"
+      />
+      {error && (
+        <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-sm text-center" role="alert">
+          {error}
+        </div>
+      )}
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        className="w-full"
+        loading={submitting || authLoading}
+        disabled={submitting || authLoading}
+      >
+        Sign In
+      </Button>
+    </form>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center pb-4">
@@ -45,43 +88,9 @@ export default function AdminLoginPage() {
           <p className="text-sm text-text-muted mt-1">Sign in to manage content</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              label="Username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoComplete="username"
-              disabled={submitting || authLoading}
-              placeholder="Enter username"
-            />
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              disabled={submitting || authLoading}
-              placeholder="Enter password"
-            />
-            {error && (
-              <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-sm text-center" role="alert">
-                {error}
-              </div>
-            )}
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full"
-              loading={submitting || authLoading}
-              disabled={submitting || authLoading}
-            >
-              Sign In
-            </Button>
-          </form>
+          <Suspense fallback={<LoadingSpinner size="lg" className="mx-auto" />}>
+            <LoginForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

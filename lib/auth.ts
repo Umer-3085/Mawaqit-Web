@@ -7,7 +7,7 @@ const COOKIE_NAME = 'mawaqit_admin_token';
 export function getTokenFromCookie(): string | null {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp(`(^| )${COOKIE_NAME}=([^;]+)`));
-  return match ? decodeURIComponent(match[2]) : null;
+  return match?.[2] ? decodeURIComponent(match[2]) : null;
 }
 
 export function hasAuthCookie(): boolean {

@@ -23,9 +23,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (hasAuthCookie()) {
         try {
           const match = document.cookie.match(/mawaqit_admin_token=([^;]+)/);
-          if (match?.[1]) {
-            const payload = JSON.parse(atob(match[1].split('.')[1]));
-            setUserState({ username: payload.sub });
+          const tokenValue = match?.[1];
+          if (tokenValue) {
+            const parts = tokenValue.split('.');
+            if (parts[1]) {
+              const payload = JSON.parse(atob(parts[1]));
+              setUserState({ username: payload.sub });
+            }
           }
         } catch {
           setUserState({ username: 'admin' });
@@ -49,7 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/logout`, {
+      const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:8000/api';
+      await fetch(`${apiUrl}/admin/logout`, {
         method: 'POST',
         credentials: 'include',
       });

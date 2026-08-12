@@ -3,7 +3,6 @@
 import { useAuth } from '@/components/admin/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useAdminSidebar } from '@/components/admin/AdminSidebar';
-import { Button } from '@/components/ui/Button';
 import { cn } from '@/components/ui/utils';
 import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';

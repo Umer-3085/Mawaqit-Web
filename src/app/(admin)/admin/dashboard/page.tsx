@@ -4,7 +4,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { cn } from '@/components/ui/utils';
-import { Plus, BookOpen, Book, FileText, Video, FolderTree, Users, TrendingUp } from 'lucide-react';
+import { Plus, BookOpen, Book, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
 
 const stats = [
   {

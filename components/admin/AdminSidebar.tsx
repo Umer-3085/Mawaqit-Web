@@ -12,7 +12,6 @@ import {
   Video,
   FolderTree,
   X,
-  ChevronLeft,
 } from 'lucide-react';
 
 interface NavItem {

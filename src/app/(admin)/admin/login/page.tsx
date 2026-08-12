@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -9,6 +9,8 @@ import { useAuth } from '@/components/admin/AuthProvider';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') ?? '/admin/dashboard';
   const { login, loading: authLoading } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ export default function AdminLoginPage() {
     const result = await login(username, password);
 
     if (result.success) {
-      router.push('/admin/dashboard');
+      router.push(redirect);
       router.refresh();
     } else {
       setError(result.error ?? 'Invalid credentials');

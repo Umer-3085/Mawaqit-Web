@@ -4,6 +4,7 @@ import { AuthProvider } from '@/components/admin/AuthProvider';
 import { AdminSidebarProvider, AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminTopBar } from '@/components/admin/AdminTopBar';
 import { usePathname } from 'next/navigation';
+import { cn } from '@/components/ui/utils';
 
 export default function AdminLayout({
   children,
@@ -18,7 +19,10 @@ export default function AdminLayout({
       <AdminSidebarProvider>
         <div className="min-h-screen bg-background flex">
           {!isLoginPage && <AdminSidebar />}
-          <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
+          <div className={cn(
+            'flex-1 flex flex-col min-w-0 transition-all duration-200',
+            isLoginPage ? '' : 'lg:ml-64'
+          )}>
             {!isLoginPage && <AdminTopBar title={getPageTitle(pathname)} />}
             <main className="flex-1 p-6">{children}</main>
           </div>

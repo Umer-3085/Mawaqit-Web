@@ -128,10 +128,17 @@ export class ApiClient {
     return url.toString();
   }
 
+  private defaultOptions(): RequestInit {
+    return {
+      credentials: 'include' as RequestCredentials,
+      headers: { Accept: 'application/json' },
+    };
+  }
+
   async get<T>(path: string, params?: Record<string, unknown>): Promise<T> {
     return fetchWithRetry<T>(
       this.buildUrl(path, params),
-      { method: 'GET', headers: { Accept: 'application/json' } },
+      { ...this.defaultOptions(), method: 'GET' },
       this.timeoutMs,
       this.retryOptions
     );
@@ -141,8 +148,9 @@ export class ApiClient {
     return fetchWithRetry<T>(
       `${this.baseURL}${path}`,
       {
+        ...this.defaultOptions(),
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: { ...this.defaultOptions().headers, 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       },
       this.timeoutMs,
@@ -155,8 +163,9 @@ export class ApiClient {
     return fetchWithRetry<T>(
       `${this.baseURL}${path}`,
       {
+        ...this.defaultOptions(),
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+        headers: { ...this.defaultOptions().headers, 'Content-Type': 'application/x-www-form-urlencoded' },
         body: formData.toString(),
       },
       this.timeoutMs,

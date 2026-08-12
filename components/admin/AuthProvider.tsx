@@ -2,30 +2,39 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { apiClient } from '@/api';
-import { getToken, getUser, setToken, setUser, clearToken } from '@/auth';
+import { hasAuthCookie } from '@/auth';
 
 interface AuthContextType {
-  token: string | null;
   user: { username: string } | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setTokenState] = useState<string | null>(null);
   const [user, setUserState] = useState<{ username: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = () => {
-      const storedToken = getToken();
-      const storedUser = getUser();
-      setTokenState(storedToken);
-      setUserState(storedUser);
+      if (hasAuthCookie()) {
+        try {
+          const match = document.cookie.match(/mawaqit_admin_token=([^;]+)/);
+          const tokenValue = match?.[1];
+          if (tokenValue) {
+            const parts = tokenValue.split('.');
+            if (parts[1]) {
+              const payload = JSON.parse(atob(parts[1]));
+              setUserState({ username: payload.sub });
+            }
+          }
+        } catch {
+          setUserState({ username: 'admin' });
+        }
+      }
       setLoading(false);
     };
     initAuth();
@@ -33,13 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await apiClient.adminLogin(username, password);
-      const { access_token } = response;
-      setToken(access_token);
-      const userObj = { username };
-      setUser(userObj);
-      setTokenState(access_token);
-      setUserState(userObj);
+      await apiClient.adminLogin(username, password);
+      setUserState({ username });
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
@@ -47,14 +51,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
-    clearToken();
-    setTokenState(null);
+  const logout = async () => {
+    try {
+      const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:8000/api';
+      await fetch(`${apiUrl}/admin/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch {
+      // Ignore logout errors
+    }
     setUserState(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

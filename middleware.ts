@@ -1,29 +1,30 @@
 import { NextResponse } from 'next/server';
 
-// This is a stub middleware for future authentication implementation
-// Currently allows all requests through
+const COOKIE_NAME = 'mawaqit_admin_token';
 
-export function middleware() {
-  // For now, allow all requests
-  // In the future, add authentication checks here
-  // Example:
-  // const token = request.cookies.get('auth-token');
-  // if (!token && request.nextUrl.pathname.startsWith('/admin')) {
-  //   return NextResponse.redirect(new URL('/login', request.url));
-  // }
+export function middleware(request: Request) {
+  const { pathname } = new URL(request.url);
+
+  if (pathname.startsWith('/admin')) {
+    if (pathname === '/admin/login') {
+      return NextResponse.next();
+    }
+
+    const cookieHeader = request.headers.get('cookie') ?? '';
+    const hasAuthCookie = cookieHeader.includes(`${COOKIE_NAME}=`);
+
+    if (!hasAuthCookie) {
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

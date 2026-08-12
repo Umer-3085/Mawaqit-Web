@@ -22,9 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initAuth = () => {
       if (hasAuthCookie()) {
         try {
-          const token = document.cookie.match(/mawaqit_admin_token=([^;]+)/);
-          if (token) {
-            const payload = JSON.parse(atob(token[1].split('.')[1]));
+          const match = document.cookie.match(/mawaqit_admin_token=([^;]+)/);
+          if (match?.[1]) {
+            const payload = JSON.parse(atob(match[1].split('.')[1]));
             setUserState({ username: payload.sub });
           }
         } catch {

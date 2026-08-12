@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { useState, createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { cn } from '@/components/ui/utils';
 import { Lock } from 'lucide-react';
 import { hasAuthCookie } from '../../lib/auth';
+import { useState, useEffect } from 'react';
 
 interface NavItem {
   label: string;
@@ -90,13 +91,7 @@ function useMobileDrawer() {
 function MobileDrawer() {
   const { isOpen, closeDrawer } = useMobileDrawer();
   const pathname = usePathname();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsAdmin(hasAuthCookie());
-    }
-  }, [isOpen]);
+  const isAdmin = hasAuthCookie();
 
   if (!isOpen) return null;
 
@@ -181,11 +176,7 @@ function MobileDrawer() {
 
 export function Navbar() {
   const pathname = usePathname();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    setIsAdmin(hasAuthCookie());
-  }, [pathname]);
+  const isAdmin = hasAuthCookie();
 
   return (
     <MobileDrawerProvider>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useState, createContext, useContext } from 'react';
 import { cn } from '@/components/ui/utils';
+import { Lock } from 'lucide-react';
 
 interface NavItem {
   label: string;

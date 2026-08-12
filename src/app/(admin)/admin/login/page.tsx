@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/components/admin/AuthProvider';
 
 export default function AdminLoginPage() {

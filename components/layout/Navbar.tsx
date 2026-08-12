@@ -194,6 +194,20 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {!pathname.startsWith('/admin') && (
+              <Link
+                href="/admin/login"
+                className={cn(
+                  'flex items-center justify-center p-2 sm:px-3 sm:py-1.5 rounded-lg transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                  'bg-primary text-black hover:bg-primary-hover active:bg-primary-light'
+                )}
+                aria-label="Admin login"
+                title="Admin Login"
+              >
+                <Lock className="w-5 h-5" aria-hidden="true" />
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}

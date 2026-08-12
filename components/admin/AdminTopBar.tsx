@@ -7,11 +7,7 @@ import { cn } from '@/components/ui/utils';
 import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
-interface AdminTopBarProps {
-  title?: string;
-}
-
-export function AdminTopBar({ title }: AdminTopBarProps) {
+export function AdminTopBar() {
   const { user, logout, isAuthenticated } = useAuth();
   const { openSidebar } = useAdminSidebar();
   const router = useRouter();
@@ -37,7 +33,7 @@ export function AdminTopBar({ title }: AdminTopBarProps) {
   return (
     <header className="sticky top-0 z-30 w-full h-16 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4">
-        {/* Left: Mobile menu button + Title */}
+        {/* Left: Mobile menu button */}
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <button
             type="button"
@@ -47,9 +43,6 @@ export function AdminTopBar({ title }: AdminTopBarProps) {
           >
             <Menu className="w-6 h-6" />
           </button>
-          {title && (
-            <h1 className="text-lg font-semibold text-text truncate">{title}</h1>
-          )}
         </div>
 
         {/* Right: User menu */}

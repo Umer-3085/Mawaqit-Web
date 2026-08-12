@@ -80,8 +80,7 @@ export function AdminSidebar({ isMobileOpen, onClose }: { isMobileOpen?: boolean
       )}
       <aside
         className={cn(
-          'fixed lg:static z-50 h-full w-64 bg-surface-elevated border-r border-border flex flex-col transition-transform duration-200 ease-out',
-          'lg:translate-x-0',
+          'fixed lg:sticky lg:top-0 lg:h-screen z-45 w-64 bg-surface-elevated border-r border-border flex flex-col transition-transform duration-200 ease-out',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
         role="navigation"

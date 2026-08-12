@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { PublicLayoutWrapper } from '@/components/layout/PublicLayoutWrapper';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,7 +39,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-text selection:bg-primary/20 selection:text-primary">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme={false}>
-          <Providers>{children}</Providers>
+          <Providers>
+            <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

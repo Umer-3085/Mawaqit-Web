@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
 import { cn } from '@/components/ui/utils';
 import { Lock } from 'lucide-react';
+import { hasAuthCookie } from '../../lib/auth';
 
 interface NavItem {
   label: string;
@@ -64,6 +65,12 @@ export function MobileDrawerProvider({ children }: { children: React.ReactNode }
   const openDrawer = () => setIsOpen(true);
   const closeDrawer = () => setIsOpen(false);
 
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-mobile-drawer', handleOpen);
+    return () => window.removeEventListener('open-mobile-drawer', handleOpen);
+  }, []);
+
   return (
     <MobileDrawerContext.Provider value={{ isOpen, openDrawer, closeDrawer }}>
       {children}
@@ -83,6 +90,13 @@ function useMobileDrawer() {
 function MobileDrawer() {
   const { isOpen, closeDrawer } = useMobileDrawer();
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsAdmin(hasAuthCookie());
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -139,7 +153,7 @@ function MobileDrawer() {
             {!pathname.startsWith('/admin') && (
               <Link
                 key="/admin/login"
-                href="/admin/login"
+                href={isAdmin ? "/admin/dashboard" : "/admin/login"}
                 onClick={() => closeDrawer()}
                 className={cn(
                   'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
@@ -150,7 +164,7 @@ function MobileDrawer() {
                 <span className="flex items-center justify-center w-6 h-6">
                   <Lock className="w-5 h-5" aria-hidden="true" />
                 </span>
-                <span>Admin Login</span>
+                <span>{isAdmin ? "Admin Dashboard" : "Admin Login"}</span>
               </Link>
             )}
           </nav>
@@ -167,6 +181,11 @@ function MobileDrawer() {
 
 export function Navbar() {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAdmin(hasAuthCookie());
+  }, [pathname]);
 
   return (
     <MobileDrawerProvider>
@@ -213,18 +232,17 @@ export function Navbar() {
             })}
             {!pathname.startsWith('/admin') && (
               <Link
-                href="/admin/login"
+                href={isAdmin ? "/admin/dashboard" : "/admin/login"}
                 className={cn(
                   'flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
                   'text-text-muted hover:text-primary hover:bg-surface'
                 )}
-                aria-label="Admin login"
-                title="Admin Login"
+                aria-label={isAdmin ? "Admin Dashboard" : "Admin login"}
+                title={isAdmin ? "Admin Dashboard" : "Admin Login"}
               >
-                <span className="flex items-center justify-center">{/* Lock icon */}</span>
-                <Lock className="w-5 h-5" aria-hidden="true" />
-                <span className="hidden sm:inline">Admin</span>
+                <Lock className="w-4.5 h-4.5 animate-pulse-lime" aria-hidden="true" />
+                <span className="hidden sm:inline">{isAdmin ? "Admin Dashboard" : "Admin"}</span>
               </Link>
             )}
           </nav>

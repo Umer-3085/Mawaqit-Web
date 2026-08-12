@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useState, createContext, useContext } from 'react';
 import { cn } from '@/components/ui/utils';
+import { Lock } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -135,6 +136,23 @@ function MobileDrawer() {
                 </Link>
               );
             })}
+            {!pathname.startsWith('/admin') && (
+              <Link
+                key="/admin/login"
+                href="/admin/login"
+                onClick={() => closeDrawer()}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                  'text-text-muted hover:text-primary hover:bg-surface'
+                )}
+              >
+                <span className="flex items-center justify-center w-6 h-6">
+                  <Lock className="w-5 h-5" aria-hidden="true" />
+                </span>
+                <span>Admin Login</span>
+              </Link>
+            )}
           </nav>
 
           {/* Theme Toggle in Drawer */}
@@ -193,6 +211,22 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {!pathname.startsWith('/admin') && (
+              <Link
+                href="/admin/login"
+                className={cn(
+                  'flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-sm font-medium rounded-lg transition-colors duration-150',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                  'text-text-muted hover:text-primary hover:bg-surface'
+                )}
+                aria-label="Admin login"
+                title="Admin Login"
+              >
+                <span className="flex items-center justify-center">{/* Lock icon */}</span>
+                <Lock className="w-5 h-5" aria-hidden="true" />
+                <span className="hidden sm:inline">Admin</span>
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}

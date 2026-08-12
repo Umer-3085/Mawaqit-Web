@@ -17,7 +17,7 @@ export default function AdminLayout({
   return (
     <AuthProvider>
       <AdminSidebarProvider>
-        <div className="min-h-screen bg-background flex">
+        <div className="min-h-screen bg-background bg-geometric-subtle bg-architectural-lines flex">
           {!isLoginPage && <AdminSidebar />}
           <div className="flex-1 flex flex-col min-w-0 transition-all duration-200">
             {!isLoginPage && <AdminTopBar />}

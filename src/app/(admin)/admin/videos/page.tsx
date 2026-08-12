@@ -58,7 +58,9 @@ export default function AdminVideosPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
-              Video Links Management
+              <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
+                Video Links Management
+              </span>
               <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
                 إدارة روابط الفيديو
               </span>

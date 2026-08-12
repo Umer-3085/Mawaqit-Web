@@ -11,7 +11,8 @@ const stats = [
     arabicLabel: 'إجمالي الآيات',
     value: '6,236',
     icon: BookOpen,
-    color: 'bg-primary/10 text-primary border-primary/20',
+    cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+    iconClass: 'bg-primary/10 text-primary border-primary/20',
     subtext: 'Active Quran Verses',
     href: '/admin/verses',
   },
@@ -20,7 +21,8 @@ const stats = [
     arabicLabel: 'إجمالي السور',
     value: '114',
     icon: Book,
-    color: 'bg-secondary/10 text-secondary border-secondary/20',
+    cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+    iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
     subtext: 'Complete Surahs List',
     href: '/admin/surahs',
   },
@@ -29,7 +31,8 @@ const stats = [
     arabicLabel: 'المقالات',
     value: '0',
     icon: FileText,
-    color: 'bg-primary/10 text-primary border-primary/20',
+    cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+    iconClass: 'bg-primary/10 text-primary border-primary/20',
     subtext: 'Published Knowledge',
     href: '/admin/articles',
   },
@@ -38,7 +41,8 @@ const stats = [
     arabicLabel: 'الفيديوهات',
     value: '0',
     icon: Video,
-    color: 'bg-secondary/10 text-secondary border-secondary/20',
+    cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+    iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
     subtext: 'Linked Video Links',
     href: '/admin/videos',
   },
@@ -59,7 +63,9 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
-            Admin Dashboard
+            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
+              Admin Dashboard
+            </span>
             <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
               لوحة التحكم
             </span>
@@ -75,7 +81,7 @@ export default function AdminDashboardPage() {
             <div
               className={cn(
                 'relative flex flex-col justify-between p-5 rounded-xl transition-all duration-150 ease-out select-none',
-                'bg-surface-elevated border border-border/40 shadow-sm hover:shadow-md hover:border-primary/30'
+                stat.cardClass
               )}
             >
               {/* Card Header: English label left, Arabic label right */}
@@ -93,7 +99,7 @@ export default function AdminDashboardPage() {
                 <span className="text-3xl font-extrabold tracking-tight text-text tabular-nums">
                   {stat.value}
                 </span>
-                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center border', stat.color)}>
+                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center border', stat.iconClass)}>
                   <stat.icon className="w-5 h-5" />
                 </div>
               </div>
@@ -113,7 +119,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions Panel - Inspired by MethodControls grid */}
-      <Card className="bg-surface-elevated border border-border/40 shadow-sm">
+      <Card className="bg-surface-elevated border border-lime/30 ring-2 ring-lime/20 shadow-md">
         <CardHeader className="border-b border-border/40 px-6 py-4">
           <h2 className="text-lg font-semibold text-text flex items-center gap-2">
             <span>Quick Actions</span>
@@ -144,7 +150,7 @@ export default function AdminDashboardPage() {
       </Card>
 
       {/* Recent Activity Panel */}
-      <Card className="bg-surface-elevated border border-border/40 shadow-sm">
+      <Card className="bg-surface-elevated border border-ivory/40 ring-2 ring-ivory/20 shadow-md">
         <CardHeader className="border-b border-border/40 px-6 py-4">
           <h2 className="text-lg font-semibold text-text flex items-center gap-2">
             <span>Recent Activity</span>

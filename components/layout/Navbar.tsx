@@ -136,6 +136,23 @@ function MobileDrawer() {
                 </Link>
               );
             })}
+            {!pathname.startsWith('/admin') && (
+              <Link
+                key="/admin/login"
+                href="/admin/login"
+                onClick={() => closeDrawer()}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
+                  'bg-primary text-black hover:bg-primary-hover active:bg-primary-light'
+                )}
+              >
+                <span className="flex items-center justify-center w-6 h-6">
+                  <Lock className="w-5 h-5" aria-hidden="true" />
+                </span>
+                <span>Admin Login</span>
+              </Link>
+            )}
           </nav>
 
           {/* Theme Toggle in Drawer */}

@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { apiClient } from '@/api';
 import type { ArticleVideo, Category, SubCategory } from '@/types/admin-content';
 
@@ -27,7 +28,8 @@ export default function AdminArticlesPage() {
   const [subCategoryFilter, setSubCategoryFilter] = useState<number | 'all'>('all');
   const [articleModal, setArticleModal] = useState<ArticleModalState>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ArticleVideo | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     data: articleData,
@@ -78,16 +80,16 @@ export default function AdminArticlesPage() {
     : subCategories.filter((sc) => sc.category_id === categoryFilter);
 
   const handleDelete = async (article: ArticleVideo) => {
-    if (!window.confirm(`Delete article "${article.title}"? This cannot be undone.`)) return;
-    setDeletingId(article.id);
+    setDeleting(true);
     setActionError(null);
     try {
       await apiClient.deleteArticleVideo(article.id);
       await mutateArticles();
+      setDeleteTarget(null);
     } catch (error) {
       setActionError(getErrorMessage(error));
     } finally {
-      setDeletingId(null);
+      setDeleting(false);
     }
   };
 
@@ -229,9 +231,9 @@ export default function AdminArticlesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={deletingId === article.id}
+                      disabled={deleting}
                       className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-error hover:bg-error/5 hover:border-error/30 transition-colors"
-                      onClick={() => handleDelete(article)}
+                      onClick={() => setDeleteTarget(article)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -253,6 +255,19 @@ export default function AdminArticlesPage() {
           setArticleModal(null);
           mutateArticles();
         }}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Article"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (deleteTarget) handleDelete(deleteTarget);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleting}
       />
     </div>
   );

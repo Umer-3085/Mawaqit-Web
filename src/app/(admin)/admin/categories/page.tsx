@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { apiClient } from '@/api';
 import type { Category, SubCategory } from '@/types/admin-content';
 
@@ -18,6 +19,10 @@ type CategoryModalState = { mode: 'create' } | { mode: 'edit'; category: Categor
 type SubCategoryModalState =
   | { mode: 'create'; defaultCategoryId?: number }
   | { mode: 'edit'; subCategory: SubCategory }
+  | null;
+type DeleteTarget =
+  | { type: 'category'; name: string; entity: Category }
+  | { type: 'subcategory'; name: string; entity: SubCategory }
   | null;
 
 function getErrorMessage(error: unknown): string {
@@ -31,7 +36,8 @@ export default function AdminCategoriesPage() {
   const [categoryModal, setCategoryModal] = useState<CategoryModalState>(null);
   const [subCategoryModal, setSubCategoryModal] = useState<SubCategoryModalState>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     data: categoryData,
@@ -75,31 +81,37 @@ export default function AdminCategoriesPage() {
     categories.find((c) => c.id === id)?.title ?? `Category #${id}`;
 
   const handleDeleteCategory = async (category: Category) => {
-    if (!window.confirm(`Delete category "${category.title}"? This will fail if content is attached to it.`)) return;
-    setDeletingId(category.id);
+    setDeleting(true);
     setActionError(null);
     try {
       await apiClient.deleteCategory(category.id);
       await Promise.all([mutateCategories(), mutateSubCategories()]);
+      setDeleteTarget(null);
     } catch (error) {
       setActionError(getErrorMessage(error));
     } finally {
-      setDeletingId(null);
+      setDeleting(false);
     }
   };
 
   const handleDeleteSubCategory = async (subCategory: SubCategory) => {
-    if (!window.confirm(`Delete subcategory "${subCategory.title}"?`)) return;
-    setDeletingId(subCategory.id);
+    setDeleting(true);
     setActionError(null);
     try {
       await apiClient.deleteSubcategory(subCategory.id);
       await Promise.all([mutateSubCategories(), mutateCategories()]);
+      setDeleteTarget(null);
     } catch (error) {
       setActionError(getErrorMessage(error));
     } finally {
-      setDeletingId(null);
+      setDeleting(false);
     }
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.type === 'category') handleDeleteCategory(deleteTarget.entity);
+    else handleDeleteSubCategory(deleteTarget.entity);
   };
 
   return (
@@ -129,6 +141,7 @@ export default function AdminCategoriesPage() {
           </div>
           <div className="flex gap-2">
             <Button
+              size="sm"
               className="gap-2 self-start sm:self-auto bg-primary text-white hover:bg-primary-hover"
               onClick={() => setCategoryModal({ mode: 'create' })}
             >
@@ -137,6 +150,7 @@ export default function AdminCategoriesPage() {
             </Button>
             <Button
               variant="outline"
+              size="sm"
               className="gap-2 self-start sm:self-auto"
               onClick={() => setSubCategoryModal({ mode: 'create' })}
             >
@@ -224,9 +238,11 @@ export default function AdminCategoriesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={deletingId === category.id}
+                      disabled={deleting}
                       className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-error hover:bg-error/5 hover:border-error/30 transition-colors"
-                      onClick={() => handleDeleteCategory(category)}
+                      onClick={() =>
+                        setDeleteTarget({ type: 'category', name: category.title, entity: category })
+                      }
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -303,9 +319,11 @@ export default function AdminCategoriesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={deletingId === subCategory.id}
+                      disabled={deleting}
                       className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-error hover:bg-error/5 hover:border-error/30 transition-colors"
-                      onClick={() => handleDeleteSubCategory(subCategory)}
+                      onClick={() =>
+                        setDeleteTarget({ type: 'subcategory', name: subCategory.title, entity: subCategory })
+                      }
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -338,6 +356,21 @@ export default function AdminCategoriesPage() {
           mutateSubCategories();
           mutateCategories();
         }}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={`Delete ${deleteTarget?.type === 'subcategory' ? 'Subcategory' : 'Category'}`}
+        message={
+          deleteTarget?.type === 'category'
+            ? `Are you sure you want to delete "${deleteTarget.name}"? This cannot be undone. Content attached to it may prevent deletion.`
+            : `Are you sure you want to delete "${deleteTarget?.name}"? This cannot be undone.`
+        }
+        confirmLabel="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleting}
       />
     </div>
   );

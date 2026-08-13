@@ -3,9 +3,19 @@
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import Link from 'next/link';
 import { cn } from '@/components/ui/utils';
-import { Plus, BookOpen, Book, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
+import { BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
 
 const stats = [
+  {
+    label: 'Total Surahs',
+    arabicLabel: 'إجمالي السور',
+    value: '114',
+    icon: Book,
+    cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+    iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
+    subtext: 'Complete Surahs List',
+    href: '/admin/surahs',
+  },
   {
     label: 'Total Verses',
     arabicLabel: 'إجمالي الآيات',
@@ -17,14 +27,24 @@ const stats = [
     href: '/admin/verses',
   },
   {
-    label: 'Total Surahs',
-    arabicLabel: 'إجمالي السور',
-    value: '114',
-    icon: Book,
+    label: 'Translations',
+    arabicLabel: 'الترجمات',
+    value: '32',
+    icon: Languages,
+    cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+    iconClass: 'bg-primary/10 text-primary border-primary/20',
+    subtext: 'Translation Editions',
+    href: '/admin/translations',
+  },
+  {
+    label: 'Tafsir',
+    arabicLabel: 'التفاسير',
+    value: '6',
+    icon: BookOpenText,
     cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
     iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
-    subtext: 'Complete Surahs List',
-    href: '/admin/surahs',
+    subtext: 'Tafsir Editions',
+    href: '/admin/tafsir',
   },
   {
     label: 'Articles',
@@ -49,8 +69,10 @@ const stats = [
 ];
 
 const quickActions = [
-  { label: 'Add Verse', actionText: 'CREATE VERSE', href: '/admin/verses', icon: Plus },
-  { label: 'Add Surah', actionText: 'CREATE SURAH', href: '/admin/surahs', icon: Book },
+  { label: 'Browse Surahs', actionText: 'VIEW SURAHS', href: '/admin/surahs', icon: Book },
+  { label: 'Browse Verses', actionText: 'VIEW VERSES', href: '/admin/verses', icon: BookOpen },
+  { label: 'Add Translation', actionText: 'ADD TRANSLATION', href: '/admin/translations', icon: Languages },
+  { label: 'Add Tafsir', actionText: 'ADD TAFSIR', href: '/admin/tafsir', icon: BookOpenText },
   { label: 'Write Article', actionText: 'WRITE ARTICLE', href: '/admin/articles', icon: FileText },
   { label: 'Add Video Link', actionText: 'ADD URL LINK', href: '/admin/videos', icon: Video },
   { label: 'Categories', actionText: 'MANAGE GROUPS', href: '/admin/categories', icon: FolderTree },
@@ -75,7 +97,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Grid - Inspired by PrayerTimeCard design */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href} className="block group">
             <div
@@ -129,7 +151,7 @@ export default function AdminDashboardPage() {
           </h2>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {quickActions.map((action) => (
               <Link key={action.label} href={action.href} className="group block">
                 <div className="flex flex-col items-center justify-center p-5 rounded-xl border border-border/40 bg-background/30 hover:bg-surface-hover hover:border-primary/40 transition-all duration-150 text-center h-full cursor-pointer select-none">

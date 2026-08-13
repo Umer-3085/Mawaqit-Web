@@ -13,6 +13,7 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+const USERNAME_KEY = 'admin_username';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<{ username: string } | null>(null);
@@ -20,20 +21,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const initAuth = () => {
-      if (hasAuthCookie()) {
-        try {
-          const match = document.cookie.match(/mawaqit_admin_token=([^;]+)/);
-          const tokenValue = match?.[1];
-          if (tokenValue) {
-            const parts = tokenValue.split('.');
-            if (parts[1]) {
-              const payload = JSON.parse(atob(parts[1]));
-              setUserState({ username: payload.sub });
-            }
-          }
-        } catch {
-          setUserState({ username: 'admin' });
-        }
+      const storedUsername = localStorage.getItem(USERNAME_KEY);
+      if (storedUsername && hasAuthCookie()) {
+        setUserState({ username: storedUsername });
       }
       setLoading(false);
     };
@@ -43,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string) => {
     try {
       await apiClient.adminLogin(username, password);
+      localStorage.setItem(USERNAME_KEY, username);
       setUserState({ username });
       return { success: true };
     } catch (error) {
@@ -61,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // Ignore logout errors
     }
+    localStorage.removeItem(USERNAME_KEY);
     setUserState(null);
   };
 

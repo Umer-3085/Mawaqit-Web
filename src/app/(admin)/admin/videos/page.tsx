@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { apiClient } from '@/api';
 import type { ArticleVideo, Category, SubCategory } from '@/types/admin-content';
 
@@ -27,7 +28,8 @@ export default function AdminVideosPage() {
   const [subCategoryFilter, setSubCategoryFilter] = useState<number | 'all'>('all');
   const [videoModal, setVideoModal] = useState<VideoModalState>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ArticleVideo | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     data: videoData,
@@ -78,16 +80,16 @@ export default function AdminVideosPage() {
     : subCategories.filter((sc) => sc.category_id === categoryFilter);
 
   const handleDelete = async (video: ArticleVideo) => {
-    if (!window.confirm(`Delete video "${video.title}"? This cannot be undone.`)) return;
-    setDeletingId(video.id);
+    setDeleting(true);
     setActionError(null);
     try {
       await apiClient.deleteArticleVideo(video.id);
       await mutateVideos();
+      setDeleteTarget(null);
     } catch (error) {
       setActionError(getErrorMessage(error));
     } finally {
-      setDeletingId(null);
+      setDeleting(false);
     }
   };
 
@@ -242,9 +244,9 @@ export default function AdminVideosPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={deletingId === video.id}
+                      disabled={deleting}
                       className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-error hover:bg-error/5 hover:border-error/30 transition-colors"
-                      onClick={() => handleDelete(video)}
+                      onClick={() => setDeleteTarget(video)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -266,6 +268,19 @@ export default function AdminVideosPage() {
           setVideoModal(null);
           mutateVideos();
         }}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Video"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (deleteTarget) handleDelete(deleteTarget);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleting}
       />
     </div>
   );

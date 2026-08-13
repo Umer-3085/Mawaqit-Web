@@ -125,24 +125,24 @@ export default function AdminCategoriesPage() {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Dashboard</span>
         </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-x-8 gap-y-3 pb-4 border-b border-border/40">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-x-3 gap-y-1 flex-wrap">
               <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
                 Categories & Subcategories
               </span>
-              <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
+              <span className="font-arabic text-primary text-lg font-semibold select-none whitespace-nowrap" dir="rtl">
                 التصنيفات والتصنيفات الفرعية
               </span>
             </h1>
-            <p className="text-sm text-text-muted mt-1">
+            <p className="text-sm text-text-muted mt-1.5">
               Organize articles and videos with categories and their subcategories
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2.5 shrink-0">
             <Button
               size="sm"
-              className="gap-2 self-start sm:self-auto bg-primary text-white hover:bg-primary-hover"
+              className="gap-2 bg-primary text-white hover:bg-primary-hover"
               onClick={() => setCategoryModal({ mode: 'create' })}
             >
               <Plus className="w-4 h-4" />
@@ -151,7 +151,7 @@ export default function AdminCategoriesPage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 self-start sm:self-auto"
+              className="gap-2"
               onClick={() => setSubCategoryModal({ mode: 'create' })}
             >
               <Plus className="w-4 h-4" />

@@ -2,10 +2,12 @@
 
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import Link from 'next/link';
+import useSWR from 'swr';
 import { cn } from '@/components/ui/utils';
-import { BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
+import { apiClient } from '@/api';
+import { BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, Layers, TrendingUp } from 'lucide-react';
 
-const stats = [
+const staticStats = [
   {
     label: 'Total Surahs',
     arabicLabel: 'إجمالي السور',
@@ -46,26 +48,6 @@ const stats = [
     subtext: 'Tafsir Editions',
     href: '/admin/tafsir',
   },
-  {
-    label: 'Articles',
-    arabicLabel: 'المقالات',
-    value: '0',
-    icon: FileText,
-    cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
-    iconClass: 'bg-primary/10 text-primary border-primary/20',
-    subtext: 'Published Knowledge',
-    href: '/admin/articles',
-  },
-  {
-    label: 'Videos',
-    arabicLabel: 'الفيديوهات',
-    value: '0',
-    icon: Video,
-    cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
-    iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
-    subtext: 'Linked Video Links',
-    href: '/admin/videos',
-  },
 ];
 
 const quickActions = [
@@ -79,6 +61,64 @@ const quickActions = [
 ];
 
 export default function AdminDashboardPage() {
+  const { data: categoryData } = useSWR('admin-dashboard-categories', () =>
+    apiClient.getCategories({ page_size: 1 })
+  );
+  const { data: subCategoryData } = useSWR('admin-dashboard-subcategories', () =>
+    apiClient.getSubcategories({ page_size: 1 })
+  );
+  const { data: articleData } = useSWR('admin-dashboard-articles', () =>
+    apiClient.getArticlesVideos({ type: 'article', page_size: 1 })
+  );
+  const { data: videoData } = useSWR('admin-dashboard-videos', () =>
+    apiClient.getArticlesVideos({ type: 'video', page_size: 1 })
+  );
+
+  const liveStats = [
+    {
+      label: 'Categories',
+      arabicLabel: 'التصنيفات',
+      value: categoryData?.total?.toLocaleString() ?? '—',
+      icon: FolderTree,
+      cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+      iconClass: 'bg-primary/10 text-primary border-primary/20',
+      subtext: 'Content Groups',
+      href: '/admin/categories',
+    },
+    {
+      label: 'Subcategories',
+      arabicLabel: 'التصنيفات الفرعية',
+      value: subCategoryData?.total?.toLocaleString() ?? '—',
+      icon: Layers,
+      cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+      iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
+      subtext: 'Sub Groups',
+      href: '/admin/categories',
+    },
+    {
+      label: 'Articles',
+      arabicLabel: 'المقالات',
+      value: articleData?.total?.toLocaleString() ?? '—',
+      icon: FileText,
+      cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+      iconClass: 'bg-primary/10 text-primary border-primary/20',
+      subtext: 'Published Knowledge',
+      href: '/admin/articles',
+    },
+    {
+      label: 'Videos',
+      arabicLabel: 'الفيديوهات',
+      value: videoData?.total?.toLocaleString() ?? '—',
+      icon: Video,
+      cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+      iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
+      subtext: 'Linked Video Links',
+      href: '/admin/videos',
+    },
+  ];
+
+  const stats = [...staticStats, ...liveStats];
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Page Header */}
@@ -97,7 +137,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Grid - Inspired by PrayerTimeCard design */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href} className="block group">
             <div

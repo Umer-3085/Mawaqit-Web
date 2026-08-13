@@ -3,6 +3,7 @@
 import { useAuth } from '@/components/admin/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useAdminSidebar } from '@/components/admin/AdminSidebar';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/components/ui/utils';
 import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
@@ -45,8 +46,9 @@ export function AdminTopBar() {
           </button>
         </div>
 
-        {/* Right: User menu */}
+        {/* Right: Theme toggle + User menu */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {isAuthenticated && (
             <div className="relative" ref={dropdownRef}>
               <button

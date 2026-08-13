@@ -19,6 +19,15 @@ import type {
   TranslationTafseerDetailSimple,
   VerseText,
   EditionType,
+  Category,
+  SubCategory,
+  ArticleVideo,
+  ArticleVideoCreateInput,
+  ArticleVideoUpdateInput,
+  CategoryCreateInput,
+  CategoryUpdateInput,
+  SubCategoryCreateInput,
+  SubCategoryUpdateInput,
 } from '../types/admin-content';
 
 const DEFAULT_TIMEOUT = 10000;
@@ -83,6 +92,10 @@ async function fetchWithRetry<T>(
           errorData = await response.text();
         }
         throw ApiError.fromResponse(response.status, errorData);
+      }
+
+      if (response.status === 204) {
+        return undefined as T;
       }
 
       const data = await response.json();
@@ -182,6 +195,29 @@ export class ApiClient {
     );
   }
 
+  async patch<T>(path: string, body: unknown): Promise<T> {
+    return fetchWithRetry<T>(
+      `${this.baseURL}${path}`,
+      {
+        ...this.defaultOptions(),
+        method: 'PATCH',
+        headers: { ...this.defaultOptions().headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      },
+      this.timeoutMs,
+      this.retryOptions
+    );
+  }
+
+  async delete(path: string): Promise<void> {
+    return fetchWithRetry<void>(
+      `${this.baseURL}${path}`,
+      { ...this.defaultOptions(), method: 'DELETE' },
+      this.timeoutMs,
+      this.retryOptions
+    );
+  }
+
   async adminLogin(username: string, password: string): Promise<{ access_token: string; token_type: string }> {
     return this.postForm<{ access_token: string; token_type: string }>('/admin/login', { username, password });
   }
@@ -238,6 +274,64 @@ export class ApiClient {
 
   async getVerseText(surahNumber: number, verseNumber: number, detailId: number): Promise<VerseText> {
     return this.get<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`);
+  }
+
+  async getCategories(params?: { page?: number; page_size?: number }): Promise<PaginatedList<Category>> {
+    return this.get<PaginatedList<Category>>('/categories', params);
+  }
+
+  async createCategory(data: CategoryCreateInput): Promise<Category> {
+    return this.post<Category>('/categories', data);
+  }
+
+  async updateCategory(id: number, data: CategoryUpdateInput): Promise<Category> {
+    return this.patch<Category>(`/categories/${id}`, data);
+  }
+
+  async deleteCategory(id: number): Promise<void> {
+    return this.delete(`/categories/${id}`);
+  }
+
+  async getSubcategories(params?: {
+    page?: number;
+    page_size?: number;
+    category_id?: number;
+  }): Promise<PaginatedList<SubCategory>> {
+    return this.get<PaginatedList<SubCategory>>('/subcategories', params);
+  }
+
+  async createSubcategory(data: SubCategoryCreateInput): Promise<SubCategory> {
+    return this.post<SubCategory>('/subcategories', data);
+  }
+
+  async updateSubcategory(id: number, data: SubCategoryUpdateInput): Promise<SubCategory> {
+    return this.patch<SubCategory>(`/subcategories/${id}`, data);
+  }
+
+  async deleteSubcategory(id: number): Promise<void> {
+    return this.delete(`/subcategories/${id}`);
+  }
+
+  async getArticlesVideos(params?: {
+    page?: number;
+    page_size?: number;
+    category_id?: number;
+    subcategory_id?: number;
+    type?: 'all' | 'video' | 'article';
+  }): Promise<PaginatedList<ArticleVideo>> {
+    return this.get<PaginatedList<ArticleVideo>>('/articles-videos', params);
+  }
+
+  async createArticleVideo(data: ArticleVideoCreateInput): Promise<ArticleVideo> {
+    return this.post<ArticleVideo>('/articles-videos', data);
+  }
+
+  async updateArticleVideo(id: number, data: ArticleVideoUpdateInput): Promise<ArticleVideo> {
+    return this.patch<ArticleVideo>(`/articles-videos/${id}`, data);
+  }
+
+  async deleteArticleVideo(id: number): Promise<void> {
+    return this.delete(`/articles-videos/${id}`);
   }
 
   async getPrayerTimes(params: SingleDayParams): Promise<PrayerTimesResponse> {

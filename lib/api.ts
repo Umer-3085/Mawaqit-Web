@@ -177,6 +177,60 @@ export class ApiClient {
     return this.postForm<{ access_token: string; token_type: string }>('/admin/login', { username, password });
   }
 
+  async getSurahs(params?: {
+    page?: number;
+    page_size?: number;
+    revelation_type?: string;
+    search?: string;
+  }): Promise<PaginatedList<Surah>> {
+    return this.get<PaginatedList<Surah>>('/surahs', params);
+  }
+
+  async getSurahsAll(): Promise<Surah[]> {
+    return this.get<Surah[]>('/surahs/all');
+  }
+
+  async getVerses(params?: {
+    page?: number;
+    page_size?: number;
+    surah_number?: number;
+    juz?: number;
+    page_no?: number;
+    search?: string;
+  }): Promise<PaginatedList<Verse>> {
+    return this.get<PaginatedList<Verse>>('/verses', params);
+  }
+
+  async getTranslationTafseerDetails(params?: {
+    page?: number;
+    page_size?: number;
+    lang?: string;
+    direction?: string;
+    search?: string;
+  }): Promise<PaginatedList<TranslationTafseerDetail>> {
+    return this.get<PaginatedList<TranslationTafseerDetail>>('/translation-tafseer-details', params);
+  }
+
+  async getTranslationTafseerDetailsAll(): Promise<TranslationTafseerDetailSimple[]> {
+    return this.get<TranslationTafseerDetailSimple[]>('/translation-tafseer-details/all');
+  }
+
+  async getVerseTexts(params?: {
+    page?: number;
+    page_size?: number;
+    surah_number?: number;
+    verse_number?: number;
+    detail_id?: number;
+    has_tafseer?: boolean;
+    search?: string;
+  }): Promise<PaginatedList<VerseText>> {
+    return this.get<PaginatedList<VerseText>>('/verse-texts', params);
+  }
+
+  async getVerseText(surahNumber: number, verseNumber: number, detailId: number): Promise<VerseText> {
+    return this.get<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`);
+  }
+
   async getPrayerTimes(params: SingleDayParams): Promise<PrayerTimesResponse> {
     const validated = SingleDayParamsSchema.parse(params);
     const queryParams = {

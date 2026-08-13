@@ -85,6 +85,9 @@ async function fetchWithRetry<T>(
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        if (response.status === 401 && typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('admin:session-expired'));
+        }
         let errorData: unknown;
         try {
           errorData = await response.json();

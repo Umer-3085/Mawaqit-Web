@@ -11,6 +11,14 @@ import {
   SingleDayParamsSchema,
   DateRangeParamsSchema,
 } from './validation';
+import type {
+  PaginatedList,
+  Surah,
+  Verse,
+  TranslationTafseerDetail,
+  TranslationTafseerDetailSimple,
+  VerseText,
+} from '../types/admin-content';
 
 const DEFAULT_TIMEOUT = 10000;
 const DEFAULT_MAX_RETRIES = 3;

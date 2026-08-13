@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { apiClient } from '@/api';
 import { hasAuthCookie } from '@/auth';
 
@@ -16,6 +17,8 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const USERNAME_KEY = 'admin_username';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [user, setUserState] = useState<{ username: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +32,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     initAuth();
   }, []);
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      const hadSession = localStorage.getItem(USERNAME_KEY) !== null;
+      localStorage.removeItem(USERNAME_KEY);
+      setUserState(null);
+      if (hadSession && pathname !== '/admin/login') {
+        router.push('/admin/login?expired=1');
+      }
+    };
+    window.addEventListener('admin:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('admin:session-expired', handleSessionExpired);
+  }, [router, pathname]);
 
   const login = async (username: string, password: string) => {
     try {

@@ -3,6 +3,7 @@ export interface AdminUser {
 }
 
 const COOKIE_NAME = 'mawaqit_admin_token';
+const SESSION_COOKIE_NAME = 'mawaqit_admin_session';
 
 export function getTokenFromCookie(): string | null {
   if (typeof document === 'undefined') return null;
@@ -11,7 +12,10 @@ export function getTokenFromCookie(): string | null {
 }
 
 export function hasAuthCookie(): boolean {
-  return getTokenFromCookie() !== null;
+  if (typeof document === 'undefined') return false;
+  return document.cookie
+    .split(';')
+    .some((part) => part.trim().startsWith(`${SESSION_COOKIE_NAME}=`));
 }
 
 export function getAuthHeader(): Record<string, string> {

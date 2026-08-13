@@ -52,3 +52,64 @@ export interface PaginatedList<T> {
 }
 
 export type EditionType = 'translation' | 'tafsir';
+
+export interface Category {
+  id: number;
+  title: string;
+  description: string | null;
+}
+
+export interface SubCategory {
+  id: number;
+  title: string;
+  category_id: number;
+  description: string | null;
+}
+
+export interface ArticleVideo {
+  id: number;
+  title: string;
+  detail: string | null;
+  category_id: number;
+  subcategory_id: number | null;
+  link: string | null;
+  content_type: 'article' | 'video';
+}
+
+export interface ArticleVideoCreateInput {
+  title: string;
+  detail?: string;
+  category_id: number;
+  subcategory_id?: number | null;
+  link?: string;
+}
+
+export interface ArticleVideoUpdateInput {
+  title?: string;
+  detail?: string;
+  category_id?: number;
+  subcategory_id?: number | null;
+  link?: string;
+}
+
+export interface CategoryCreateInput {
+  title: string;
+  description?: string;
+}
+
+export interface CategoryUpdateInput {
+  title?: string;
+  description?: string;
+}
+
+export interface SubCategoryCreateInput {
+  title: string;
+  category_id: number;
+  description?: string;
+}
+
+export interface SubCategoryUpdateInput {
+  title?: string;
+  category_id?: number;
+  description?: string;
+}

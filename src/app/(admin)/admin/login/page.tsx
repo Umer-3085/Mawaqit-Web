@@ -12,6 +12,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '/admin/dashboard';
+  const sessionExpired = searchParams.get('expired') === '1';
   const { login, loading: authLoading } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,6 +38,14 @@ function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {sessionExpired && (
+        <div
+          className="p-3 rounded-lg bg-secondary/10 border border-secondary/30 text-secondary text-sm text-center"
+          role="status"
+        >
+          Your session has expired. Please sign in again to continue.
+        </div>
+      )}
       <Input
         label="Username"
         type="text"

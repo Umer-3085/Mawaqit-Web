@@ -4,6 +4,7 @@ import { useAuth } from '@/components/admin/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useAdminSidebar } from '@/components/admin/AdminSidebar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { hasAuthCookie } from '@/auth';
 import { cn } from '@/components/ui/utils';
 import { Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
@@ -14,6 +15,7 @@ export function AdminTopBar() {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const showUserMenu = isAuthenticated || hasAuthCookie();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -49,7 +51,7 @@ export function AdminTopBar() {
         {/* Right: Theme toggle + User menu */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          {isAuthenticated && (
+          {showUserMenu && (
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"

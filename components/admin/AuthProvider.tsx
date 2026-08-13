@@ -25,8 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initAuth = () => {
       const storedUsername = localStorage.getItem(USERNAME_KEY);
-      if (storedUsername && hasAuthCookie()) {
-        setUserState({ username: storedUsername });
+      if (hasAuthCookie()) {
+        setUserState({ username: storedUsername ?? 'Admin' });
       }
       setLoading(false);
     };

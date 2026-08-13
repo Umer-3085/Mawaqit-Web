@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import Link from 'next/link';
 import { cn } from '@/components/ui/utils';
-import { Plus, BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
+import { BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, TrendingUp } from 'lucide-react';
 
 const stats = [
   {
@@ -151,7 +151,7 @@ export default function AdminDashboardPage() {
           </h2>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {quickActions.map((action) => (
               <Link key={action.label} href={action.href} className="group block">
                 <div className="flex flex-col items-center justify-center p-5 rounded-xl border border-border/40 bg-background/30 hover:bg-surface-hover hover:border-primary/40 transition-all duration-150 text-center h-full cursor-pointer select-none">

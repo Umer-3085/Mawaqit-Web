@@ -18,6 +18,7 @@ import type {
   TranslationTafseerDetail,
   TranslationTafseerDetailSimple,
   VerseText,
+  EditionType,
 } from '../types/admin-content';
 
 const DEFAULT_TIMEOUT = 10000;
@@ -238,6 +239,27 @@ export class ApiClient {
   async getVerseText(surahNumber: number, verseNumber: number, detailId: number): Promise<VerseText> {
     return this.get<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`);
   }
+}
+
+export async function classifyEditionTypes(
+  details: TranslationTafseerDetailSimple[]
+): Promise<Map<number, EditionType | null>> {
+  const results = await Promise.all(
+    details.map(async (detail) => {
+      try {
+        const data = await apiClient.getVerseTexts({ detail_id: detail.id, page_size: 1 });
+        const row = data.items[0];
+        if (!row) return [detail.id, null] as const;
+        if (row.verse_translation && row.verse_translation.trim()) return [detail.id, 'translation'] as const;
+        if (row.verse_tafseer && row.verse_tafseer.trim()) return [detail.id, 'tafsir'] as const;
+        return [detail.id, null] as const;
+      } catch {
+        return [detail.id, null] as const;
+      }
+    })
+  );
+  return new Map(results);
+}
 
   async getPrayerTimes(params: SingleDayParams): Promise<PrayerTimesResponse> {
     const validated = SingleDayParamsSchema.parse(params);

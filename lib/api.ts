@@ -451,11 +451,43 @@ export function createApiClient(config?: Partial<ApiClientConfig>): ApiClient {
 
 export const apiClient = createApiClient();
 
+const EDITION_TYPE_MARKER_PREFIX = '[edition-type:';
+const EDITION_TYPE_MARKER_SUFFIX = '] ';
+
+export function markerForType(type: EditionType): string {
+  return `${EDITION_TYPE_MARKER_PREFIX}${type}${EDITION_TYPE_MARKER_SUFFIX}`;
+}
+
+export function typeFromMarker(description: string | null | undefined): EditionType | null {
+  if (!description) return null;
+  const match = description.match(
+    new RegExp(`^\\${EDITION_TYPE_MARKER_PREFIX}(translation|tafsir)\\${EDITION_TYPE_MARKER_SUFFIX}`)
+  );
+  return match ? (match[1] as EditionType) : null;
+}
+
+export function stripTypeMarker(description: string | null | undefined): string | null {
+  if (!description) return null;
+  return (
+    description.replace(
+      new RegExp(`^\\${EDITION_TYPE_MARKER_PREFIX}(translation|tafsir)\\${EDITION_TYPE_MARKER_SUFFIX}`),
+      ''
+    ) || null
+  );
+}
+
+export function applyTypeMarker(type: EditionType, description: string | null | undefined): string {
+  const clean = stripTypeMarker(description) ?? '';
+  return `${markerForType(type)}${clean}`;
+}
+
 export async function classifyEditionTypes(
   details: TranslationTafseerDetailSimple[]
 ): Promise<Map<number, EditionType | null>> {
   const results = await Promise.all(
     details.map(async (detail) => {
+      const marked = typeFromMarker((detail as TranslationTafseerDetail).description);
+      if (marked) return [detail.id, marked] as const;
       try {
         let page = 1;
         let type: EditionType | null = null;

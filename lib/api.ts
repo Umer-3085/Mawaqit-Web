@@ -267,6 +267,10 @@ export class ApiClient {
     return this.get<PaginatedList<Verse>>('/verses', params);
   }
 
+  async getVersesBySurah(surahNumber: number): Promise<Verse[]> {
+    return this.get<Verse[]>(`/verses/surah/${surahNumber}`);
+  }
+
   async getTranslationTafseerDetails(params?: {
     page?: number;
     page_size?: number;

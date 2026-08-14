@@ -55,7 +55,7 @@ export default function AdminTafsirPage() {
     };
   }, [allDetails]);
 
-  const tafsirEditions = allDetails.filter((d) => editionTypes.get(d.id) === 'tafsir');
+  const tafsirEditions = allDetails.filter((d) => editionTypes.get(d.id) !== 'translation');
   const { data: surahs, error: surahsError } = useSWR('admin-surahs-all', () =>
     apiClient.getSurahsAll()
   );

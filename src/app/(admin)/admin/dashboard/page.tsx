@@ -54,7 +54,7 @@ const quickActions = [
   { label: 'Browse Surahs', actionText: 'VIEW SURAHS', href: '/admin/surahs', icon: Book },
   { label: 'Browse Verses', actionText: 'VIEW VERSES', href: '/admin/verses', icon: BookOpen },
   { label: 'Manage Translations', actionText: 'MANAGE TRANSLATIONS', href: '/admin/translations', icon: Languages },
-  { label: 'Add Tafsir', actionText: 'ADD TAFSIR', href: '/admin/tafsir', icon: BookOpenText },
+  { label: 'Manage Tafsir', actionText: 'MANAGE TAFSIR', href: '/admin/tafsir', icon: BookOpenText },
   { label: 'Write Article', actionText: 'WRITE ARTICLE', href: '/admin/articles', icon: FileText },
   { label: 'Add Video Link', actionText: 'ADD URL LINK', href: '/admin/videos', icon: Video },
   { label: 'Categories', actionText: 'MANAGE GROUPS', href: '/admin/categories', icon: FolderTree },

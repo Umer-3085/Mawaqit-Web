@@ -17,7 +17,11 @@ import type {
   Verse,
   TranslationTafseerDetail,
   TranslationTafseerDetailSimple,
+  TranslationTafseerDetailCreateInput,
+  TranslationTafseerDetailUpdateInput,
   VerseText,
+  VerseTextUpsertInput,
+  VerseTextBulkUpsertInput,
   EditionType,
   Category,
   SubCategory,
@@ -212,6 +216,20 @@ export class ApiClient {
     );
   }
 
+  async put<T>(path: string, body: unknown): Promise<T> {
+    return fetchWithRetry<T>(
+      `${this.baseURL}${path}`,
+      {
+        ...this.defaultOptions(),
+        method: 'PUT',
+        headers: { ...this.defaultOptions().headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      },
+      this.timeoutMs,
+      this.retryOptions
+    );
+  }
+
   async delete(path: string): Promise<void> {
     return fetchWithRetry<void>(
       `${this.baseURL}${path}`,
@@ -263,6 +281,21 @@ export class ApiClient {
     return this.get<TranslationTafseerDetailSimple[]>('/translation-tafseer-details/all');
   }
 
+  async createTranslationTafseerDetail(data: TranslationTafseerDetailCreateInput): Promise<TranslationTafseerDetail> {
+    return this.post<TranslationTafseerDetail>('/translation-tafseer-details', data);
+  }
+
+  async updateTranslationTafseerDetail(
+    id: number,
+    data: TranslationTafseerDetailUpdateInput
+  ): Promise<TranslationTafseerDetail> {
+    return this.patch<TranslationTafseerDetail>(`/translation-tafseer-details/${id}`, data);
+  }
+
+  async deleteTranslationTafseerDetail(id: number): Promise<void> {
+    return this.delete(`/translation-tafseer-details/${id}`);
+  }
+
   async getVerseTexts(params?: {
     page?: number;
     page_size?: number;
@@ -277,6 +310,19 @@ export class ApiClient {
 
   async getVerseText(surahNumber: number, verseNumber: number, detailId: number): Promise<VerseText> {
     return this.get<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`);
+  }
+
+  async upsertVerseText(
+    surahNumber: number,
+    verseNumber: number,
+    detailId: number,
+    data: VerseTextUpsertInput
+  ): Promise<VerseText> {
+    return this.put<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`, data);
+  }
+
+  async bulkUpsertVerseTexts(data: VerseTextBulkUpsertInput): Promise<VerseText[]> {
+    return this.put<VerseText[]>('/verse-texts/surah-bulk', data);
   }
 
   async getCategories(params?: { page?: number; page_size?: number }): Promise<PaginatedList<Category>> {
@@ -407,12 +453,24 @@ export async function classifyEditionTypes(
   const results = await Promise.all(
     details.map(async (detail) => {
       try {
-        const data = await apiClient.getVerseTexts({ detail_id: detail.id, page_size: 1 });
-        const row = data.items[0];
-        if (!row) return [detail.id, null] as const;
-        if (row.verse_translation && row.verse_translation.trim()) return [detail.id, 'translation'] as const;
-        if (row.verse_tafseer && row.verse_tafseer.trim()) return [detail.id, 'tafsir'] as const;
-        return [detail.id, null] as const;
+        let page = 1;
+        let type: EditionType | null = null;
+        while (page >= 1) {
+          const data = await apiClient.getVerseTexts({ detail_id: detail.id, page, page_size: 100 });
+          for (const row of data.items) {
+            if (row.verse_translation && row.verse_translation.trim()) {
+              type = 'translation';
+              break;
+            }
+            if (row.verse_tafseer && row.verse_tafseer.trim()) {
+              type = 'tafsir';
+              break;
+            }
+          }
+          if (type || page >= data.total_pages) break;
+          page += 1;
+        }
+        return [detail.id, type] as const;
       } catch {
         return [detail.id, null] as const;
       }

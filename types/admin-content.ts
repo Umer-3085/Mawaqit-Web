@@ -29,6 +29,22 @@ export interface TranslationTafseerDetail {
   description: string | null;
 }
 
+export interface TranslationTafseerDetailCreateInput {
+  title: string;
+  lang: string;
+  author: string;
+  direction?: 'ltr' | 'rtl';
+  description?: string;
+}
+
+export interface TranslationTafseerDetailUpdateInput {
+  title?: string;
+  lang?: string;
+  author?: string;
+  direction?: 'ltr' | 'rtl';
+  description?: string;
+}
+
 export interface TranslationTafseerDetailSimple {
   id: number;
   title: string;
@@ -41,6 +57,23 @@ export interface VerseText {
   detail_id: number;
   verse_translation: string;
   verse_tafseer: string | null;
+}
+
+export interface VerseTextUpsertInput {
+  verse_translation?: string;
+  verse_tafseer?: string;
+}
+
+export interface VerseTextBulkItemInput {
+  verse_number: number;
+  verse_translation?: string;
+  verse_tafseer?: string;
+}
+
+export interface VerseTextBulkUpsertInput {
+  surah_number: number;
+  detail_id: number;
+  items: VerseTextBulkItemInput[];
 }
 
 export interface PaginatedList<T> {

@@ -53,7 +53,7 @@ const staticStats = [
 const quickActions = [
   { label: 'Browse Surahs', actionText: 'VIEW SURAHS', href: '/admin/surahs', icon: Book },
   { label: 'Browse Verses', actionText: 'VIEW VERSES', href: '/admin/verses', icon: BookOpen },
-  { label: 'Add Translation', actionText: 'ADD TRANSLATION', href: '/admin/translations', icon: Languages },
+  { label: 'Manage Translations', actionText: 'MANAGE TRANSLATIONS', href: '/admin/translations', icon: Languages },
   { label: 'Add Tafsir', actionText: 'ADD TAFSIR', href: '/admin/tafsir', icon: BookOpenText },
   { label: 'Write Article', actionText: 'WRITE ARTICLE', href: '/admin/articles', icon: FileText },
   { label: 'Add Video Link', actionText: 'ADD URL LINK', href: '/admin/videos', icon: Video },

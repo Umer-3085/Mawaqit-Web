@@ -13,7 +13,7 @@ import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Modal } from '@/components/admin/Modal';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { VerseContentEditor } from '@/components/admin/VerseContentEditor';
-import { apiClient, classifyEditionTypes } from '@/api';
+import { apiClient, classifyEditionTypes, applyTypeMarker, stripTypeMarker } from '@/api';
 import type { EditionType, TranslationTafseerDetail, Surah } from '@/types/admin-content';
 
 type EditionModalState =
@@ -55,7 +55,7 @@ export default function AdminTafsirPage() {
     };
   }, [allDetails]);
 
-  const tafsirEditions = allDetails.filter((d) => editionTypes.get(d.id) !== 'translation');
+  const tafsirEditions = allDetails.filter((d) => editionTypes.get(d.id) === 'tafsir');
   const { data: surahs, error: surahsError } = useSWR('admin-surahs-all', () =>
     apiClient.getSurahsAll()
   );
@@ -174,8 +174,8 @@ export default function AdminTafsirPage() {
                           {edition.author}
                         </span>
                       </div>
-                      {edition.description && (
-                        <p className="text-sm text-text-secondary mt-1">{edition.description}</p>
+                      {stripTypeMarker(edition.description) && (
+                        <p className="text-sm text-text-secondary mt-1">{stripTypeMarker(edition.description)}</p>
                       )}
                     </div>
                   </div>
@@ -256,6 +256,7 @@ export default function AdminTafsirPage() {
       {/* Edition Modal */}
       <EditionModal
         state={editionModal}
+        type="tafsir"
         onClose={() => setEditionModal(null)}
         onSaved={() => {
           setEditionModal(null);
@@ -283,11 +284,12 @@ export default function AdminTafsirPage() {
 
 interface EditionModalProps {
   state: EditionModalState;
+  type: 'translation' | 'tafsir';
   onClose: () => void;
   onSaved: () => void;
 }
 
-function EditionModal({ state, onClose, onSaved }: EditionModalProps) {
+function EditionModal({ state, type, onClose, onSaved }: EditionModalProps) {
   return (
     <Modal
       open={!!state}
@@ -308,6 +310,7 @@ function EditionModal({ state, onClose, onSaved }: EditionModalProps) {
         <EditionFormContent
           key={state.mode === 'edit' ? `edit-${state.edition.id}` : 'create'}
           state={state}
+          type={type}
           onSaved={onSaved}
         />
       )}
@@ -317,9 +320,11 @@ function EditionModal({ state, onClose, onSaved }: EditionModalProps) {
 
 function EditionFormContent({
   state,
+  type,
   onSaved,
 }: {
   state: Exclude<EditionModalState, null>;
+  type: 'translation' | 'tafsir';
   onSaved: () => void;
 }) {
   const isEdit = state.mode === 'edit';
@@ -329,7 +334,9 @@ function EditionFormContent({
   const [direction, setDirection] = useState<'ltr' | 'rtl'>(
     isEdit ? (state.edition.direction ?? 'ltr') : 'ltr'
   );
-  const [description, setDescription] = useState(isEdit ? (state.edition.description ?? '') : '');
+  const [description, setDescription] = useState(
+    isEdit ? (stripTypeMarker(state.edition.description) ?? '') : ''
+  );
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -342,7 +349,7 @@ function EditionFormContent({
         lang: lang.trim().toLowerCase(),
         author: author.trim(),
         direction,
-        description: description.trim() || undefined,
+        description: applyTypeMarker(type, description.trim()) || undefined,
       };
       if (isEdit) {
         await apiClient.updateTranslationTafseerDetail(state.edition.id, payload);

@@ -4,7 +4,9 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { cn } from '@/components/ui/utils';
-import { apiClient } from '@/api';
+import { apiClient, classifyEditionTypes } from '@/api';
+import type { EditionType } from '@/types/admin-content';
+import { useEffect, useMemo, useState } from 'react';
 import { BookOpen, Book, Languages, BookOpenText, FileText, Video, FolderTree, Layers, TrendingUp } from 'lucide-react';
 
 const staticStats = [
@@ -19,34 +21,14 @@ const staticStats = [
     href: '/admin/surahs',
   },
   {
-    label: 'Total Verses',
-    arabicLabel: 'إجمالي الآيات',
+    label: 'Verses',
+    arabicLabel: 'الآيات',
     value: '6,236',
     icon: BookOpen,
     cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
     iconClass: 'bg-primary/10 text-primary border-primary/20',
     subtext: 'Active Quran Verses',
     href: '/admin/verses',
-  },
-  {
-    label: 'Translations',
-    arabicLabel: 'الترجمات',
-    value: '32',
-    icon: Languages,
-    cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
-    iconClass: 'bg-primary/10 text-primary border-primary/20',
-    subtext: 'Translation Editions',
-    href: '/admin/translations',
-  },
-  {
-    label: 'Tafsir',
-    arabicLabel: 'التفاسير',
-    value: '6',
-    icon: BookOpenText,
-    cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
-    iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
-    subtext: 'Tafsir Editions',
-    href: '/admin/tafsir',
   },
 ];
 
@@ -73,6 +55,26 @@ export default function AdminDashboardPage() {
   const { data: videoData } = useSWR('admin-dashboard-videos', () =>
     apiClient.getArticlesVideos({ type: 'video', page_size: 1 })
   );
+  const { data: editionsData } = useSWR('admin-dashboard-editions', () =>
+    apiClient.getTranslationTafseerDetails({ page_size: 100 })
+  );
+  const [editionTypes, setEditionTypes] = useState<Map<number, EditionType | null>>(new Map());
+
+  const allDetails = useMemo(() => editionsData?.items ?? [], [editionsData]);
+
+  useEffect(() => {
+    if (!allDetails.length) return;
+    let cancelled = false;
+    classifyEditionTypes(allDetails).then((types) => {
+      if (!cancelled) setEditionTypes(types);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [allDetails]);
+
+  const translationCount = allDetails.filter((d) => editionTypes.get(d.id) === 'translation').length;
+  const tafsirCount = allDetails.filter((d) => editionTypes.get(d.id) === 'tafsir').length;
 
   const liveStats = [
     {
@@ -114,6 +116,26 @@ export default function AdminDashboardPage() {
       iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
       subtext: 'Linked Video Links',
       href: '/admin/videos',
+    },
+    {
+      label: 'Translations',
+      arabicLabel: 'الترجمات',
+      value: translationCount ? translationCount.toLocaleString() : '—',
+      icon: Languages,
+      cardClass: 'ring-2 ring-lime/20 border-lime/30 bg-surface-elevated hover:bg-surface-hover/30',
+      iconClass: 'bg-primary/10 text-primary border-primary/20',
+      subtext: 'Translation Editions',
+      href: '/admin/translations',
+    },
+    {
+      label: 'Tafsir',
+      arabicLabel: 'التفاسير',
+      value: tafsirCount ? tafsirCount.toLocaleString() : '—',
+      icon: BookOpenText,
+      cardClass: 'bg-ivory/5 ring-2 ring-ivory border-ivory/40 shadow-md hover:bg-ivory/10',
+      iconClass: 'bg-secondary/15 text-secondary border-secondary/20',
+      subtext: 'Tafsir Editions',
+      href: '/admin/tafsir',
     },
   ];
 

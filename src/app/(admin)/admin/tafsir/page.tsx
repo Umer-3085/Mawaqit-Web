@@ -1,31 +1,51 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
-import { ArrowLeft, Search, BookOpenText } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, BookOpenText, ScrollText } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { Modal } from '@/components/admin/Modal';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
+import { VerseContentEditor } from '@/components/admin/VerseContentEditor';
 import { apiClient, classifyEditionTypes } from '@/api';
-import type { EditionType, TranslationTafseerDetailSimple, Surah, VerseText } from '@/types/admin-content';
+import type { EditionType, TranslationTafseerDetail, Surah } from '@/types/admin-content';
+
+type EditionModalState =
+  | { mode: 'create' }
+  | { mode: 'edit'; edition: TranslationTafseerDetail }
+  | null;
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return 'An unexpected error occurred';
+}
 
 export default function AdminTafsirPage() {
   const [editionId, setEditionId] = useState<number | null>(null);
   const [surahNumber, setSurahNumber] = useState<number | null>(null);
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
   const [editionTypes, setEditionTypes] = useState<Map<number, EditionType | null>>(new Map());
+  const [editionModal, setEditionModal] = useState<EditionModalState>(null);
+  const [deleteTarget, setDeleteTarget] = useState<TranslationTafseerDetail | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const { data: allDetails, error: detailsError } = useSWR(
-    'admin-editions-all',
-    () => apiClient.getTranslationTafseerDetailsAll()
-  );
+  const {
+    data: editions,
+    error: editionsError,
+    isLoading: editionsLoading,
+    mutate: mutateEditions,
+  } = useSWR('admin-tafsir-editions', () => apiClient.getTranslationTafseerDetails({ page_size: 100 }));
+
+  const allDetails = useMemo(() => editions?.items ?? [], [editions]);
 
   useEffect(() => {
-    if (!allDetails) return;
+    if (!allDetails.length) return;
     let cancelled = false;
     classifyEditionTypes(allDetails).then((types) => {
       if (!cancelled) setEditionTypes(types);
@@ -35,40 +55,31 @@ export default function AdminTafsirPage() {
     };
   }, [allDetails]);
 
-  const { data: surahs, error: surahsError } = useSWR('admin-surahs-all', () => apiClient.getSurahsAll());
-
-  const tafsirEditions = allDetails?.filter((d) => editionTypes.get(d.id) === 'tafsir') ?? [];
-
-  const { data: verseTexts, error: textsError, isLoading: textsLoading } = useSWR(
-    editionId && surahNumber ? ['admin-tafsir-texts', editionId, surahNumber, page] : null,
-    () =>
-      apiClient.getVerseTexts({
-        detail_id: editionId as number,
-        surah_number: surahNumber as number,
-        page,
-        page_size: 100,
-      })
+  const tafsirEditions = allDetails.filter((d) => editionTypes.get(d.id) === 'tafsir');
+  const { data: surahs, error: surahsError } = useSWR('admin-surahs-all', () =>
+    apiClient.getSurahsAll()
   );
 
   const selectedSurah = surahs?.find((s: Surah) => s.surah_number === surahNumber);
-  const filteredTexts = (verseTexts?.items ?? []).filter((t: VerseText) => {
-    const tafseer = t.verse_tafseer ?? '';
-    return (
-      tafseer.toLowerCase().includes(search.toLowerCase()) ||
-      t.verse_number.toString().includes(search)
-    );
-  });
 
-  const handleEditionChange = (value: number) => {
-    setEditionId(value);
-    setPage(1);
-    setSearch('');
-  };
-
-  const handleSurahChange = (value: number) => {
-    setSurahNumber(value);
-    setPage(1);
-    setSearch('');
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setActionError(null);
+    try {
+      await apiClient.deleteTranslationTafseerDetail(deleteTarget.id);
+      if (editionId === deleteTarget.id) {
+        setEditionId(null);
+        setSurahNumber(null);
+      }
+      await mutateEditions();
+      setDeleteTarget(null);
+    } catch (error) {
+      setActionError(getErrorMessage(error));
+      setDeleteTarget(null);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -93,30 +104,121 @@ export default function AdminTafsirPage() {
               </span>
             </h1>
             <p className="text-sm text-text-muted mt-1">
-              Browse and manage verse tafsir across all tafsir editions
+              Manage tafsir editions and edit verse tafsir in-place
             </p>
+          </div>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Button
+              size="sm"
+              className="gap-2 bg-primary text-white hover:bg-primary-hover"
+              onClick={() => setEditionModal({ mode: 'create' })}
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Tafsir</span>
+            </Button>
           </div>
         </div>
       </div>
 
-      {(detailsError || surahsError) && (
+      {(editionsError || surahsError) && (
         <ErrorAlert
           message="Failed to load tafsir data. Make sure the API server is running."
           title="Loading Error"
         />
       )}
 
-      {/* Edition + Surah Selectors */}
+      {actionError && (
+        <ErrorAlert message={actionError} title="Action Failed" onDismiss={() => setActionError(null)} />
+      )}
+
+      {/* Editions List */}
+      <Card className="bg-surface-elevated border border-border/40 shadow-sm">
+        <CardHeader className="border-b border-border/40 px-6 py-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-text-muted flex items-center gap-2">
+            <ScrollText className="w-4 h-4 text-secondary" />
+            Tafsir Editions ({tafsirEditions.length})
+          </h2>
+        </CardHeader>
+        <CardContent className="p-0">
+          {editionsLoading ? (
+            <div className="py-12 flex justify-center">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : tafsirEditions.length === 0 ? (
+            <div className="py-12 text-center text-text-muted">
+              <BookOpenText className="w-10 h-10 mx-auto mb-3 opacity-40 text-secondary" />
+              <p className="text-base font-semibold text-text">No tafsir editions found</p>
+              <p className="text-xs mt-1">Create a tafsir edition to start adding verse content.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/30">
+              {tafsirEditions.map((edition) => (
+                <div
+                  key={edition.id}
+                  className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover/30 transition-colors"
+                >
+                  <div className="flex items-start gap-4 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-secondary/15 text-secondary border border-secondary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <BookOpenText className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-text">{edition.title}</span>
+                        <span className="px-2 py-0.5 rounded bg-secondary/15 text-secondary border border-secondary/20 text-[10px] font-bold">
+                          tafsir
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-surface border border-border/50 text-[10px] text-text-muted font-bold">
+                          {edition.lang}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-surface border border-border/50 text-[10px] text-text-muted font-bold">
+                          {edition.author}
+                        </span>
+                      </div>
+                      {edition.description && (
+                        <p className="text-sm text-text-secondary mt-1">{edition.description}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 self-end sm:self-auto">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-text hover:text-primary hover:bg-surface transition-colors"
+                      onClick={() => setEditionModal({ mode: 'edit', edition })}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={deleting}
+                      className="h-9 w-9 p-0 flex items-center justify-center border-border/60 text-error hover:bg-error/5 hover:border-error/30 transition-colors"
+                      onClick={() => setDeleteTarget(edition)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Verse Content Editor */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           label="Tafsir Edition"
           placeholder="Select an edition..."
-          options={(tafsirEditions as TranslationTafseerDetailSimple[]).map((d) => ({
+          options={tafsirEditions.map((d) => ({
             value: d.id,
             label: `${d.title} (${d.lang})`,
           }))}
           value={editionId ? String(editionId) : ''}
-          onChange={(v) => handleEditionChange(Number(v))}
+          onChange={(v) => {
+            setEditionId(Number(v));
+            setSurahNumber(null);
+          }}
         />
         <Select
           label="Surah"
@@ -126,113 +228,190 @@ export default function AdminTafsirPage() {
             label: `${s.surah_number}. ${s.english_name} — ${s.name_arabic}`,
           }))}
           value={surahNumber ? String(surahNumber) : ''}
-          onChange={(v) => handleSurahChange(Number(v))}
+          onChange={(v) => setSurahNumber(Number(v))}
+          disabled={!editionId}
         />
       </div>
 
-      {/* Search */}
-      {verseTexts && (
-        <div className="flex gap-4 items-center">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-            <input
-              type="text"
-              placeholder="Search tafsir text or verse number..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-border bg-surface text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            />
-          </div>
-        </div>
+      {editionId && surahNumber && selectedSurah ? (
+        <VerseContentEditor
+          key={`${editionId}-${surahNumber}`}
+          editionId={editionId}
+          surah={selectedSurah}
+          field="verse_tafseer"
+          badgeClass="bg-secondary/15 text-secondary border-secondary/20"
+          placeholder="Enter tafsir for this verse..."
+          onSaved={() => mutateEditions()}
+        />
+      ) : (
+        <Card className="bg-surface-elevated border border-border/40 shadow-sm">
+          <CardContent className="p-12 text-center text-text-muted">
+            <BookOpenText className="w-10 h-10 mx-auto mb-3 opacity-40 text-secondary" />
+            <p className="text-base font-semibold text-text">Select an edition and surah</p>
+            <p className="text-xs mt-1">Pick a tafsir edition and a surah to edit its verse tafsir</p>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Verse Tafsir List */}
-      <Card className="bg-surface-elevated border border-border/40 shadow-sm">
-        <CardHeader className="border-b border-border/40 px-6 py-4 flex flex-row items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-text-muted">
-            {selectedSurah
-              ? `${selectedSurah.english_name} — Tafsir (${filteredTexts.length})`
-              : 'Tafsir'}
-          </h2>
-        </CardHeader>
-        <CardContent className="p-0">
-          {textsLoading && editionId && surahNumber ? (
-            <div className="py-16 flex justify-center">
-              <LoadingSpinner size="lg" />
-            </div>
-          ) : textsError ? (
-            <div className="py-12 text-center text-text-muted">
-              <p className="text-base font-semibold text-error">Failed to load verse tafsir</p>
-            </div>
-          ) : !editionId || !surahNumber ? (
-            <div className="py-12 text-center text-text-muted">
-              <BookOpenText className="w-10 h-10 mx-auto mb-3 opacity-40 text-primary" />
-              <p className="text-base font-semibold text-text">Select an edition and surah</p>
-              <p className="text-xs mt-1">Pick a tafsir edition and a surah to view its tafsir content</p>
-            </div>
-          ) : filteredTexts.length === 0 ? (
-            <div className="py-12 text-center text-text-muted">
-              <p className="text-base font-semibold text-text">No tafsir content found</p>
-              <p className="text-xs mt-1">
-                This surah has no tafsir content for the selected edition{search ? ' matching your search' : ''}.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border/30">
-              {filteredTexts.map((text) => {
-                const tafseer = text.verse_tafseer ?? '';
-                return (
-                  <div
-                    key={`${text.surah_number}-${text.verse_number}-${text.detail_id}`}
-                    className="p-5 flex items-start gap-4 hover:bg-surface-hover/30 transition-colors"
-                  >
-                    <div className="w-10 h-10 shrink-0 rounded-xl bg-secondary/15 text-secondary border border-secondary/20 flex items-center justify-center font-bold font-mono text-sm">
-                      {text.verse_number}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-text leading-relaxed whitespace-pre-line">
-                        {tafseer || (
-                          <span className="text-text-muted italic">No tafsir content for this verse</span>
-                        )}
-                      </p>
-                      <p className="text-xs text-text-muted mt-1.5">
-                        Surah {text.surah_number} : Verse {text.verse_number}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Edition Modal */}
+      <EditionModal
+        state={editionModal}
+        onClose={() => setEditionModal(null)}
+        onSaved={() => {
+          setEditionModal(null);
+          mutateEditions();
+        }}
+      />
 
-      {/* Pagination */}
-      {verseTexts && verseTexts.total_pages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-text-muted">
-            Page {verseTexts.page} of {verseTexts.total_pages} ({verseTexts.total} verses)
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={verseTexts.page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={verseTexts.page >= verseTexts.total_pages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Tafsir Edition"
+        message={
+          deleteTarget
+            ? `Are you sure you want to delete "${deleteTarget.title}"? This cannot be undone. Editions that still have verse content cannot be deleted.`
+            : ''
+        }
+        confirmLabel="Delete"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleting}
+      />
     </div>
+  );
+}
+
+interface EditionModalProps {
+  state: EditionModalState;
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+function EditionModal({ state, onClose, onSaved }: EditionModalProps) {
+  return (
+    <Modal
+      open={!!state}
+      onClose={onClose}
+      title={state?.mode === 'edit' ? 'Edit Tafsir Edition' : 'Add Tafsir Edition'}
+      footer={
+        <>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" form="edition-form" className="bg-primary text-white hover:bg-primary-hover">
+            {state?.mode === 'edit' ? 'Save Changes' : 'Create Edition'}
+          </Button>
+        </>
+      }
+    >
+      {state && (
+        <EditionFormContent
+          key={state.mode === 'edit' ? `edit-${state.edition.id}` : 'create'}
+          state={state}
+          onSaved={onSaved}
+        />
+      )}
+    </Modal>
+  );
+}
+
+function EditionFormContent({
+  state,
+  onSaved,
+}: {
+  state: Exclude<EditionModalState, null>;
+  onSaved: () => void;
+}) {
+  const isEdit = state.mode === 'edit';
+  const [title, setTitle] = useState(isEdit ? state.edition.title : '');
+  const [lang, setLang] = useState(isEdit ? state.edition.lang : '');
+  const [author, setAuthor] = useState(isEdit ? state.edition.author : '');
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>(
+    isEdit ? (state.edition.direction ?? 'ltr') : 'ltr'
+  );
+  const [description, setDescription] = useState(isEdit ? (state.edition.description ?? '') : '');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || lang.trim().length !== 2 || !author.trim()) return;
+    setError(null);
+    try {
+      const payload = {
+        title: title.trim(),
+        lang: lang.trim().toLowerCase(),
+        author: author.trim(),
+        direction,
+        description: description.trim() || undefined,
+      };
+      if (isEdit) {
+        await apiClient.updateTranslationTafseerDetail(state.edition.id, payload);
+      } else {
+        await apiClient.createTranslationTafseerDetail(payload);
+      }
+      onSaved();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
+  };
+
+  return (
+    <form id="edition-form" onSubmit={handleSubmit} className="space-y-4">
+      <Input
+        label="Title"
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+        placeholder="e.g. Tafseer Al-Muyassar"
+        autoFocus
+      />
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          label="Language Code"
+          type="text"
+          value={lang}
+          onChange={(e) => setLang(e.target.value.toLowerCase().slice(0, 2))}
+          required
+          maxLength={2}
+          placeholder="e.g. ar"
+        />
+        <Select
+          label="Direction"
+          placeholder="Select direction..."
+          options={[
+            { value: 'ltr', label: 'Left to Right (LTR)' },
+            { value: 'rtl', label: 'Right to Left (RTL)' },
+          ]}
+          value={direction}
+          onChange={(v) => setDirection(v as 'ltr' | 'rtl')}
+        />
+      </div>
+      <Input
+        label="Author"
+        type="text"
+        value={author}
+        onChange={(e) => setAuthor(e.target.value)}
+        required
+        placeholder="e.g. Ministry of Islamic Affairs"
+      />
+      <Input
+        label="Description"
+        type="text"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Optional description"
+      />
+      {lang && lang.length !== 2 && (
+        <p className="text-xs text-error font-medium" role="alert">
+          Language code must be exactly 2 characters (e.g. en, ar, ur).
+        </p>
+      )}
+      {error && (
+        <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-sm" role="alert">
+          {error}
+        </div>
+      )}
+    </form>
   );
 }

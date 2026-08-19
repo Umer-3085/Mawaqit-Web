@@ -46,7 +46,7 @@ export default function Home() {
     <PageContainer className="space-y-14 py-14 md:py-20">
       {/* Hero */}
       <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime/10 border border-lime/20 text-primary text-xs font-semibold uppercase tracking-wider mb-6 hover:animate-pulse-lime">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime/10 border border-lime/20 text-primary text-xs font-semibold uppercase tracking-wider mb-6 animate-pulse">
           <span className="font-arabic font-bold text-sm" dir="rtl">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </span>
@@ -67,17 +67,31 @@ export default function Home() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/prayer-times"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-lime text-black text-sm font-semibold hover:bg-lime-hover transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-semibold text-text hover:border-lime/50 hover:text-primary hover:bg-surface transition-colors"
           >
             <Clock className="w-4 h-4" />
-            View Prayer Times
+            Prayer Times
           </Link>
           <Link
             href="/quran"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-semibold text-text hover:border-lime/50 hover:text-primary hover:bg-surface transition-colors"
           >
             <BookOpenText className="w-4 h-4" />
-            Read the Quran
+            Quran
+          </Link>
+          <Link
+            href="/library"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-semibold text-text hover:border-lime/50 hover:text-primary hover:bg-surface transition-colors"
+          >
+            <LibraryBig className="w-4 h-4" />
+            Library
+          </Link>
+          <Link
+            href="/zakat"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-semibold text-text hover:border-lime/50 hover:text-primary hover:bg-surface transition-colors"
+          >
+            <HandCoins className="w-4 h-4" />
+            Zakat
           </Link>
         </div>
       </div>

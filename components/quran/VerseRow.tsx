@@ -39,15 +39,28 @@ export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
               {verse.arabic}
             </p>
           )}
-          {text?.verse_translation && (
-            <p className="mt-4 text-base text-text-secondary leading-relaxed" dir="ltr">
-              {text.verse_translation}
-            </p>
+          {text?.verse_translation?.trim() && (
+            <div className="mt-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5">
+                Translation{editionTitle ? ` — ${editionTitle}` : ''}
+              </p>
+              <p className="text-base text-text-secondary leading-relaxed" dir="ltr">
+                {text.verse_translation}
+              </p>
+            </div>
           )}
-          {text?.verse_tafseer && (
-            <p className="mt-3 text-sm text-text-muted leading-relaxed border-l-2 border-border/50 pl-4" dir="ltr">
-              {text.verse_tafseer}
-            </p>
+          {text?.verse_tafseer?.trim() && (
+            <div className="mt-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5">
+                Tafsir{editionTitle ? ` — ${editionTitle}` : ''}
+              </p>
+              <p
+                className="text-sm text-text-secondary leading-relaxed border-l-2 border-border/50 pl-4"
+                dir="ltr"
+              >
+                {text.verse_tafseer}
+              </p>
+            </div>
           )}
         </div>
         {/* Verse number marker */}
@@ -59,17 +72,11 @@ export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
           <span className="text-sm">{verse.number_in_surah}</span>
         </div>
       </div>
-      {editionTitle && text && (
-        <p className="mt-2 text-[10px] text-text-muted">{editionTitle}</p>
-      )}
     </div>
   );
 }
 
-export function useVerseTextMap(
-  verses: Verse[],
-  texts: VerseText[] | null | undefined
-): Map<number, VerseText> {
+export function useVerseTextMap(texts: VerseText[] | null | undefined): Map<number, VerseText> {
   return useMemo(() => {
     const map = new Map<number, VerseText>();
     if (texts) {
@@ -78,5 +85,5 @@ export function useVerseTextMap(
       }
     }
     return map;
-  }, [verses, texts]);
+  }, [texts]);
 }

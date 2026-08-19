@@ -16,7 +16,7 @@ import type {
   TranslationTafseerDetailSimple,
 } from '@/types/admin-content';
 
-const DEFAULT_EDITION_ID = 1;
+const NO_EDITION = 'none';
 
 export interface VerseDetailClientProps {
   surah: Surah;
@@ -25,7 +25,7 @@ export interface VerseDetailClientProps {
 }
 
 export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailClientProps) {
-  const [editionId, setEditionId] = useState<number>(DEFAULT_EDITION_ID);
+  const [editionId, setEditionId] = useState<number | null>(null);
 
   const { data: editions, error } = useSWR(
     'quran-editions',
@@ -34,7 +34,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
 
   const editionList: TranslationTafseerDetailSimple[] = editions?.length
     ? editions
-    : [{ id: DEFAULT_EDITION_ID, title: 'Saheeh International', lang: 'en' }];
+    : [{ id: 1, title: 'Saheeh International', lang: 'en' }];
 
   const text = useMemo(
     () => initialTexts.find((t) => t.detail_id === editionId) ?? null,
@@ -83,9 +83,12 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
       <div className="max-w-md">
         <Select
           label="Translation / Tafsir"
-          options={editionList.map((e) => ({ value: e.id, label: `${e.title} (${e.lang})` }))}
-          value={String(editionId)}
-          onChange={(v) => setEditionId(Number(v))}
+          options={[
+            { value: NO_EDITION, label: 'Arabic only (no translation)' },
+            ...editionList.map((e) => ({ value: String(e.id), label: `${e.title} (${e.lang})` })),
+          ]}
+          value={editionId == null ? NO_EDITION : String(editionId)}
+          onChange={(v) => setEditionId(v === NO_EDITION ? null : Number(v))}
         />
       </div>
 

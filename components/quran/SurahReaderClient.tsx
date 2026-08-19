@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
@@ -11,9 +11,9 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { apiClient } from '@/api';
 import { VerseRow, useVerseTextMap } from '@/components/quran/VerseRow';
-import type { Surah, Verse, VerseText, TranslationTafseerDetailSimple } from '@/types/admin-content';
+import type { Surah, Verse, TranslationTafseerDetailSimple } from '@/types/admin-content';
 
-const DEFAULT_EDITION_ID = 1;
+const NO_EDITION = 'none';
 const VERSES_PER_PAGE = 25;
 
 export interface SurahReaderClientProps {
@@ -23,17 +23,17 @@ export interface SurahReaderClientProps {
 }
 
 export function SurahReaderClient({ surah, initialVerses, editions }: SurahReaderClientProps) {
-  const [editionId, setEditionId] = useState<number>(DEFAULT_EDITION_ID);
+  const [editionId, setEditionId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
 
   const selectedEdition = editions.find((e) => e.id === editionId);
 
   const { data: texts, error, isLoading } = useSWR(
-    ['quran-texts', surah.surah_number, editionId],
-    () => apiClient.getVerseTextsForEdition(surah.surah_number, editionId)
+    editionId != null ? ['quran-texts', surah.surah_number, editionId] : null,
+    () => apiClient.getVerseTextsForEdition(surah.surah_number, editionId!)
   );
 
-  const textMap = useVerseTextMap(initialVerses, texts);
+  const textMap = useVerseTextMap(texts);
   const totalPages = Math.max(1, Math.ceil(surah.total_ayat / VERSES_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const pagedVerses = useMemo(() => {
@@ -41,9 +41,10 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
     return initialVerses.slice(start, start + VERSES_PER_PAGE);
   }, [initialVerses, currentPage]);
 
-  useEffect(() => {
+  const handleEditionChange = (v: string) => {
+    setEditionId(v === NO_EDITION ? null : Number(v));
     setPage(1);
-  }, [editionId]);
+  };
 
   return (
     <div className="space-y-6">
@@ -95,12 +96,16 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
       {/* Edition selector */}
       <div className="max-w-md">
         <Select
-          label="Translation"
-          options={(editions.length ? editions : [{ id: DEFAULT_EDITION_ID, title: 'Saheeh International', lang: 'en' }]).map(
-            (e) => ({ value: e.id, label: `${e.title} (${e.lang})` })
-          )}
-          value={String(editionId)}
-          onChange={(v) => setEditionId(Number(v))}
+          label="Translation / Tafsir"
+          options={[
+            { value: NO_EDITION, label: 'Arabic only (no translation)' },
+            ...(editions.length
+              ? editions
+              : [{ id: 1, title: 'Saheeh International', lang: 'en' }]
+            ).map((e) => ({ value: String(e.id), label: `${e.title} (${e.lang})` })),
+          ]}
+          value={editionId == null ? NO_EDITION : String(editionId)}
+          onChange={handleEditionChange}
         />
       </div>
 
@@ -119,7 +124,7 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
           </h2>
         </CardHeader>
         <CardContent className="p-0">
-          {isLoading && !texts ? (
+          {editionId != null && isLoading && !texts ? (
             <div className="py-16 flex justify-center">
               <LoadingSpinner size="lg" />
             </div>

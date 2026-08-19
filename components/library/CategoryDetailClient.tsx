@@ -52,13 +52,13 @@ export function CategoryDetailClient({
         <div>
           <Link
             href="/library"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-lime transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>All Categories</span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3 mt-2">
-            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
               {category.title}
             </span>
           </h1>
@@ -90,8 +90,8 @@ export function CategoryDetailClient({
             onClick={() => setTypeFilter(f.value)}
             className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
               typeFilter === f.value
-                ? 'bg-primary/10 text-primary border-primary/20'
-                : 'text-text-muted border-border/60 hover:text-primary hover:bg-surface'
+                ? 'bg-lime/10 text-lime border-lime/25'
+                : 'text-text-muted border-border/60 hover:text-lime hover:bg-surface'
             }`}
           >
             {f.label}
@@ -110,7 +110,7 @@ export function CategoryDetailClient({
               <Link
                 key={sc.id}
                 href={`/library/${category.id}/${sc.id}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-border/60 text-sm text-text hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-border/60 text-sm text-text hover:border-lime/30 hover:text-lime hover:bg-lime/5 transition-colors"
               >
                 <FolderOpen className="w-4 h-4" />
                 {sc.title}

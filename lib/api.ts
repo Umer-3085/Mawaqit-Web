@@ -256,6 +256,10 @@ export class ApiClient {
     return this.get<Surah[]>('/surahs/all');
   }
 
+  async getSurah(surahNumber: number): Promise<Surah> {
+    return this.get<Surah>(`/surahs/${surahNumber}`);
+  }
+
   async getVerses(params?: {
     page?: number;
     page_size?: number;
@@ -314,6 +318,27 @@ export class ApiClient {
 
   async getVerseText(surahNumber: number, verseNumber: number, detailId: number): Promise<VerseText> {
     return this.get<VerseText>(`/verse-texts/${surahNumber}/${verseNumber}/${detailId}`);
+  }
+
+  async getVerseTextsByVerse(surahNumber: number, verseNumber: number): Promise<VerseText[]> {
+    return this.get<VerseText[]>(`/verse-texts/surah/${surahNumber}/${verseNumber}`);
+  }
+
+  async getVerseTextsForEdition(surahNumber: number, detailId: number): Promise<VerseText[]> {
+    const all: VerseText[] = [];
+    let page = 1;
+    while (true) {
+      const data = await this.get<PaginatedList<VerseText>>('/verse-texts', {
+        surah_number: surahNumber,
+        detail_id: detailId,
+        page,
+        page_size: 100,
+      });
+      all.push(...data.items);
+      if (page >= data.total_pages || data.items.length === 0) break;
+      page += 1;
+    }
+    return all;
   }
 
   async upsertVerseText(

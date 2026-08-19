@@ -9,7 +9,7 @@ const FEATURES = [
     title: 'Prayer Times',
     arabic: 'أوقات الصلاة',
     description:
-      'Accurate obligatory and Nafl prayer times using world-standard authorities, custom high-latitude rules, and exact geolocation.',
+      'Prayer times for your location with the method and rules that suit you.',
     accent: 'primary' as const,
   },
   {
@@ -18,7 +18,7 @@ const FEATURES = [
     title: 'The Holy Quran',
     arabic: 'القرآن الكريم',
     description:
-      'Read the Quran in Arabic and follow along with trusted translations and tafsir from a selection of authentic editions.',
+      'Read the Quran in Arabic with translations and tafsir alongside each verse.',
     accent: 'primary' as const,
   },
   {
@@ -27,7 +27,7 @@ const FEATURES = [
     title: 'Islamic Library',
     arabic: 'المكتبة',
     description:
-      'Browse authentic articles and videos on Quran, Hadith, Fiqh and more, organised by category and subcategory.',
+      'Articles and videos on the Quran, Hadith and Fiqh, arranged by topic.',
     accent: 'secondary' as const,
   },
   {
@@ -36,33 +36,32 @@ const FEATURES = [
     title: 'Zakat Calculator',
     arabic: 'الزكاة',
     description:
-      'Estimate your Nisab and due Zakat on cash, gold, silver, investments and business assets at the standard 2.5% rate.',
+      'A simple estimate of your Zakat on cash, gold, silver and other assets.',
     accent: 'secondary' as const,
   },
 ];
 
 export default function Home() {
   return (
-    <PageContainer className="space-y-16 py-14 md:py-20">
+    <PageContainer className="space-y-14 py-14 md:py-20">
       {/* Hero */}
       <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime/10 border border-lime/20 text-primary text-xs font-semibold uppercase tracking-wider mb-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime/10 border border-lime/20 text-primary text-xs font-semibold uppercase tracking-wider mb-6 hover:animate-pulse-lime">
           <span className="font-arabic font-bold text-sm" dir="rtl">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-text max-w-4xl leading-tight mb-6">
-          Prayer, Quran &amp; Zakat,{" "}
+          Everything for your daily worship,{" "}
           <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
-            All in One Place
+            in one place
           </span>
         </h1>
 
         <p className="text-base sm:text-lg md:text-xl text-text-muted max-w-2xl leading-relaxed mx-auto mb-8">
-          Mawaqit brings together precise prayer times, Quran reading with translations and tafsir,
-          an authentic Islamic library, and a Zakat calculator — everything you need for daily
-          worship, in one simple app.
+          Mawaqit brings together accurate prayer times, the Quran, a library of trusted
+          reading and a Zakat calculator so you can focus on your worship.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">
@@ -71,7 +70,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-lime text-black text-sm font-semibold hover:bg-lime-hover transition-colors"
           >
             <Clock className="w-4 h-4" />
-            Today&apos;s Prayer Times
+            View Prayer Times
           </Link>
           <Link
             href="/quran"
@@ -124,7 +123,7 @@ export default function Home() {
                   feature.accent === 'secondary' ? 'text-secondary' : 'text-primary'
                 }`}
               >
-                Explore →
+                Visit {feature.title}
               </p>
             </div>
           </Link>

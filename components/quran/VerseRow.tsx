@@ -8,9 +8,14 @@ export interface VerseRowProps {
   verse: Verse;
   text: VerseText | null;
   editionTitle?: string | null;
+  editionQuery?: number | null;
 }
 
-export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
+export function VerseRow({ verse, text, editionTitle, editionQuery = null }: VerseRowProps) {
+  const verseHref = editionQuery != null
+    ? `/quran/${verse.surah_number}/${verse.number_in_surah}?edition=${editionQuery}`
+    : `/quran/${verse.surah_number}/${verse.number_in_surah}`;
+
   return (
     <div className="py-6 border-b border-border/30 last:border-b-0">
       <div className="flex items-start justify-between gap-4">
@@ -18,14 +23,14 @@ export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <Link
-              href={`/quran/${verse.surah_number}/${verse.number_in_surah}`}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-lime/10 border border-lime/25 text-lime text-xs font-bold hover:bg-lime/20 transition-colors"
+              href={verseHref}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-colors"
             >
               <span aria-hidden="true">۝</span>
               <span>Verse {verse.number_in_surah}</span>
             </Link>
             {verse.sajda && (
-              <span className="px-2 py-0.5 rounded bg-ivory/10 border border-ivory/25 text-ivory text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2 py-0.5 rounded bg-secondary/15 border border-secondary/30 text-secondary text-[10px] font-bold uppercase tracking-wider">
                 Sajda
               </span>
             )}
@@ -65,7 +70,7 @@ export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
         </div>
         {/* Verse number marker */}
         <div
-          className="flex-shrink-0 w-9 h-9 rounded-lg bg-lime/10 text-lime border border-lime/25 flex items-center justify-center font-bold font-arabic text-lg mt-1"
+          className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold font-arabic text-lg mt-1"
           aria-label={`Verse ${verse.number_in_surah}`}
           dir="rtl"
         >

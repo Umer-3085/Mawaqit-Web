@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
@@ -23,7 +24,17 @@ export interface SurahReaderClientProps {
 }
 
 export function SurahReaderClient({ surah, initialVerses, editions }: SurahReaderClientProps) {
-  const [editionId, setEditionId] = useState<number | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editionParam = searchParams.get('edition');
+
+  const [editionId, setEditionId] = useState<number | null>(() => {
+    if (editionParam && editionParam !== NO_EDITION) {
+      const n = Number(editionParam);
+      return Number.isFinite(n) ? n : null;
+    }
+    return null;
+  });
   const [page, setPage] = useState(1);
 
   const selectedEdition = editions.find((e) => e.id === editionId);
@@ -42,9 +53,29 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
   }, [initialVerses, currentPage]);
 
   const handleEditionChange = (v: string) => {
-    setEditionId(v === NO_EDITION ? null : Number(v));
+    const next = v === NO_EDITION ? null : Number(v);
+    setEditionId(next);
     setPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next != null) {
+      params.set('edition', String(next));
+    } else {
+      params.delete('edition');
+    }
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
   };
+
+  const surahHref = useCallback(
+    (targetSurah: number) => {
+      const href = `/quran/${targetSurah}`;
+      if (editionId != null) {
+        return `${href}?edition=${editionId}`;
+      }
+      return href;
+    },
+    [editionId]
+  );
 
   return (
     <div className="space-y-6">
@@ -53,16 +84,16 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
         <div>
           <Link
             href="/quran"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-lime transition-colors w-fit"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>All Surahs</span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3 mt-2">
-            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
               Surah {surah.english_name}
             </span>
-            <span className="font-arabic text-lime text-xl font-semibold select-none" dir="rtl">
+            <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
               {surah.name_arabic}
             </span>
           </h1>
@@ -74,8 +105,8 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
         <div className="flex items-center gap-2">
           {surah.surah_number > 1 && (
             <Link
-              href={`/quran/${surah.surah_number - 1}`}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-lime hover:bg-surface transition-colors"
+              href={surahHref(surah.surah_number - 1)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Prev</span>
@@ -83,8 +114,8 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
           )}
           {surah.surah_number < 114 && (
             <Link
-              href={`/quran/${surah.surah_number + 1}`}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-lime hover:bg-surface transition-colors"
+              href={surahHref(surah.surah_number + 1)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
             >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
@@ -136,6 +167,7 @@ export function SurahReaderClient({ surah, initialVerses, editions }: SurahReade
                   verse={verse}
                   text={textMap.get(verse.number_in_surah) ?? null}
                   editionTitle={selectedEdition?.title}
+                  editionQuery={editionId}
                 />
               ))}
             </div>

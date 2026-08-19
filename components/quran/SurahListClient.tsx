@@ -43,10 +43,10 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
-            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
               The Holy Quran
             </span>
-            <span className="font-arabic text-lime text-xl font-semibold select-none" dir="rtl">
+            <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
               القرآن الكريم
             </span>
           </h1>
@@ -96,7 +96,7 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
         <CardContent className="p-0">
           {paged.length === 0 ? (
             <div className="py-12 text-center text-text-muted">
-              <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40 text-lime" />
+              <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40 text-primary" />
               <p className="text-base font-semibold text-text">No surahs found</p>
               <p className="text-xs mt-1">Try adjusting the filters or search criteria.</p>
             </div>
@@ -109,13 +109,13 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
                   className="p-5 flex items-center justify-between gap-4 hover:bg-surface-hover/30 transition-colors group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-lime/10 text-lime border border-lime/25 flex items-center justify-center font-bold font-mono text-sm group-hover:bg-lime group-hover:text-black transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold font-mono text-sm group-hover:bg-lime group-hover:text-black transition-colors">
                       {surah.surah_number}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-text">{surah.english_name}</span>
-                        <span className="font-arabic font-bold text-lime" dir="rtl">
+                        <span className="font-arabic font-bold text-primary" dir="rtl">
                           {surah.name_arabic}
                         </span>
                       </div>
@@ -128,7 +128,7 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
                       </div>
                     </div>
                   </div>
-                  <span className="text-text-muted group-hover:text-lime transition-colors text-sm">
+                  <span className="text-text-muted group-hover:text-primary transition-colors text-sm">
                     Read →
                   </span>
                 </Link>

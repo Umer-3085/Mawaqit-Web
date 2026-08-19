@@ -40,10 +40,10 @@ export function LibraryClient({ initialCategories }: LibraryClientProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3">
-            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
               Islamic Library
             </span>
-            <span className="font-arabic text-lime text-xl font-semibold select-none" dir="rtl">
+            <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
               المكتبة
             </span>
           </h1>
@@ -63,7 +63,7 @@ export function LibraryClient({ initialCategories }: LibraryClientProps) {
       {categories.length === 0 ? (
         <Card className="bg-surface-elevated border border-border/40 shadow-sm">
           <CardContent className="py-12 text-center text-text-muted">
-            <FolderOpen className="w-10 h-10 mx-auto mb-3 opacity-40 text-lime" />
+            <FolderOpen className="w-10 h-10 mx-auto mb-3 opacity-40 text-primary" />
             <p className="text-base font-semibold text-text">No categories yet</p>
             <p className="text-xs mt-1">Check back later — content is being added.</p>
           </CardContent>
@@ -78,7 +78,7 @@ export function LibraryClient({ initialCategories }: LibraryClientProps) {
             >
               <Card className="h-full bg-surface-elevated border border-border/40 shadow-sm hover:shadow-md transition-all duration-150">
                 <CardContent className="p-6">
-                  <div className="w-11 h-11 rounded-xl bg-lime/10 text-lime border border-lime/25 flex items-center justify-center mb-4 group-hover:bg-lime group-hover:text-black transition-colors">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-lime group-hover:text-black transition-colors">
                     <BookOpenText className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-semibold text-text">{category.title}</h3>

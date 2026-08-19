@@ -19,7 +19,7 @@ export function ItemDetailClient({ item, category, subcategory }: ItemDetailClie
       <div className="flex flex-col gap-2 pb-4 border-b border-border/40">
         <Link
           href={subcategory ? `/library/${category?.id}/${subcategory.id}` : `/library/${category?.id ?? ''}`}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-lime transition-colors w-fit"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>
@@ -31,8 +31,8 @@ export function ItemDetailClient({ item, category, subcategory }: ItemDetailClie
           <span
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
               isVideo
-                ? 'bg-ivory/10 text-ivory border-ivory/25'
-                : 'bg-lime/10 text-lime border-lime/25'
+                ? 'bg-secondary/10 text-secondary border-secondary/25'
+                : 'bg-primary/10 text-primary border-primary/20'
             }`}
           >
             {isVideo ? <Video className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
@@ -41,7 +41,7 @@ export function ItemDetailClient({ item, category, subcategory }: ItemDetailClie
           {category && (
             <Link
               href={`/library/${category.id}`}
-              className="text-xs font-semibold text-text-muted hover:text-lime transition-colors"
+className="text-xs font-semibold text-text-muted hover:text-primary transition-colors"
             >
               {category.title}
             </Link>
@@ -51,7 +51,7 @@ export function ItemDetailClient({ item, category, subcategory }: ItemDetailClie
               <span className="text-xs text-text-muted">•</span>
               <Link
                 href={`/library/${category?.id}/${subcategory.id}`}
-className="text-xs font-semibold text-text-muted hover:text-lime transition-colors"
+className="text-xs font-semibold text-text-muted hover:text-primary transition-colors"
               >
                 {subcategory.title}
               </Link>

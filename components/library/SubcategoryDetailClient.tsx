@@ -58,13 +58,13 @@ export function SubcategoryDetailClient({
         <div>
           <Link
             href={`/library/${category.id}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-lime transition-colors w-fit"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to {category.title}</span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3 mt-2">
-            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
               {subcategory.title}
             </span>
           </h1>
@@ -96,8 +96,8 @@ export function SubcategoryDetailClient({
             onClick={() => setTypeFilter(f.value)}
             className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
               typeFilter === f.value
-                ? 'bg-lime/10 text-lime border-lime/25'
-                : 'text-text-muted border-border/60 hover:text-lime hover:bg-surface'
+                ? 'bg-primary/10 text-primary border-primary/20'
+                : 'text-text-muted border-border/60 hover:text-primary hover:bg-surface'
             }`}
           >
             {f.label}

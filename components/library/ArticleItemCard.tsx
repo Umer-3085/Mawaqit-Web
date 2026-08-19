@@ -19,14 +19,14 @@ export function ArticleItemCard({ item, categoryTitle, subcategoryTitle }: Artic
       href={`/library/item/${item.id}`}
       className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-xl"
     >
-      <Card className="h-full bg-surface-elevated border border-border/40 shadow-sm hover:shadow-md transition-all duration-150 group-hover:border-lime/40">
+      <Card className="h-full bg-surface-elevated border border-border/40 shadow-sm hover:shadow-md transition-all duration-150 group-hover:border-primary/40">
         <CardContent className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
                 isVideo
-                  ? 'bg-ivory/10 text-ivory border-ivory/25'
-                  : 'bg-lime/10 text-lime border-lime/25'
+                  ? 'bg-secondary/10 text-secondary border-secondary/25'
+                  : 'bg-primary/10 text-primary border-primary/20'
               }`}
             >
               {isVideo ? <Video className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
@@ -34,15 +34,15 @@ export function ArticleItemCard({ item, categoryTitle, subcategoryTitle }: Artic
             <span
               className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                 isVideo
-                  ? 'bg-ivory/10 text-ivory border-ivory/25'
-                  : 'bg-lime/10 text-lime border-lime/25'
+                  ? 'bg-secondary/10 text-secondary border-secondary/25'
+                  : 'bg-primary/10 text-primary border-primary/20'
               }`}
             >
               {isVideo ? 'Video' : 'Article'}
             </span>
           </div>
 
-          <h3 className="text-sm font-semibold text-text mt-3 leading-snug group-hover:text-lime transition-colors">
+          <h3 className="text-sm font-semibold text-text mt-3 leading-snug group-hover:text-primary transition-colors">
             {item.title}
           </h3>
 

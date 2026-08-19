@@ -12,14 +12,15 @@ export function Footer() {
           <Link href="/prayer-times" className="hover:text-primary transition-colors">
             Prayer Times
           </Link>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-primary transition-colors"
-          >
-            GitHub
-          </a>
+          <Link href="/quran" className="hover:text-primary transition-colors">
+            Quran
+          </Link>
+          <Link href="/library" className="hover:text-primary transition-colors">
+            Library
+          </Link>
+          <Link href="/zakat" className="hover:text-primary transition-colors">
+            Zakat
+          </Link>
         </div>
       </div>
     </footer>

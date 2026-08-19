@@ -4,7 +4,6 @@ import { AuthProvider } from '@/components/admin/AuthProvider';
 import { AdminSidebarProvider, AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminTopBar } from '@/components/admin/AdminTopBar';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/components/ui/utils';
 
 export default function AdminLayout({
   children,

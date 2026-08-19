@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -25,7 +26,17 @@ export interface VerseDetailClientProps {
 }
 
 export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailClientProps) {
-  const [editionId, setEditionId] = useState<number | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editionParam = searchParams.get('edition');
+
+  const [editionId, setEditionId] = useState<number | null>(() => {
+    if (editionParam && editionParam !== NO_EDITION) {
+      const n = Number(editionParam);
+      return Number.isFinite(n) ? n : null;
+    }
+    return null;
+  });
 
   const { data: editions, error } = useSWR(
     'quran-editions',
@@ -44,13 +55,37 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
   const prevVerse = verse.number_in_surah > 1;
   const nextVerse = verse.number_in_surah < surah.total_ayat;
 
+  const buildHref = useCallback(
+    (targetVerse: number) => {
+      const href = `/quran/${surah.surah_number}/${targetVerse}`;
+      if (editionId != null) {
+        return `${href}?edition=${editionId}`;
+      }
+      return href;
+    },
+    [surah.surah_number, editionId]
+  );
+
+  const handleEditionChange = (v: string) => {
+    const next = v === NO_EDITION ? null : Number(v);
+    setEditionId(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next != null) {
+      params.set('edition', String(next));
+    } else {
+      params.delete('edition');
+    }
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
+  };
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <Link
-            href={`/quran/${surah.surah_number}`}
+            href={`/quran/${surah.surah_number}${editionId != null ? `?edition=${editionId}` : ''}`}
             className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -88,7 +123,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
             ...editionList.map((e) => ({ value: String(e.id), label: `${e.title} (${e.lang})` })),
           ]}
           value={editionId == null ? NO_EDITION : String(editionId)}
-          onChange={(v) => setEditionId(v === NO_EDITION ? null : Number(v))}
+          onChange={handleEditionChange}
         />
       </div>
 
@@ -157,7 +192,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
       <div className="flex items-center justify-between">
         {prevVerse ? (
           <Link
-            href={`/quran/${surah.surah_number}/${verse.number_in_surah - 1}`}
+            href={buildHref(verse.number_in_surah - 1)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -168,7 +203,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
         )}
         {nextVerse ? (
           <Link
-            href={`/quran/${surah.surah_number}/${verse.number_in_surah + 1}`}
+            href={buildHref(verse.number_in_surah + 1)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
           >
             <span>Next Verse</span>

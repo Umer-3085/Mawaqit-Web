@@ -400,6 +400,10 @@ export class ApiClient {
     return this.get<PaginatedList<ArticleVideo>>('/articles-videos', params);
   }
 
+  async getArticleVideo(id: number): Promise<ArticleVideo> {
+    return this.get<ArticleVideo>(`/articles-videos/${id}`);
+  }
+
   async createArticleVideo(data: ArticleVideoCreateInput): Promise<ArticleVideo> {
     return this.post<ArticleVideo>('/articles-videos', data);
   }

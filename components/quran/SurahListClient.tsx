@@ -81,7 +81,7 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-border bg-surface text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-border bg-surface text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-lime/20 focus:border-lime transition-all"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@ export function SurahListClient({ initialSurahs }: SurahListClientProps) {
                   className="p-5 flex items-center justify-between gap-4 hover:bg-surface-hover/30 transition-colors group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold font-mono text-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold font-mono text-sm group-hover:bg-lime group-hover:text-black transition-colors">
                       {surah.surah_number}
                     </div>
                     <div>

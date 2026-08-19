@@ -8,9 +8,14 @@ export interface VerseRowProps {
   verse: Verse;
   text: VerseText | null;
   editionTitle?: string | null;
+  editionQuery?: number | null;
 }
 
-export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
+export function VerseRow({ verse, text, editionTitle, editionQuery = null }: VerseRowProps) {
+  const verseHref = editionQuery != null
+    ? `/quran/${verse.surah_number}/${verse.number_in_surah}?edition=${editionQuery}`
+    : `/quran/${verse.surah_number}/${verse.number_in_surah}`;
+
   return (
     <div className="py-6 border-b border-border/30 last:border-b-0">
       <div className="flex items-start justify-between gap-4">
@@ -18,7 +23,7 @@ export function VerseRow({ verse, text, editionTitle }: VerseRowProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <Link
-              href={`/quran/${verse.surah_number}/${verse.number_in_surah}`}
+              href={verseHref}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-colors"
             >
               <span aria-hidden="true">۝</span>

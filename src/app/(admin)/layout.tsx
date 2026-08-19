@@ -27,21 +27,3 @@ export default function AdminLayout({
     </AuthProvider>
   );
 }
-
-function getPageTitle(pathname: string): string {
-  const titles: Record<string, string> = {
-    '/admin/dashboard': 'Dashboard',
-    '/admin/verses': 'Verses',
-    '/admin/surahs': 'Surahs',
-    '/admin/articles': 'Articles',
-    '/admin/videos': 'Videos',
-    '/admin/categories': 'Categories',
-  };
-
-  for (const [path, title] of Object.entries(titles)) {
-    if (pathname === path || pathname.startsWith(path + '/')) {
-      return title;
-    }
-  }
-  return 'Admin';
-}

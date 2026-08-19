@@ -35,7 +35,12 @@ export function CategoryDetailClient({
   } = useSWR(
     ['library-category-items', category.id, typeFilter],
     () => apiClient.getArticlesVideos({ category_id: category.id, page_size: 100, type: typeFilter }),
-    { fallbackData: typeFilter === 'all' ? { items: initialItems, total: initialTotal } : undefined }
+    {
+      fallbackData:
+        typeFilter === 'all'
+          ? { items: initialItems, total: initialTotal, page: 1, page_size: 100, total_pages: 1 }
+          : undefined,
+    }
   );
 
   const items = itemsData?.items ?? [];

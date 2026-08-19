@@ -5,7 +5,6 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { BookOpenText, FolderOpen } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { apiClient } from '@/api';
 import type { Category } from '@/types/admin-content';

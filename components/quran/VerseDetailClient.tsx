@@ -51,16 +51,16 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
         <div>
           <Link
             href={`/quran/${surah.surah_number}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-primary transition-colors w-fit"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-lime transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Surah {surah.english_name}</span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text flex items-center gap-3 mt-2">
-            <span className="bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-lime via-lime-light to-ivory bg-clip-text text-transparent">
               Surah {surah.english_name} · Verse {verse.number_in_surah}
             </span>
-            <span className="font-arabic text-primary text-xl font-semibold select-none" dir="rtl">
+            <span className="font-arabic text-lime text-xl font-semibold select-none" dir="rtl">
               {surah.name_arabic}
             </span>
           </h1>
@@ -110,7 +110,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
                     {verse.arabic}
                   </p>
                   <div
-                    className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold font-arabic text-lg mt-1"
+                    className="flex-shrink-0 w-10 h-10 rounded-lg bg-lime/10 text-lime border border-lime/25 flex items-center justify-center font-bold font-arabic text-lg mt-1"
                     aria-label={`Verse ${verse.number_in_surah}`}
                     dir="rtl"
                   >
@@ -121,7 +121,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
 
               {verse.sajda && (
                 <div className="mt-4">
-                  <span className="px-2.5 py-1 rounded bg-secondary/15 border border-secondary/30 text-secondary text-[10px] font-bold uppercase tracking-wider">
+                  <span className="px-2.5 py-1 rounded bg-ivory/10 border border-ivory/25 text-ivory text-[10px] font-bold uppercase tracking-wider">
                     Sajda Verse
                   </span>
                 </div>
@@ -158,7 +158,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
         {prevVerse ? (
           <Link
             href={`/quran/${surah.surah_number}/${verse.number_in_surah - 1}`}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-lime hover:bg-surface transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Previous Verse</span>
@@ -169,7 +169,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
         {nextVerse ? (
           <Link
             href={`/quran/${surah.surah_number}/${verse.number_in_surah + 1}`}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-lime hover:bg-surface transition-colors"
           >
             <span>Next Verse</span>
             <ChevronRight className="w-4 h-4" />
@@ -177,7 +177,7 @@ export function VerseDetailClient({ surah, verse, initialTexts }: VerseDetailCli
         ) : (
           <Link
             href={`/quran/${Math.min(surah.surah_number + 1, 114)}`}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-primary hover:bg-surface transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border/60 text-sm text-text-muted hover:text-lime hover:bg-surface transition-colors"
           >
             <span>Next Surah</span>
             <ChevronRight className="w-4 h-4" />

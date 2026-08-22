@@ -297,6 +297,73 @@ export function Component({ prop }: ComponentProps) {
 
 ---
 
+## Theming & Design System
+
+### Color Palette (CSS Variables in `globals.css`)
+```css
+:root {
+  --color-primary: #006B3C;           /* Islamic green */
+  --color-primary-hover: #005a32;
+  --color-primary-light: #008f4d;
+  --color-secondary: #f39c12;         /* Gold */
+  --color-background: #ffffff;
+  --color-surface: #f8faf8;
+  --color-surface-elevated: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-focus: #006B3C;
+  --color-error: #dc2626;
+  --color-success: #006B3C;
+}
+
+.dark {
+  --color-primary: #2ecc71;
+  --color-primary-hover: #27ae60;
+  --color-background: #1a1a1a;
+  --color-surface: #242424;
+  --color-surface-elevated: #2d2d2d;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a0a0a0;
+  --color-border: #333333;
+}
+```
+
+### Dark Mode
+- **Class-based** via `next-themes` (`.dark` on `<html>`)
+- **No `prefers-color-scheme`** — user preference only
+- **CSS variables** for all colors — automatic switching
+
+### Typography
+```css
+--font-sans: 'Inter', system-ui, sans-serif;           /* Latin + Latin-ext */
+--font-arabic: 'Noto Sans Arabic', system-ui, sans-serif;  /* Arabic */
+```
+- **Arabic content**: use `font-arabic` class, line-height 1.8, supports diacritics
+
+### Spacing System
+Base unit: **4px (0.25rem)** — tokens 1–12 (4px → 48px)
+
+### Border Radius
+| Token | Value | Usage |
+|-------|-------|-------|
+| `sm` | 4px | Chips, badges |
+| `DEFAULT` | 8px | **Buttons, inputs, cards** |
+| `md` | 12px | Modals, dropdowns |
+| `lg` | 16px | Sheets, panels |
+| `xl` | 24px | Large containers |
+| `full` | 9999px | Pills, avatars |
+
+### Shadows
+| Token | Light | Dark |
+|-------|-------|------|
+| `sm` | `0 1px 2px rgba(0,0,0,0.05)` | `0 1px 2px rgba(0,0,0,0.3)` |
+| `DEFAULT` | `0 4px 6px rgba(0,0,0,0.07)` | `0 4px 6px rgba(0,0,0,0.4)` |
+| `md` | `0 10px 15px rgba(0,0,0,0.1)` | `0 10px 15px rgba(0,0,0,0.5)` |
+| `lg` | `0 20px 25px rgba(0,0,0,0.15)` | `0 20px 25px rgba(0,0,0,0.6)` |
+
+---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

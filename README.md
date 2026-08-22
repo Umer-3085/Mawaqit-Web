@@ -142,25 +142,50 @@ mawaqit-web/
 - **`(public)`** — no authentication, public layouts, shared providers
 - **`(admin)`** — JWT-protected, admin layout with sidebar, middleware guard
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- **Node.js** 18+ (recommended: 20 LTS)
+- **npm** 9+ (or yarn/pnpm/bun)
+- **Backend API** running at `http://localhost:8000` (see [mawaqit-api](../mawaqit-api))
 
+### Environment Variables
+Copy `.env.example` to `.env` and adjust:
 ```bash
-npm run dev
+cp .env.example .env
+```
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL (must include `/api`) | `http://localhost:8000/api` |
+
+### Installation
+```bash
+npm install
 # or
-yarn dev
+yarn install
 # or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
+```bash
+npm run dev
+# Runs on http://localhost:3000 with Turbopack
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
+```bash
+npm run build   # Type-checks + compiles
+npm run start   # Serves production build
+```
+
+### Linting & Type Checking
+```bash
+npm run lint      # ESLint
+# npm run typecheck  # TypeScript only (if configured)
+```
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

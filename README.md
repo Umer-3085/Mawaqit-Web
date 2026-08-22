@@ -187,7 +187,58 @@ npm run lint      # ESLint
 # npm run typecheck  # TypeScript only (if configured)
 ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
+
+## API Integration
+
+The frontend communicates with the **Mawaqit API** (FastAPI) running at `NEXT_PUBLIC_API_URL`.
+
+### Base Configuration
+```typescript
+// lib/api.ts
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+```
+
+### Prayer Times Endpoints
+
+| Endpoint | Hook | Purpose | Key Params |
+|----------|------|---------|------------|
+| `GET /prayer-times/today` | `useTodayPrayerTimes` | Today's prayer times | `lat`, `lng`, `timezone`, `calculation_method?`, `madhab?`, `high_latitude_rule?`, `nafl_method?` |
+| `GET /prayer-times` | `usePrayerTimes` | Specific date | Above + `date` (YYYY-MM-DD), adjustments (`*_adj`) |
+| `GET /prayer-times/range` | `usePrayerTimesRange` | Date range (max 30 days) | `start_date`, `end_date`, same as above |
+| `GET /prayer-times/methods` | `usePrayerTimesMethods` | List 11 calculation methods | — |
+
+### Quran Endpoints
+| Endpoint | Hook | Purpose |
+|----------|------|---------|
+| `GET /surahs` | `useSurahs` | Paginated surah list (filter: revelation type, search) |
+| `GET /surahs/{number}` | `useSurah` | Single surah with verses |
+| `GET /verses/surah/{surah}` | `useVerses` | All verses of a surah |
+| `GET /texts/surah/{surah}/ayah/{ayah}` | `useVerseTexts` | All translations/tafseers for a verse |
+| `GET /details` | `useDetails` | Translation/tafseer metadata (36 editions) |
+
+### Library Endpoints
+| Endpoint | Hook | Purpose |
+|----------|------|---------|
+| `GET /categories` | `useCategories` | Category list |
+| `GET /subcategories?category_id=` | `useSubcategories` | Subcategories by category |
+| `GET /articles-videos` | `useArticlesVideos` | Items (filter: category, subcategory, type) |
+
+### SWR Configuration (lib/swr-config.ts)
+```typescript
+export const swrConfig = {
+  revalidateOnFocus: false,
+  dedupingInterval: 60_000,        // 1 minute
+  refreshInterval: 0,              // No auto-refresh
+  onErrorRetry: (err, key, cfg, revalidate, { retryCount }) => {
+    if (retryCount >= 3) return;
+    if (err.status === 404) return;
+    setTimeout(() => revalidate({ retryCount }), 1000 * retryCount);
+  },
+};
+```
+
+---
 
 ## Learn More
 

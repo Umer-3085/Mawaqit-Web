@@ -30,6 +30,46 @@ A modern, accessible web application for accurate prayer times, Quran reading wi
 
 ---
 
+## Features
+
+### 🕌 Prayer Times (`/prayer-times`)
+- **Today / specific date / date range** — accurate times for any location
+- **11 calculation methods** — Muslim World League, Egyptian, Karachi, Umm al-Qura, Dubai, Moon Sighting Committee, North America, Kuwait, Qatar, Singapore, UOIF
+- **Madhab support** — Shafi'i and Hanafi for Asr
+- **High-latitude rules** — Middle of the Night, Seventh of the Night, Twilight Angle
+- **Nafl prayers** — Ishraq, Duha, Tahajjud with configurable methods
+- **Manual adjustments** — per-prayer minute offsets (±60 min)
+- **Geolocation + timezone auto-detect** — browser GPS + IANA timezone
+- **Persisted preferences** — localStorage + URL sync (debounced)
+
+### 📖 Quran (`/quran`)
+- **All 114 surahs** with revelation type, verse count, page/juz mapping
+- **Verse-by-verse reading** with Arabic text, translations, and tafsir
+- **36 translation/tafseer editions** — 32 translations + 6 tafseers (multi-language, RTL/LTR)
+- **Edition persistence** — selected translation carried across surah/verse navigation via URL
+- **Search & filter** — by surah, juz, page, sajda verses
+
+### 📚 Islamic Library (`/library`)
+- **Category → Subcategory → Items** hierarchy (Quran, Hadith, Fiqh, etc.)
+- **Articles & videos** — auto-detected by link presence
+- **Admin-managed content** — CRUD via protected endpoints
+
+### 💰 Zakat Calculator (`/zakat`)
+- **Frontend-only** — no backend dependency
+- **Multi-currency** — USD, EUR, GBP, PKR, SAR, AED, INR, CAD, AUD
+- **Nisab by silver (595g) / gold (85g) / custom** — live price inputs
+- **Asset categories** — cash, gold (g), silver (g), investments, business inventory, receivables
+- **Deductible debts** — subtracted before 2.5% calculation
+- **Visual result** — green when above Nisab, breakdown card
+
+### 🛡️ Admin Panel (`/admin/*`)
+- **JWT authentication** — login, credential rotation
+- **Content management** — categories, subcategories, articles/videos
+- **Quran management** — surahs, verses, translations, tafseer details
+- **Role-guarded routes** — middleware protection
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

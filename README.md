@@ -70,6 +70,78 @@ A modern, accessible web application for accurate prayer times, Quran reading wi
 
 ---
 
+## Project Structure
+
+```
+mawaqit-web/
+├── src/
+│   ├── app/                          # Next.js App Router
+│   │   ├── (public)/                 # Public route group (no auth)
+│   │   │   ├── page.tsx              # Landing page
+│   │   │   ├── layout.tsx            # Public layout + providers
+│   │   │   ├── prayer-times/         # Prayer times routes
+│   │   │   │   ├── page.tsx          # Today (SSR + client)
+│   │   │   │   ├── [date]/page.tsx   # Specific date
+│   │   │   │   └── range/page.tsx    # Date range
+│   │   │   ├── quran/                # Quran routes
+│   │   │   │   ├── page.tsx          # Surah list
+│   │   │   │   ├── [surah_number]/page.tsx        # Surah view
+│   │   │   │   └── [surah_number]/[verse_number]/page.tsx  # Verse detail
+│   │   │   ├── library/              # Library routes
+│   │   │   │   ├── page.tsx          # Categories
+│   │   │   │   ├── [category_id]/page.tsx
+│   │   │   │   ├── [category_id]/[subcategory_id]/page.tsx
+│   │   │   │   └── item/[id]/page.tsx
+│   │   │   └── zakat/page.tsx        # Zakat calculator
+│   │   ├── (admin)/                  # Admin route group (protected)
+│   │   │   ├── layout.tsx            # Admin layout + auth check
+│   │   │   ├── login/page.tsx
+│   │   │   ├── dashboard/page.tsx
+│   │   │   ├── categories/page.tsx
+│   │   │   ├── articles/page.tsx
+│   │   │   ├── videos/page.tsx
+│   │   │   ├── surahs/page.tsx
+│   │   │   ├── verses/page.tsx
+│   │   │   ├── translations/page.tsx
+│   │   │   └── tafsir/page.tsx
+│   │   ├── globals.css               # Tailwind v4 + CSS variables + theme
+│   │   ├── providers.tsx             # SWRConfig + ThemeProvider
+│   │   └── layout.tsx                # Root layout (fonts, providers)
+│   ├── components/
+│   │   ├── ui/                       # Base UI components (Button, Select, Input, Card, etc.)
+│   │   ├── prayer-times/             # Prayer times specific components
+│   │   ├── quran/                    # Quran components (SurahList, VerseDetail, etc.)
+│   │   ├── library/                  # Library components
+│   │   ├── zakat/                    # Zakat calculator components
+│   │   └── layout/                   # PageContainer, Header, Footer, ThemeToggle
+│   ├── hooks/
+│   │   ├── usePrayerTimes.ts         # SWR hooks for prayer times
+│   │   ├── useLocation.ts            # Location state + localStorage
+│   │   ├── useLocationMutations.ts   # Location updates + SWR revalidation
+│   │   ├── useQuran.ts               # SWR hooks for Quran data
+│   │   └── useLibrary.ts             # SWR hooks for library data
+│   ├── lib/
+│   │   ├── api.ts                    # API client with retry logic
+│   │   ├── validation.ts             # Zod schemas
+│   │   ├── errors.ts                 # Custom error classes
+│   │   └── swr-config.ts             # SWR global config
+│   └── types/
+│       ├── prayer-times.ts           # TypeScript interfaces for prayer times
+│       ├── quran.ts                  # Quran-related types
+│       └── library.ts                # Library-related types
+├── public/                           # Static assets
+├── .env                              # NEXT_PUBLIC_API_URL=http://localhost:8000/api
+├── .env.example
+├── tsconfig.json                     # Path aliases: @/*, @/components/*, @/hooks/*, @/types/*
+├── next.config.js
+├── package.json
+└── README.md
+```
+
+### Route Groups
+- **`(public)`** — no authentication, public layouts, shared providers
+- **`(admin)`** — JWT-protected, admin layout with sidebar, middleware guard
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

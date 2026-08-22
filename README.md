@@ -240,6 +240,63 @@ export const swrConfig = {
 
 ---
 
+## Key Conventions
+
+### Path Aliases (tsconfig.json)
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*", "./types/*", "./lib/*", "./hooks/*"],
+      "@/components/*": ["./components/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/types/*": ["./types/*"]
+    }
+  }
+}
+```
+
+### Import Patterns
+```typescript
+// ✅ Correct — use path aliases
+import { Button } from '@/components/ui/Button';
+import { useTodayPrayerTimes } from '@/hooks/usePrayerTimes';
+import type { LocationParams } from '@/types/prayer-times';
+
+// ❌ Wrong — relative imports
+import { Button } from '../../../components/ui/Button';
+```
+
+### Component Structure
+```tsx
+'use client';  // Only for client components
+
+import { cn } from '@/components/ui/utils';
+
+export interface ComponentProps {
+  // props with JSDoc comments for complex props
+}
+
+export function Component({ prop }: ComponentProps) {
+  // implementation
+}
+```
+
+### Tailwind v4 Usage
+- **No `tailwind.config.ts`** — all config in `src/app/globals.css`
+- Use `@theme inline` for design tokens
+- **Dark mode via `.dark` class selector** (not `prefers-color-scheme`)
+- CSS variables for all colors, fonts, spacing
+
+### State Management
+- **Server state**: SWR hooks (`useTodayPrayerTimes`, `usePrayerTimes`, etc.)
+- **Client state**: React `useState` + `useCallback`
+- **Persistence**: localStorage via `useLocation` hook
+- **URL sync**: Debounced `router.push()` with search params (300ms)
+
+---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

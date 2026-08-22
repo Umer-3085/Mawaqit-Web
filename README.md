@@ -12,6 +12,24 @@ A modern, accessible web application for accurate prayer times, Quran reading wi
 
 ---
 
+## Tech Stack
+
+| Category | Technology | Version |
+|----------|------------|---------|
+| Framework | [Next.js](https://nextjs.org) | 15 (App Router, Turbopack) |
+| Language | [TypeScript](https://www.typescriptlang.org) | 5 (strict mode) |
+| Styling | [Tailwind CSS](https://tailwindcss.com) | v4 (CSS-first, no config file) |
+| State / Data | [SWR](https://swr.vercel.app) | 2.4 (caching, revalidation) |
+| Fonts | [Inter](https://rsms.me/inter/) + [Noto Sans Arabic](https://fonts.google.com/noto/specimen/Noto+Sans+Arabic) | via `next/font/google` |
+| Theming | [next-themes](https://github.com/pacocoursey/next-themes) | class-based dark mode |
+| Icons | [lucide-react](https://lucide.dev) | inline SVG |
+| Validation | [Zod](https://zod.dev) | 4 |
+| Maps | [Leaflet](https://leafletjs.com) + [react-leaflet](https://react-leaflet.js.org) | 1.9 / 5.0 |
+| Hijri Calendar | [hijri-js](https://github.com/amina-s/hijri-js) | 1.0 |
+| Notifications | [sonner](https://sonner.emilkowal.ski) | 2.0 |
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

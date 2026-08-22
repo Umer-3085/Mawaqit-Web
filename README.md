@@ -1,3 +1,17 @@
+# Mawaqit Web
+
+**Mawaqit** (مواقيت) — *Islamic Prayer Times & Quran Companion*
+
+A modern, accessible web application for accurate prayer times, Quran reading with translations and tafsir, an Islamic knowledge library, and Zakat calculation. Built with Next.js 15, React 19, and Tailwind CSS v4.
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-v4-06B6D4?logo=tailwindcss)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

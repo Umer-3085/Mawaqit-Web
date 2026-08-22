@@ -364,6 +364,45 @@ Base unit: **4px (0.25rem)** — tokens 1–12 (4px → 48px)
 
 ---
 
+## Testing Checklist
+
+- [ ] SSR page loads with initial data (no hydration mismatch)
+- [ ] Client hydrates correctly with `fallbackData`
+- [ ] Location inputs update and revalidate
+- [ ] Geolocation button works (HTTPS required in prod)
+- [ ] All 4 method dropdowns update and revalidate
+- [ ] 6 obligatory + 7 nafl/elevation cards display
+- [ ] Loading spinner shows during fetch
+- [ ] Error alert shows on API failure
+- [ ] Dark mode toggle works
+- [ ] URL sync works (debounced 300ms)
+- [ ] localStorage persistence works
+- [ ] `npm run build` and `npm run lint` pass
+
+## Common Issues & Fixes
+
+### Hydration Mismatch
+- **Cause**: Invalid HTML (e.g., `<span>` inside `<svg>`)
+- **Fix**: Move accessible text outside SVG wrapper
+
+### Timezone Validation Fails on Windows
+- **Cause**: Python `zoneinfo` needs `tzdata` package
+- **Fix**: `pip install tzdata` + full server restart
+
+### Dropdown Not Updating
+- **Cause**: Key mismatch (camelCase vs snake_case)
+- **Fix**: Ensure `onChange` keys match `ClientParams` interface
+
+### API 404
+- **Cause**: Missing `/api` prefix in `NEXT_PUBLIC_API_URL`
+- **Fix**: Set `NEXT_PUBLIC_API_URL=http://localhost:8000/api`
+
+### Path Alias Not Resolving
+- **Cause**: Missing entries in `tsconfig.json` paths
+- **Fix**: Add `@/components/*`, `@/hooks/*`, `@/types/*` aliases
+
+---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

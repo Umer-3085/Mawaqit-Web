@@ -403,6 +403,65 @@ Base unit: **4px (0.25rem)** — tokens 1–12 (4px → 48px)
 
 ---
 
+## Deployment
+
+### Vercel (Recommended)
+1. Push to GitHub/GitLab/Bitbucket
+2. Import project in Vercel
+3. Add `NEXT_PUBLIC_API_URL` environment variable
+4. Deploy
+
+### Docker
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "run", "start"]
+```
+
+### Environment Variables for Production
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_API_URL` | Yes | Production API URL (e.g., `https://api.mawaqit.com/api`) |
+
+---
+
+## Accessibility (WCAG AA)
+
+- **Semantic HTML** — `<main>`, `<section aria-labelledby>`, `<article>`
+- **ARIA labels** — on icon-only buttons, form inputs, live regions
+- **Focus management** — visible focus rings, `focus-visible` for keyboard-only
+- **Color contrast** — primary text 12.6:1, muted text 4.5:1, buttons 7.8:1
+- **Keyboard navigation** — tab order matches visual, Escape closes modals
+- **Screen readers** — `sr-only` for visual-only content, live regions for updates
+
+### Arabic / RTL Support
+- `Noto Sans Arabic` font loaded via `next/font`
+- `dir="rtl"` on Arabic content containers
+- `font-arabic` Tailwind class via `@theme inline`
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
+3. Follow conventional commits: `feat:`, `fix:`, `chore:`, `docs:`
+4. Run `npm run build && npm run lint` before pushing
+5. Open a Pull Request
+
+---
+
+## License
+
+MIT License — see [LICENSE](../LICENSE) for details.
+
+---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
